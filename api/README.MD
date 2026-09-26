@@ -17,35 +17,6 @@ uv run fastapi dev app/main.py
 
 Open http://localhost:8000 (or `/docs` for swagger).
 
-## Development
-
-Linting, formatting and type checking are handled by [ruff](https://docs.astral.sh/ruff/)
-and [mypy](https://mypy-lang.org/), both configured in `pyproject.toml`. The
-`Makefile` wraps the common commands:
-
-```bash
-make help          # list all targets
-make install       # sync dependencies
-make run           # start the dev server
-make format        # auto-fix lint and apply formatting
-make check         # lint + format check + types (what CI runs)
-```
-
-Run the tools directly if you prefer:
-
-```bash
-uv run ruff check .        # lint
-uv run ruff check . --fix  # lint and auto-fix
-uv run ruff format .       # format
-uv run mypy                # type check (strict)
-```
-
-Ruff also sorts imports and `__all__`; the config selects the `E`, `F`, `I`, `B`,
-`UP`, `SIM`, `C4` and `RUF` rule sets at a 100 character line length.
-
-`make check` also runs automatically on every push and pull request via
-`.github/workflows/ci.yml`.
-
 ## Scan endpoints
 
 ### `POST /api/v1/scans`
