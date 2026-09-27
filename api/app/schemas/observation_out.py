@@ -8,10 +8,11 @@ from app.schemas.orientation import Orientation
 from app.schemas.position import Position
 
 
-class MarkerOut(BaseModel):
+class ObservationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
+    marker_id: UUID
     aruco_id: int
     dictionary: ArucoDictionary
     name: str | None = None
@@ -21,14 +22,15 @@ class MarkerOut(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def from_marker(cls, data: Any) -> Any:
+    def from_observation(cls, data: Any) -> Any:
         if isinstance(data, dict):
             return data
 
         return {
             "id": data.id,
-            "aruco_id": data.aruco_id,
-            "dictionary": data.dictionary,
+            "marker_id": data.marker_id,
+            "aruco_id": data.marker.aruco_id,
+            "dictionary": data.marker.dictionary,
             "name": data.name,
             "position": {
                 "x": data.position_x,

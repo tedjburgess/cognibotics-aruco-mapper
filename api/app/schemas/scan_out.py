@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
-from app.schemas.marker_out import MarkerOut
+from app.schemas.observation_out import ObservationOut
 from app.schemas.relation_out import RelationOut
 
 
@@ -12,11 +12,12 @@ class ScanOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
+    site_name: str
     cell_name: str
     device_id: str
     measured_at: datetime
     created_at: datetime
-    markers: list[MarkerOut]
+    observations: list[ObservationOut]
     relations: list[RelationOut]
 
     @model_validator(mode="before")
@@ -27,10 +28,11 @@ class ScanOut(BaseModel):
 
         return {
             "id": data.id,
+            "site_name": data.cell.site.name,
             "cell_name": data.cell.name,
             "device_id": data.device_id,
             "measured_at": data.measured_at,
             "created_at": data.created_at,
-            "markers": [MarkerOut.model_validate(m) for m in data.markers],
+            "observations": [ObservationOut.model_validate(o) for o in data.observations],
             "relations": [RelationOut.model_validate(r) for r in data.relations],
         }

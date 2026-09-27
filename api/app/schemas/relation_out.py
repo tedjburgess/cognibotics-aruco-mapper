@@ -10,8 +10,8 @@ class RelationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
-    from_aruco_id: int
-    to_aruco_id: int
+    from_marker_id: UUID
+    to_marker_id: UUID
     distance_mm: float
     relative_position: Position | None = None
 
@@ -23,8 +23,8 @@ class RelationOut(BaseModel):
 
         return {
             "id": data.id,
-            "from_aruco_id": data.from_aruco_id,
-            "to_aruco_id": data.to_aruco_id,
+            "from_marker_id": data.from_marker_id,
+            "to_marker_id": data.to_marker_id,
             "distance_mm": data.distance_mm,
             "relative_position": data.relative_position,
         }

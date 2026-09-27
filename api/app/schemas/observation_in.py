@@ -5,7 +5,7 @@ from app.schemas.orientation import Orientation
 from app.schemas.position import Position
 
 
-class MarkerIn(BaseModel):
+class ObservationIn(BaseModel):
     aruco_id: int = Field(ge=0)
     dictionary: ArucoDictionary = ArucoDictionary.DICT_6X6_50
     name: str | None = None
