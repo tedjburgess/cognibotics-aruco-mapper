@@ -11,8 +11,8 @@ Default values use local SQLite `aruco_mapper.db`.
 Tables are automatically created on startup.
 
 ```bash
-uv sync
-uv run fastapi dev app/main.py
+make install
+make run
 ```
 
 Open http://localhost:8000 (or `/docs` for swagger).
