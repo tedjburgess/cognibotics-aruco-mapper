@@ -1,12 +1,15 @@
 package com.example.cogniboticsarucomapper.ui.home
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.painterResource
+import com.example.cogniboticsarucomapper.R
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
 
 @Composable
@@ -27,6 +32,7 @@ fun HomeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -97,6 +103,16 @@ fun HomeScreen(
                 )
             }
         }
+
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.hkr_logo),
+            contentDescription = "HKR logo",
+            modifier = Modifier.width(120.dp)
+        )
     }
 }
 
