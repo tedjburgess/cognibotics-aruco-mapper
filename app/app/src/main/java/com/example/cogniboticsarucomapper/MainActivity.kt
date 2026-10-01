@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cogniboticsarucomapper.ui.camera.CameraFeedScreen
+import com.example.cogniboticsarucomapper.ui.home.HomeScreen
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,35 +37,15 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(innerPadding)
                         )
                     } else {
-                        MainScreen(
-                            onOpenCameraFeed = { showCameraFeed = true },
+                        HomeScreen(
+                            onCalibrationClick = {}, // Calibration screen will be added later
+                            onMeasurementClick = { showCameraFeed = true },
+                            onExportClick = {}, // Export screen will be added later
                             modifier = Modifier.padding(innerPadding)
                         )
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun MainScreen(onOpenCameraFeed: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Hello Android!")
-        Button(onClick = onOpenCameraFeed) {
-            Text(text = "Open Camera Feed")
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    CogniboticsArucoMapperTheme {
-        MainScreen(onOpenCameraFeed = {})
     }
 }
