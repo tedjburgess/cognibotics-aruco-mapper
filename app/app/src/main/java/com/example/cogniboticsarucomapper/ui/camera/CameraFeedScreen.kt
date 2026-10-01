@@ -36,6 +36,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.cogniboticsarucomapper.vision.ArucoAnalyzer
 import com.example.cogniboticsarucomapper.vision.OpenCv
 import com.example.cogniboticsarucomapper.vision.VisionEngine
 import com.example.cogniboticsarucomapper.vision.VisionEvent
@@ -55,7 +56,7 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val permissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
     val opencvReady = remember { OpenCv.ensureInitialized() }
-    val visionEngine = remember { VisionEngine() }
+    val visionEngine = remember { VisionEngine(analyzers = listOf(ArucoAnalyzer())) }
     val recentEvents = remember { mutableStateListOf<VisionEvent.MarkerDetected>() }
     val analysisEnabled by visionEngine.analysisEnabled.collectAsStateWithLifecycle()
     val fps by visionEngine.fps.collectAsStateWithLifecycle()
