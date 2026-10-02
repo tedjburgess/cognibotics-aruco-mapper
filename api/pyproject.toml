@@ -1,0 +1,41 @@
+[project]
+name = "aruco-mapper-api"
+version = "0.1.0"
+description = "Centralized measurement API for the Cognibotics ArUco mapper Android app"
+readme = "README.MD"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]>=0.115",
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.2",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9",
+    "mypy>=1.14",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+src = ["app"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # bugbear
+    "UP",  # pyupgrade
+    "SIM", # simplify
+    "C4",  # comprehensions
+    "RUF", # ruff-specific
+]
+
+[tool.mypy]
+python_version = "3.14"
+files = ["app"]
+strict = true
+plugins = ["pydantic.mypy"]
+warn_unreachable = true
