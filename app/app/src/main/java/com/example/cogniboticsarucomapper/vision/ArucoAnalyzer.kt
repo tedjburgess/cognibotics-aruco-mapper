@@ -42,17 +42,17 @@ class ArucoAnalyzer : VisionEngine.FrameAnalyzer {
 
         val secondOffset = Offset(
             secondCorner[0].toFloat(),
-            secondCorner[0].toFloat()
+            secondCorner[1].toFloat()
         )
 
         val thirdOffset = Offset(
             thirdCorner[0].toFloat(),
-            thirdCorner[0].toFloat()
+            thirdCorner[1].toFloat()
         )
 
         val fourthOffset = Offset(
             fourthCorner[0].toFloat(),
-            fourthCorner[0].toFloat()
+            fourthCorner[1].toFloat()
         )
 
         val markerOffsets = listOf(
