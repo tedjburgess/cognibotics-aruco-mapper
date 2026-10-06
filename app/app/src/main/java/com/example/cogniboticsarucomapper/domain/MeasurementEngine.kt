@@ -1,5 +1,9 @@
 package com.example.cogniboticsarucomapper.domain
 
+import kotlin.math.abs
+
+private const val MIN_NORMALISER = 1.0e-6
+
 object MeasurementEngine {
     fun measure(
         reference: ReferenceMarker?,
@@ -25,12 +29,24 @@ object MeasurementEngine {
             return partial(detections.size)
         }
 
+        val anchorDepthMm = anchor.pose.unitRangeMm * reference.sizeMm
+
         val sizes = ArrayList<MarkerSize>()
         val positions = HashMap<MarkerKey, Point3d>()
 
         for (detection in detections) {
-            val ratio = detection.pose.unitRangeMm / anchor.pose.unitRangeMm
-            val sizeMm = reference.sizeMm * ratio
+            val detectionRangeMm = detection.pose.unitRangeMm
+            if (detectionRangeMm <= 0.0) {
+                continue
+            }
+
+            val depthMm = depthOnAnchorPlane(
+                pose = detection.pose,
+                anchorPose = anchor.pose,
+                anchorSizeMm = reference.sizeMm,
+                fallbackDepthMm = anchorDepthMm,
+            )
+            val sizeMm = depthMm / detectionRangeMm
             val key = MarkerKey(detection.dictionary, detection.markerId)
 
             sizes.add(
@@ -42,11 +58,11 @@ object MeasurementEngine {
                 ),
             )
 
-            positions[key] = Point3d(
-                x = detection.pose.tx * sizeMm,
-                y = detection.pose.ty * sizeMm,
-                z = detection.pose.tz * sizeMm,
-            )
+            positions[key] = detection.pose.positionMm(sizeMm)
+        }
+
+        if (positions.isEmpty()) {
+            return partial(detections.size)
         }
 
         sizes.sortWith(
@@ -82,6 +98,51 @@ object MeasurementEngine {
             sizes = sizes,
             distances = distances,
         )
+    }
+
+    private fun depthOnAnchorPlane(
+        pose: MarkerPose,
+        anchorPose: MarkerPose,
+        anchorSizeMm: Double,
+        fallbackDepthMm: Double,
+    ): Double {
+        val rangeMm = pose.unitRangeMm
+        if (rangeMm <= 0.0) {
+            return fallbackDepthMm
+        }
+
+        val anchorRangeMm = anchorPose.unitRangeMm
+        if (anchorRangeMm <= 0.0) {
+            return fallbackDepthMm
+        }
+
+        val directionX = pose.tx / rangeMm
+        val directionY = pose.ty / rangeMm
+        val directionZ = pose.tz / rangeMm
+
+        val anchorX = anchorPose.tx * anchorSizeMm
+        val anchorY = anchorPose.ty * anchorSizeMm
+        val anchorZ = anchorPose.tz * anchorSizeMm
+
+        val normaliser =
+            directionX * anchorPose.normalX +
+                directionY * anchorPose.normalY +
+                directionZ * anchorPose.normalZ
+        if (abs(normaliser) < MIN_NORMALISER) {
+            return fallbackDepthMm
+        }
+
+        val offset =
+            anchorX * anchorPose.normalX +
+                anchorY * anchorPose.normalY +
+                anchorZ * anchorPose.normalZ
+
+        val depthMm = offset / normaliser
+        if (depthMm <= 0.0) {
+            return fallbackDepthMm
+        }
+
+        return depthMm
     }
 
     private fun partial(detectedCount: Int): FrameMeasurement {

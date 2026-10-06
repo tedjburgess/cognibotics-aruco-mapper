@@ -10,13 +10,14 @@ import org.opencv.core.Point3
 import kotlin.math.sqrt
 
 private const val CORNER_COUNT = 4
+private const val NORMAL_COMPONENT_COUNT = 3L
 
 class PoseSolver {
     private val unitSquarePoints = MatOfPoint3f(
-        Point3(-0.5, -0.5, 0.0),
-        Point3(0.5, -0.5, 0.0),
-        Point3(0.5, 0.5, 0.0),
         Point3(-0.5, 0.5, 0.0),
+        Point3(0.5, 0.5, 0.0),
+        Point3(0.5, -0.5, 0.0),
+        Point3(-0.5, -0.5, 0.0),
     )
 
     fun solve(
@@ -51,11 +52,15 @@ class PoseSolver {
         try {
             for (index in 0 until minOf(rotations.size, translations.size)) {
                 val translation = readVector3(translations[index]) ?: continue
+                val normal = readNormal(rotations[index]) ?: continue
 
                 val pose = MarkerPose(
                     tx = translation[0],
                     ty = translation[1],
                     tz = translation[2],
+                    normalX = normal[0],
+                    normalY = normal[1],
+                    normalZ = normal[2],
                     reprojectionErrorPx = reprojectionError(
                         corners = corners,
                         cameraMatrix = cameraMatrix,
@@ -139,6 +144,36 @@ class PoseSolver {
         }
 
         return null
+    }
+
+    private fun readNormal(rotationVector: Mat): DoubleArray? {
+        if (rotationVector.rows() == 3 && rotationVector.cols() == 3) {
+            return readColumn(rotationVector, 2)
+        }
+        if (rotationVector.total() != NORMAL_COMPONENT_COUNT) {
+            return null
+        }
+
+        val rotationMatrix = Mat()
+        try {
+            Calib3d.Rodrigues(rotationVector, rotationMatrix)
+            if (rotationMatrix.rows() != 3 || rotationMatrix.cols() != 3) {
+                return null
+            }
+            return readColumn(rotationMatrix, 2)
+        } catch (_: Exception) {
+            return null
+        } finally {
+            rotationMatrix.release()
+        }
+    }
+
+    private fun readColumn(matrix: Mat, column: Int): DoubleArray {
+        return doubleArrayOf(
+            matrix.get(0, column)[0],
+            matrix.get(1, column)[0],
+            matrix.get(2, column)[0],
+        )
     }
 
     private fun releaseAll(mats: List<Mat>) {

@@ -16,7 +16,6 @@ data class CameraIntrinsics(
     val cx: Double,
     val cy: Double,
 ) {
-
     fun cameraMatrix(): Mat {
         val matrix = Mat(3, 3, CvType.CV_64F)
 
@@ -56,9 +55,19 @@ data class CameraIntrinsics(
                 return null
             }
 
+            val imageAspect = imageWidth.toDouble() / imageHeight
+            val sensorAspect = geometry.sensorWidthMm / geometry.sensorHeightMm
+
+            var visibleWidthMm = geometry.sensorWidthMm
+            if (imageAspect < sensorAspect) {
+                visibleWidthMm = geometry.sensorHeightMm * imageAspect
+            }
+
+            val pixelsPerMm = imageWidth / visibleWidthMm
+
             return CameraIntrinsics(
-                fx = geometry.focalLengthMm * imageWidth / geometry.sensorWidthMm,
-                fy = geometry.focalLengthMm * imageHeight / geometry.sensorHeightMm,
+                fx = geometry.focalLengthMm * pixelsPerMm,
+                fy = geometry.focalLengthMm * pixelsPerMm,
                 cx = imageWidth / 2.0,
                 cy = imageHeight / 2.0,
             )
