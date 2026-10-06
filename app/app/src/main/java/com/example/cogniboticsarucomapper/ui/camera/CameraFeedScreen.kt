@@ -58,13 +58,7 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var torchEnabled by remember { mutableStateOf(false) }
     val analysisEnabled by visionEngine.analysisEnabled.collectAsStateWithLifecycle()
-
-    val opencvStatus: String
-    if (opencvReady) {
-        opencvStatus = "OK"
-    } else {
-        opencvStatus = "FAIL"
-    }
+    val opencvStatus: String = if (opencvReady) "OK" else "FAIL"
 
     LaunchedEffect(visionEngine) {
         visionEngine.events.collect { event ->
