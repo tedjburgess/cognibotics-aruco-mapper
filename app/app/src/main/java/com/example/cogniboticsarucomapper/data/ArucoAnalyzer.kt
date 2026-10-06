@@ -24,10 +24,10 @@ class ArucoAnalyzer(
     private var cachedIntrinsicsHeight = 0
 
     init {
-        detectorParameters.set_useAruco3Detection(true)
-        detectorParameters.set_cornerRefinementMethod(Objdetect.CORNER_REFINE_APRILTAG)
-        detectorParameters.set_minDistanceToBorder(4)
-        detectorParameters.set_minMarkerDistanceRate(0.04)
+        detectorParameters._useAruco3Detection = true
+        detectorParameters._cornerRefinementMethod = Objdetect.CORNER_REFINE_APRILTAG
+        detectorParameters._minDistanceToBorder = 4
+        detectorParameters._minMarkerDistanceRate = 0.04
 
         val detectors = ArrayList<MarkerDetector>()
         for (option in enabledDictionaries) {
