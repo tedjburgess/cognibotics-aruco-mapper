@@ -37,10 +37,7 @@ class MarkerDetector(
             val detections = ArrayList<MarkerDetection>()
             for (index in corners.indices) {
                 val markerCorners = corners[index]
-                val pose = poseSolver.solve(markerCorners, cameraMatrix, distortionCoefficients)
-                if (pose == null) {
-                    continue
-                }
+                val pose = poseSolver.solve(markerCorners, cameraMatrix, distortionCoefficients)  ?: continue
 
                 detections.add(
                     MarkerDetection(

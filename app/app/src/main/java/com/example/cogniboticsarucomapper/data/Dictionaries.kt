@@ -3,11 +3,9 @@ package com.example.cogniboticsarucomapper.data
 import com.example.cogniboticsarucomapper.domain.ArucoDictionaryOption
 import org.opencv.objdetect.Objdetect
 
-const val DEFAULT_DICTIONARY = Objdetect.DICT_4X4_50
+const val DEFAULT_REFERENCE_MARKER_DICTIONARY = Objdetect.DICT_4X4_50
 
-val ACTIVE_DICTIONARY_CODES: Set<Int> = setOf(DEFAULT_DICTIONARY)
-
-val SUPPORTED_DICTIONARIES: List<ArucoDictionaryOption> = listOf(
+val DICTIONARIES: List<ArucoDictionaryOption> = listOf(
     ArucoDictionaryOption(Objdetect.DICT_4X4_50, "DICT_4X4_50"),
     ArucoDictionaryOption(Objdetect.DICT_4X4_100, "DICT_4X4_100"),
     ArucoDictionaryOption(Objdetect.DICT_4X4_250, "DICT_4X4_250"),
@@ -27,12 +25,14 @@ val SUPPORTED_DICTIONARIES: List<ArucoDictionaryOption> = listOf(
     ArucoDictionaryOption(Objdetect.DICT_ARUCO_ORIGINAL, "DICT_ARUCO_ORIGINAL"),
 )
 
-val ACTIVE_DICTIONARIES: List<ArucoDictionaryOption> = SUPPORTED_DICTIONARIES.toList()
+val SUPPORTED_SCAN_DICTIONARIES: List<ArucoDictionaryOption> =
+    DICTIONARIES.filter { option -> option.code == Objdetect.DICT_4X4_50 }
 
 fun dictionaryLabel(code: Int): String {
-    val match = SUPPORTED_DICTIONARIES.firstOrNull { option -> option.code == code }
+    val match = DICTIONARIES.firstOrNull { option -> option.code == code }
     if (match == null) {
         return "DICT($code)"
     }
+
     return match.label
 }

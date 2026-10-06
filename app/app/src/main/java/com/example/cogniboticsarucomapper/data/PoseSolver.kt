@@ -38,7 +38,7 @@ class PoseSolver {
                 false,
                 Calib3d.SOLVEPNP_IPPE_SQUARE,
             )
-        } catch (ignored: Exception) {
+        } catch (_: Exception) {
             return null
         }
         if (solutionCount <= 0) {
@@ -50,10 +50,7 @@ class PoseSolver {
 
         try {
             for (index in 0 until minOf(rotations.size, translations.size)) {
-                val translation = readVector3(translations[index])
-                if (translation == null) {
-                    continue
-                }
+                val translation = readVector3(translations[index]) ?: continue
 
                 val pose = MarkerPose(
                     tx = translation[0],

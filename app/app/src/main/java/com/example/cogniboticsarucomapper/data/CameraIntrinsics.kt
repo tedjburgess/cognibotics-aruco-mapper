@@ -29,6 +29,7 @@ data class CameraIntrinsics(
         matrix.put(2, 0, 0.0)
         matrix.put(2, 1, 0.0)
         matrix.put(2, 2, 1.0)
+
         return matrix
     }
 

@@ -13,7 +13,7 @@ import org.opencv.objdetect.Objdetect
 class ArucoAnalyzer(
     private val sensorGeometry: SensorGeometry? = null,
     @Volatile var reference: ReferenceMarker? = null,
-    enabledDictionaries: List<ArucoDictionaryOption> = ACTIVE_DICTIONARIES,
+    enabledDictionaries: List<ArucoDictionaryOption> = SUPPORTED_SCAN_DICTIONARIES,
 ) : VisionEngine.FrameAnalyzer {
     private val detectorParameters = DetectorParameters()
     private val poseSolver = PoseSolver()

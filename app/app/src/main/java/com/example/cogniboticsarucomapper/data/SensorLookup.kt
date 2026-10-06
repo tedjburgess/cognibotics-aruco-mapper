@@ -5,11 +5,7 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 
 fun readSensorGeometry(context: Context): SensorGeometry? {
-    val manager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
-
-    if (manager == null) {
-        return null
-    }
+    val manager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager ?: return null
 
     var backCameraId: String? = null
     for (cameraId in manager.cameraIdList) {

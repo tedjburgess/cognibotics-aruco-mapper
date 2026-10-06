@@ -22,8 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.cogniboticsarucomapper.data.SUPPORTED_DICTIONARIES
-import com.example.cogniboticsarucomapper.data.DEFAULT_DICTIONARY
+import com.example.cogniboticsarucomapper.data.DICTIONARIES
+import com.example.cogniboticsarucomapper.data.DEFAULT_REFERENCE_MARKER_DICTIONARY
 import com.example.cogniboticsarucomapper.data.dictionaryLabel
 import com.example.cogniboticsarucomapper.domain.ReferenceMarkerState
 
@@ -35,7 +35,7 @@ fun CalibrationScreen(
 ) {
     val saved = ReferenceMarkerState.value
 
-    var dictionary by remember { mutableStateOf(saved?.dictionary ?: DEFAULT_DICTIONARY) }
+    var dictionary by remember { mutableStateOf(saved?.dictionary ?: DEFAULT_REFERENCE_MARKER_DICTIONARY) }
     var markerIdText by remember { mutableStateOf(saved?.markerId?.toString() ?: "0") }
     var sizeText by remember { mutableStateOf(saved?.sizeMm?.toString() ?: "100.0") }
     var expanded by remember { mutableStateOf(false) }
@@ -71,7 +71,7 @@ fun CalibrationScreen(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
             ) {
-                for (option in SUPPORTED_DICTIONARIES) {
+                for (option in DICTIONARIES) {
                     DropdownMenuItem(
                         text = { Text(text = option.label) },
                         onClick = {
