@@ -24,7 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.cogniboticsarucomapper.data.DICTIONARIES
 import com.example.cogniboticsarucomapper.data.DEFAULT_REFERENCE_MARKER_DICTIONARY
-import com.example.cogniboticsarucomapper.data.dictionaryLabel
+import com.example.cogniboticsarucomapper.data.getDictionaryLabelByCode
 import com.example.cogniboticsarucomapper.domain.ReferenceMarkerState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +55,7 @@ fun CalibrationScreen(
             onExpandedChange = { isExpanded -> expanded = isExpanded },
         ) {
             OutlinedTextField(
-                value = dictionaryLabel(dictionary),
+                value = getDictionaryLabelByCode(dictionary),
                 onValueChange = {},
                 readOnly = true,
                 label = { Text(text = "Dictionary") },

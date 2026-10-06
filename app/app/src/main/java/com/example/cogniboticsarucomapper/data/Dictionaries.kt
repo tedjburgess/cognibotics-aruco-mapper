@@ -28,11 +28,6 @@ val DICTIONARIES: List<ArucoDictionaryOption> = listOf(
 val SUPPORTED_SCAN_DICTIONARIES: List<ArucoDictionaryOption> =
     DICTIONARIES.filter { option -> option.code == Objdetect.DICT_4X4_50 }
 
-fun dictionaryLabel(code: Int): String {
-    val match = DICTIONARIES.firstOrNull { option -> option.code == code }
-    if (match == null) {
-        return "DICT($code)"
-    }
-
-    return match.label
+fun getDictionaryLabelByCode(code: Int): String {
+    return DICTIONARIES.firstOrNull { option -> option.code == code }?.label ?: "DICT($code)"
 }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cogniboticsarucomapper.domain.FrameMeasurement
 import com.example.cogniboticsarucomapper.domain.ReferenceMarker
-import com.example.cogniboticsarucomapper.data.dictionaryLabel
+import com.example.cogniboticsarucomapper.data.getDictionaryLabelByCode
 
 @Composable
 fun ColumnScope.ScanResults(
@@ -57,7 +56,7 @@ fun ColumnScope.ScanResults(
                 }
 
                 Text(
-                    text = "${dictionaryLabel(size.dictionary)} #${size.markerId}  ${"%.1f".format(size.sizeMm)} mm  ${"%.0f".format(size.edgeLengthPx)} px$suffix",
+                    text = "${getDictionaryLabelByCode(size.dictionary)} #${size.markerId}  ${"%.1f".format(size.sizeMm)} mm  ${"%.0f".format(size.edgeLengthPx)} px$suffix",
 
                     style = MaterialTheme.typography.bodySmall,
                 )
@@ -77,7 +76,7 @@ fun ColumnScope.ScanResults(
             } else {
                 for (pair in measurement.distances) {
                     Text(
-                        text = "${dictionaryLabel(pair.from.dictionary)} #${pair.from.markerId} -> ${dictionaryLabel(pair.to.dictionary)} #${pair.to.markerId}  ${"%.1f".format(pair.distanceMm)} mm",
+                        text = "${getDictionaryLabelByCode(pair.from.dictionary)} #${pair.from.markerId} -> ${getDictionaryLabelByCode(pair.to.dictionary)} #${pair.to.markerId}  ${"%.1f".format(pair.distanceMm)} mm",
 
                         style = MaterialTheme.typography.bodySmall,
                     )
@@ -101,12 +100,12 @@ private fun singleMessage(
     }
 
     if (measurement == null || measurement.detectedCount == 0) {
-        return "No markers detected. Trying ${dictionaryLabel(reference.dictionary)} only. " +
+        return "No markers detected. Trying ${getDictionaryLabelByCode(reference.dictionary)} only. " +
             "The markers may need more light, more pixels, or a white margin."
     }
 
     if (!measurement.referenceVisible) {
-        return "Reference marker #${reference.markerId} (${dictionaryLabel(reference.dictionary)}) " +
+        return "Reference marker #${reference.markerId} (${getDictionaryLabelByCode(reference.dictionary)}) " +
             "is not in frame. Sizes and distances need it."
     }
 
