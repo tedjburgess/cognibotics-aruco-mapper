@@ -69,6 +69,7 @@ class ArucoAnalyzer(
                 if (found.isNotEmpty()) {
                     sawMarker = true
                 }
+
                 detections.addAll(found)
             } catch (exception: Exception) {
                 if (failure == null) {

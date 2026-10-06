@@ -15,6 +15,7 @@ object ReferenceMarkerState {
         if (markerId == null || sizeMm == null || sizeMm <= 0.0) {
             return
         }
+
         value = ReferenceMarker(
             dictionary = dictionary,
             markerId = markerId,

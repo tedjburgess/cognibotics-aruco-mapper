@@ -124,16 +124,15 @@ object MeasurementEngine {
         val anchorY = anchorPose.ty * anchorSizeMm
         val anchorZ = anchorPose.tz * anchorSizeMm
 
-        val normaliser =
-            directionX * anchorPose.normalX +
+        val normaliser = directionX * anchorPose.normalX +
                 directionY * anchorPose.normalY +
                 directionZ * anchorPose.normalZ
+
         if (abs(normaliser) < MIN_NORMALISER) {
             return fallbackDepthMm
         }
 
-        val offset =
-            anchorX * anchorPose.normalX +
+        val offset = anchorX * anchorPose.normalX +
                 anchorY * anchorPose.normalY +
                 anchorZ * anchorPose.normalZ
 
@@ -160,10 +159,12 @@ object MeasurementEngine {
     ): MarkerDetection? {
         for (detection in detections) {
             val detectionKey = MarkerKey(detection.dictionary, detection.markerId)
+
             if (detectionKey == key) {
                 return detection
             }
         }
+
         return null
     }
 }

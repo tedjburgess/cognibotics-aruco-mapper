@@ -7,6 +7,7 @@ sealed interface VisionEvent {
         companion object {
             fun from(throwable: Throwable): AnalysisError {
                 val detail = throwable.message ?: "unknown error"
+
                 return AnalysisError("${throwable.javaClass.simpleName}: $detail")
             }
         }
