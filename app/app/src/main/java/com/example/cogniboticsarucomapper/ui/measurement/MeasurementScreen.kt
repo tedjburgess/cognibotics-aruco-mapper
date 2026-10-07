@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun MeasurementScreen(
     onStartMeasurement: () -> Unit,
+    onHistoryClick: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -24,6 +25,10 @@ fun MeasurementScreen(
 
         Button(onClick = onStartMeasurement) {
             Text(text = "Start Measurement")
+        }
+
+        Button(onClick = onHistoryClick) {
+            Text(text = "Measurement History")
         }
 
         Button(onClick = onBack) {
