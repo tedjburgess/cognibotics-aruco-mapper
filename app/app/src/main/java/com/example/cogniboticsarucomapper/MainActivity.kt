@@ -18,11 +18,13 @@ import com.example.cogniboticsarucomapper.ui.export.ExportScreen
 import com.example.cogniboticsarucomapper.ui.home.HomeScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementScreen
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
+import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryScreen
 
 private enum class AppScreen {
     Home,
     Calibration,
     Measurement,
+    MeasurementHistory,
     Camera,
     Export
 }
@@ -76,8 +78,21 @@ class MainActivity : ComponentActivity() {
                                 onStartMeasurement = {
                                     currentScreen = AppScreen.Camera
                                 },
+                                onHistoryClick = {
+                                    currentScreen = AppScreen.MeasurementHistory
+                                },
                                 onBack = {
                                     currentScreen = AppScreen.Home
+                                },
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
+
+                        AppScreen.MeasurementHistory -> {
+                            MeasurementHistoryScreen(
+                                measurements = emptyList(),
+                                onBack = {
+                                    currentScreen = AppScreen.Measurement
                                 },
                                 modifier = Modifier.padding(innerPadding)
                             )
