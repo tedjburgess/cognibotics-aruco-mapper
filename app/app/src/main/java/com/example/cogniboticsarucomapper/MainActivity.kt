@@ -19,7 +19,10 @@ import com.example.cogniboticsarucomapper.ui.home.HomeScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementScreen
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryScreen
-
+import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
+import com.example.cogniboticsarucomapper.network.ApiClient
+import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryItem
 private enum class AppScreen {
     Home,
     Calibration,
@@ -41,6 +44,32 @@ class MainActivity : ComponentActivity() {
 
                 var currentScreen by remember {
                     mutableStateOf(AppScreen.Home)
+                }
+
+                var measurements by remember {
+                    mutableStateOf<List<MeasurementHistoryItem>>(emptyList())
+                }
+
+                LaunchedEffect(currentScreen) {
+                    if (currentScreen == AppScreen.MeasurementHistory) {
+                        try {
+                            measurements = ApiClient.service.getScans().map { scan ->
+                                MeasurementHistoryItem(
+                                    id = scan.id,
+                                    siteName = scan.site_name,
+                                    cellName = scan.cell_name,
+                                    measuredAt = scan.measured_at,
+                                    observationCount = scan.observations.size
+                                )
+                            }
+                        } catch (e: Exception) {
+                            Log.e(
+                                "MainActivity",
+                                "Failed to load measurement history",
+                                e
+                            )
+                        }
+                    }
                 }
 
                 Scaffold(
@@ -90,7 +119,7 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.MeasurementHistory -> {
                             MeasurementHistoryScreen(
-                                measurements = emptyList(),
+                                measurements = measurements,
                                 onBack = {
                                     currentScreen = AppScreen.Measurement
                                 },
