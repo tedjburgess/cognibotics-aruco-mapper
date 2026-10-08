@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import com.example.cogniboticsarucomapper.ui.components.PageHeading
+import com.example.cogniboticsarucomapper.ui.components.InfoPanel
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,10 +42,7 @@ fun MeasurementHistoryScreen(
             .fillMaxSize()
             .padding(24.dp)
     ) {
-        Text(
-            text = "Measurement History",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        PageHeading("Measurement History", "Your saved measurements", onBack)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -52,7 +53,7 @@ fun MeasurementHistoryScreen(
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "No measurements saved yet.")
+                InfoPanel("No measurements saved yet.", "Saved measurements will appear here.")
             }
         } else {
             LazyColumn(
@@ -65,7 +66,10 @@ fun MeasurementHistoryScreen(
                 ) { measurement ->
 
                     Card(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp)
@@ -88,11 +92,6 @@ fun MeasurementHistoryScreen(
             }
         }
 
-        Button(
-            onClick = onBack,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Back")
-        }
+
     }
 }
