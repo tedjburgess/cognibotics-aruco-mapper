@@ -144,6 +144,7 @@ object MeasurementEngine {
         return depthMm
     }
 
+    // TODO sio, 2026-10-06: implement prototype for processing of partial markers prototype and handle certainty feedback
     private fun partial(detectedCount: Int): FrameMeasurement {
         return FrameMeasurement(
             detectedCount = detectedCount,
