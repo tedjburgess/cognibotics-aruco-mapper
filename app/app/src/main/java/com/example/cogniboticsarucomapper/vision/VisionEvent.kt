@@ -9,7 +9,12 @@ sealed interface VisionEvent {
         val markerId: Int,
         val corners: List<Offset>,
         val center: Offset,
-        val timestampMs: Long
+        val timestampMs: Long,
+        val certainty: Float = 0f,
+        val scanState: MarkerScanState = MarkerScanState.DETECTED,
+        val frameWidth: Int,
+        val frameHeight: Int,
+        val rotationDegrees: Int
     ) : VisionEvent
 
     data class MarkersCleared(val timestampMs: Long) : VisionEvent
