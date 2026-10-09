@@ -1,10 +1,15 @@
 package com.example.cogniboticsarucomapper.ui.camera
 
 import android.Manifest
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.ui.draw.clip
 import android.util.Log
 import androidx.camera.core.CameraSelector
@@ -133,70 +138,60 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                         modifier = Modifier.fillMaxSize()
                     )
 
-                    Text(
-                        text = "%.0f fps".format(fps),
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(8.dp)
-                    )
+                    Surface(color = Color(0xD9102A43), contentColor = Color.White,
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.align(Alignment.TopEnd).padding(12.dp)) {
+                        Text(text = "%.0f fps".format(fps),
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                    }
                 }
 
                 controller?.enableTorch(torchEnabled)
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OptionToggle(
-                        label = "Analysis",
-                        checked = analysisEnabled,
-                        onCheckedChange = visionEngine::setAnalysisEnabled
-                    )
-                    OptionToggle(
-                        label = "Torch",
-                        checked = torchEnabled,
-                        onCheckedChange = { torchEnabled = it }
-                    )
-                    Text(
-                        text = "${visibleMarkers.size} marker(s)",
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Badge { Text("OPENCV ${if (opencvReady) "OK" else "FAIL"}") }
-                }
+                Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
+                    Column(Modifier.heightIn(max = controlsMaxHeight).verticalScroll(rememberScrollState()).padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically) {
+                            Text("${visibleMarkers.size} marker(s)", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                            Badge { Text("OPENCV ${if (opencvReady) "OK" else "FAIL"}") }
+                        }
+                        OptionToggle(label = "Analysis", checked = analysisEnabled,
+                            onCheckedChange = visionEngine::setAnalysisEnabled)
+                        OptionToggle(label = "Torch", checked = torchEnabled,
+                            onCheckedChange = { torchEnabled = it })
+                        if (visibleMarkers.isNotEmpty()) {
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                visibleMarkers
+                                    .sortedBy { it.markerId }
+                                    .forEach { event ->
+                                        Text(
+                                            text = buildString {
+                                                append("Marker ${event.markerId}")
+                                                append(" - ${(event.certainty * 100).toInt()}%")
+                                                append(
+                                                    when (event.scanState) {
+                                                        MarkerScanState.DETECTED ->
+                                                            " - Detected"
 
-                if (visibleMarkers.isNotEmpty()) {
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        visibleMarkers
-                            .sortedBy { it.markerId }
-                            .forEach { event ->
+                                                        MarkerScanState.CONFIRMING ->
+                                                            " - Confirming"
 
-                                Text(
-                                    text = buildString {
-                                        append("Marker ${event.markerId}")
-                                        append(" - ${(event.certainty * 100).toInt()}%")
-
-                                        append(
-                                            when (event.scanState) {
-                                                MarkerScanState.DETECTED ->
-                                                    " - Detected"
-
-                                                MarkerScanState.CONFIRMING ->
-                                                    " - Confirming"
-
-                                                MarkerScanState.STABLE ->
-                                                    " - Stable ✓"
-                                            }
+                                                        MarkerScanState.STABLE ->
+                                                            " - Stable ✓"
+                                                    }
+                                                )
+                                            },
+                                            color = markerOutlineColor(event.scanState),
+                                            style = MaterialTheme.typography.bodySmall
                                         )
-                                    },
-                                    color = markerOutlineColor(event.scanState),
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                    }
                             }
+                        }
                     }
                 }
             }
