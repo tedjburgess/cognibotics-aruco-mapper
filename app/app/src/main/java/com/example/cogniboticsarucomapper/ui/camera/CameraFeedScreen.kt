@@ -1,11 +1,18 @@
 package com.example.cogniboticsarucomapper.ui.camera
 
 import android.Manifest
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.ui.draw.clip
 import android.util.Log
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
@@ -33,12 +40,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cogniboticsarucomapper.vision.ArucoAnalyzer
@@ -58,6 +65,7 @@ private const val TAG = "CameraFeedScreen"
 @Composable
 fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val controlsMaxHeight = (LocalConfiguration.current.screenHeightDp.dp * 0.35f).coerceAtMost(200.dp)
     val lifecycleOwner = LocalLifecycleOwner.current
     val permissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
@@ -85,16 +93,13 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     }
 
     Column(modifier = modifier.fillMaxSize()) {
+        Text("Live measurement", style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp))
         when {
             permissionState.status.isGranted -> {
                 var controller by remember { mutableStateOf<LifecycleCameraController?>(null) }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-
+                Box(modifier = Modifier.fillMaxWidth().weight(1f).padding(horizontal = 16.dp).clip(RoundedCornerShape(20.dp))) {
                     AndroidView(
                         modifier = Modifier.fillMaxSize(),
                         factory = { ctx ->
@@ -133,76 +138,67 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                         modifier = Modifier.fillMaxSize()
                     )
 
-                    Text(
-                        text = "%.0f fps".format(fps),
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(8.dp)
-                    )
+                    Surface(color = Color(0xD9102A43), contentColor = Color.White,
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.align(Alignment.TopEnd).padding(12.dp)) {
+                        Text(text = "%.0f fps".format(fps),
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                    }
                 }
 
                 controller?.enableTorch(torchEnabled)
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OptionToggle(
-                        label = "Analysis",
-                        checked = analysisEnabled,
-                        onCheckedChange = visionEngine::setAnalysisEnabled
-                    )
-                    OptionToggle(
-                        label = "Torch",
-                        checked = torchEnabled,
-                        onCheckedChange = { torchEnabled = it }
-                    )
-                    Text(
-                        text = "${visibleMarkers.size} marker(s)",
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Badge { Text("OPENCV ${if (opencvReady) "OK" else "FAIL"}") }
-                }
+                Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
+                    Column(Modifier.heightIn(max = controlsMaxHeight).verticalScroll(rememberScrollState()).padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically) {
+                            Text("${visibleMarkers.size} marker(s)", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                            Badge { Text("OPENCV ${if (opencvReady) "OK" else "FAIL"}") }
+                        }
+                        OptionToggle(label = "Analysis", checked = analysisEnabled,
+                            onCheckedChange = visionEngine::setAnalysisEnabled)
+                        OptionToggle(label = "Torch", checked = torchEnabled,
+                            onCheckedChange = { torchEnabled = it })
+                        if (visibleMarkers.isNotEmpty()) {
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                visibleMarkers
+                                    .sortedBy { it.markerId }
+                                    .forEach { event ->
+                                        Text(
+                                            text = buildString {
+                                                append("Marker ${event.markerId}")
+                                                append(" - ${(event.certainty * 100).toInt()}%")
+                                                append(
+                                                    when (event.scanState) {
+                                                        MarkerScanState.DETECTED ->
+                                                            " - Detected"
 
-                if (visibleMarkers.isNotEmpty()) {
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        visibleMarkers
-                            .sortedBy { it.markerId }
-                            .forEach { event ->
+                                                        MarkerScanState.CONFIRMING ->
+                                                            " - Confirming"
 
-                                Text(
-                                    text = buildString {
-                                        append("Marker ${event.markerId}")
-                                        append(" - ${(event.certainty * 100).toInt()}%")
-
-                                        append(
-                                            when (event.scanState) {
-                                                MarkerScanState.DETECTED ->
-                                                    " - Detected"
-
-                                                MarkerScanState.CONFIRMING ->
-                                                    " - Confirming"
-
-                                                MarkerScanState.STABLE ->
-                                                    " - Stable ✓"
-                                            }
+                                                        MarkerScanState.STABLE ->
+                                                            " - Stable ✓"
+                                                    }
+                                                )
+                                            },
+                                            color = markerOutlineColor(event.scanState),
+                                            style = MaterialTheme.typography.bodySmall
                                         )
-                                    },
-                                    color = markerOutlineColor(event.scanState),
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                    }
                             }
+                        }
                     }
                 }
             }
 
             permissionState.status.shouldShowRationale -> {
                 PermissionPrompt(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
                     message = "Camera access is needed to show the live feed.",
                     onRequest = { permissionState.launchPermissionRequest() }
                 )
@@ -210,17 +206,18 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
 
             else -> {
                 PermissionPrompt(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
                     message = "Grant camera permission to continue.",
                     onRequest = { permissionState.launchPermissionRequest() }
                 )
             }
         }
 
-        Button(
+        OutlinedButton(
             onClick = onBack,
             modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.CenterHorizontally)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .fillMaxWidth()
         ) {
             Text("Back")
         }
@@ -237,17 +234,17 @@ private fun markerOutlineColor(state: MarkerScanState): Color {
 
 @Composable
 private fun OptionToggle(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(label, style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
         Switch(checked = checked, onCheckedChange = onCheckedChange)
-        Text(label, style = MaterialTheme.typography.labelMedium)
     }
 }
 
 @Composable
-private fun PermissionPrompt(message: String, onRequest: () -> Unit) {
+private fun PermissionPrompt(message: String, onRequest: () -> Unit, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(message)
