@@ -29,7 +29,7 @@ class VisionEngine(
 
     interface FrameAnalyzer {
         /** Process one frame and return any events it produced. Called on the camera thread. */
-        fun processFrame(gray: Mat, color: Mat, timestampMs: Long): List<VisionEvent>
+        fun processFrame(gray: Mat, color: Mat, timestampMs: Long, rotationDegrees: Int ): List<VisionEvent>
     }
 
     private val _events = MutableSharedFlow<VisionEvent>(
@@ -46,6 +46,8 @@ class VisionEngine(
     val fps: StateFlow<Float> = _fps.asStateFlow()
 
     private val listeners = mutableListOf<(VisionEvent) -> Unit>()
+
+    private val markerCertaintyTracker = MarkerCertaintyTracker( stableThreshold = 10 )
 
     private var lastFrameTimestampMs = 0L
     private var fpsWindowStartMs = 0L
@@ -72,7 +74,7 @@ class VisionEngine(
                 color = frame.toBgrMat()
                 val produced = buildList {
                     for (analyzer in analyzers) {
-                        addAll(runCatching { analyzer.processFrame(gray, color, now) }
+                        addAll(runCatching { analyzer.processFrame(gray, color, now, frame.imageInfo.rotationDegrees) }
                             .onFailure {
                                 Log.e("VisionEngine", "Analyzer ${analyzer::class.simpleName} failed", it)
                                 add(VisionEvent.AnalysisError(it.message ?: "analyzer failure", it))
@@ -80,10 +82,42 @@ class VisionEngine(
                             .getOrDefault(emptyList()))
                     }
                 }
+
+                val detectedMarkerEvents =
+                    produced.filterIsInstance<VisionEvent.MarkerDetected>()
+
+                val detectedIds =
+                    detectedMarkerEvents
+                        .map { it.markerId }
+                        .toSet()
+
+                val certaintyMap =
+                    markerCertaintyTracker.update(detectedIds)
+
                 for (event in produced) {
-                    _events.tryEmit(event)
-                    listeners.forEach { it(event) }
+
+                    val enrichedEvent =
+                        if (event is VisionEvent.MarkerDetected) {
+
+                            val certainty =
+                                certaintyMap[event.markerId]
+
+                            event.copy(
+                                certainty = certainty?.certainty ?: 0f,
+                                scanState = certainty?.state ?: MarkerScanState.DETECTED
+                            )
+
+                        } else {
+                            event
+                        }
+
+                    _events.tryEmit(enrichedEvent)
+
+                    listeners.forEach { listener ->
+                        listener(enrichedEvent)
+                    }
                 }
+
             } catch (t: Throwable) {
                 Log.e("VisionEngine", "Frame processing failed", t)
                 _events.tryEmit(VisionEvent.AnalysisError(t.message ?: "frame processing failed", t))
@@ -94,6 +128,7 @@ class VisionEngine(
 
             updateFps(now)
             lastFrameTimestampMs = now
+
         } finally {
             frame.close()
         }

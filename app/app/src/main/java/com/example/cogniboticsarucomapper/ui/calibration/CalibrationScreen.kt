@@ -1,28 +1,13 @@
 package com.example.cogniboticsarucomapper.ui.calibration
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.cogniboticsarucomapper.ui.components.FeatureLayout
+import com.example.cogniboticsarucomapper.ui.components.InfoPanel
 
 @Composable
-fun CalibrationScreen(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Calibration")
-
-        Button(onClick = onBack) {
-            Text(text = "Back")
-        }
+fun CalibrationScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
+    FeatureLayout("Calibration", "Camera calibration workspace", onBack, modifier) {
+        InfoPanel("Calibration tools", "Calibration controls will appear here when available.")
     }
 }

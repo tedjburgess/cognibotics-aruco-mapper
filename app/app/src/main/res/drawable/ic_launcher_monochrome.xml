@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The complete marker fits inside the adaptive icon's central safe area. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <path android:fillColor="#FFFFFF" android:pathData="M32,32h44v44h-44z" />
-    <path android:fillColor="#171321" android:pathData="M36,36h36v36h-36z" />
+    <path android:fillColor="#FFFFFF" android:fillType="evenOdd"
+        android:pathData="M32,32h44v44h-44z M36,36h36v36h-36z" />
     <path android:fillColor="#FFFFFF"
         android:pathData="M42,42h6v6h-6z M54,42h12v6h-12z M48,48h6v6h-6z M60,48h6v6h-6z M42,54h6v12h-6z M54,54h6v6h-6z M48,60h12v6h-12z" />
 </vector>

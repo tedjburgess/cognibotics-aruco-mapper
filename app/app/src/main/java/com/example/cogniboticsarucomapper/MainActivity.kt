@@ -1,6 +1,8 @@
 package com.example.cogniboticsarucomapper
 
 import android.os.Bundle
+import android.os.SystemClock
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -23,6 +25,9 @@ import android.util.Log
 import androidx.compose.runtime.LaunchedEffect
 import com.example.cogniboticsarucomapper.network.ApiClient
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryItem
+
+private const val SPLASH_MIN_DURATION_MS = 1_500L
+
 private enum class AppScreen {
     Home,
     Calibration,
@@ -35,7 +40,16 @@ private enum class AppScreen {
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashStartedAt = SystemClock.uptimeMillis()
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        if (savedInstanceState == null) {
+            // Keep branding visible on launch without delaying activity recreation.
+            splashScreen.setKeepOnScreenCondition {
+                SystemClock.uptimeMillis() - splashStartedAt < SPLASH_MIN_DURATION_MS
+            }
+        }
 
         enableEdgeToEdge()
 

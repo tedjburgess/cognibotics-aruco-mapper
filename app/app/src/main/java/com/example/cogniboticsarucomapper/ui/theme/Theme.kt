@@ -1,6 +1,5 @@
 package com.example.cogniboticsarucomapper.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -9,35 +8,46 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+private val LightColorScheme = lightColorScheme(
+    primary = CogniTeal,
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFD7F1EE),
+    onPrimaryContainer = CogniNavy,
+    secondary = CogniNavy,
+    onSecondary = Color.White,
+    background = CogniMist,
+    onBackground = CogniInk,
+    surface = Color.White,
+    onSurface = CogniInk,
+    surfaceVariant = Color(0xFFE8EEF2),
+    onSurfaceVariant = CogniMuted,
+    outline = Color(0xFF718594),
+    outlineVariant = CogniOutline
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val DarkColorScheme = darkColorScheme(
+    primary = CogniTealLight,
+    onPrimary = Color(0xFF003638),
+    primaryContainer = Color(0xFF004F52),
+    onPrimaryContainer = Color(0xFFB4EFEB),
+    secondary = Color(0xFFB4CDE3),
+    background = Color(0xFF0C1924),
+    onBackground = Color(0xFFE4EDF3),
+    surface = Color(0xFF142633),
+    onSurface = Color(0xFFE4EDF3),
+    surfaceVariant = Color(0xFF233946),
+    onSurfaceVariant = Color(0xFFB7C9D4),
+    outline = Color(0xFF8A9EAB),
+    outlineVariant = Color(0xFF3B515F)
 )
 
 @Composable
 fun CogniboticsArucoMapperTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -45,14 +55,8 @@ fun CogniboticsArucoMapperTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    MaterialTheme(colorScheme = colorScheme, typography = Typography, content = content)
 }
