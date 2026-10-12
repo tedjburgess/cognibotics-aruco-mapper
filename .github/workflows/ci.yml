@@ -53,7 +53,7 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: 'platform-tools platforms;android-37.0'
+          packages: "platform-tools platforms;android-37.0"
           log-accepted-android-sdk-licenses: false
 
       - name: Set up Gradle
@@ -61,3 +61,9 @@ jobs:
 
       - name: Check formatting and Android lint
         run: bash ./gradlew ktlintCheck lintDebug
+
+      - name: Assemble
+        run: bash ./gradlew assembleDebug
+
+      - name: Run unit tests
+        run: bash ./gradlew testDebugUnitTest
