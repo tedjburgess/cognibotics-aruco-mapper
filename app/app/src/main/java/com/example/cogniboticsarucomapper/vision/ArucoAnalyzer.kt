@@ -18,7 +18,6 @@ class ArucoAnalyzer : VisionEngine.FrameAnalyzer {
         timestampMs: Long,
         rotationDegrees: Int
     ): List<VisionEvent> {
-
         val corners = mutableListOf<Mat>()
         val ids = Mat()
 
@@ -36,7 +35,6 @@ class ArucoAnalyzer : VisionEngine.FrameAnalyzer {
             val events = mutableListOf<VisionEvent>()
 
             for (i in 0 until ids.rows()) {
-
                 val markerId =
                     ids.get(i, 0)[0].toInt()
 
@@ -73,9 +71,7 @@ class ArucoAnalyzer : VisionEngine.FrameAnalyzer {
             }
 
             return events
-
         } finally {
-
             ids.release()
 
             corners.forEach { corner ->

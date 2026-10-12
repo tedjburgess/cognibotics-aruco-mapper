@@ -24,12 +24,17 @@ class VisionEngine(
     // TODO: plug in the marker detection analyzer here, e.g.:
     //   listOf(ArUcoAnalyzer()) — a VisionEngine.FrameAnalyzer that finds
     //   markers in the frame and returns MarkerDetected/MarkersCleared events.
-    private val analyzers: List<FrameAnalyzer> = emptyList(),
+    private val analyzers: List<FrameAnalyzer> = emptyList()
 ) : ImageAnalysis.Analyzer {
 
     interface FrameAnalyzer {
         /** Process one frame and return any events it produced. Called on the camera thread. */
-        fun processFrame(gray: Mat, color: Mat, timestampMs: Long, rotationDegrees: Int ): List<VisionEvent>
+        fun processFrame(
+            gray: Mat,
+            color: Mat,
+            timestampMs: Long,
+            rotationDegrees: Int
+        ): List<VisionEvent>
     }
 
     private val _events = MutableSharedFlow<VisionEvent>(
@@ -47,7 +52,7 @@ class VisionEngine(
 
     private val listeners = mutableListOf<(VisionEvent) -> Unit>()
 
-    private val markerCertaintyTracker = MarkerCertaintyTracker( stableThreshold = 10 )
+    private val markerCertaintyTracker = MarkerCertaintyTracker(stableThreshold = 10)
 
     private var lastFrameTimestampMs = 0L
     private var fpsWindowStartMs = 0L
@@ -74,12 +79,30 @@ class VisionEngine(
                 color = frame.toBgrMat()
                 val produced = buildList {
                     for (analyzer in analyzers) {
-                        addAll(runCatching { analyzer.processFrame(gray, color, now, frame.imageInfo.rotationDegrees) }
-                            .onFailure {
-                                Log.e("VisionEngine", "Analyzer ${analyzer::class.simpleName} failed", it)
-                                add(VisionEvent.AnalysisError(it.message ?: "analyzer failure", it))
+                        addAll(
+                            runCatching {
+                                analyzer.processFrame(
+                                    gray,
+                                    color,
+                                    now,
+                                    frame.imageInfo.rotationDegrees
+                                )
                             }
-                            .getOrDefault(emptyList()))
+                                .onFailure {
+                                    Log.e(
+                                        "VisionEngine",
+                                        "Analyzer ${analyzer::class.simpleName} failed",
+                                        it
+                                    )
+                                    add(
+                                        VisionEvent.AnalysisError(
+                                            it.message ?: "analyzer failure",
+                                            it
+                                        )
+                                    )
+                                }
+                                .getOrDefault(emptyList())
+                        )
                     }
                 }
 
@@ -95,10 +118,8 @@ class VisionEngine(
                     markerCertaintyTracker.update(detectedIds)
 
                 for (event in produced) {
-
                     val enrichedEvent =
                         if (event is VisionEvent.MarkerDetected) {
-
                             val certainty =
                                 certaintyMap[event.markerId]
 
@@ -106,7 +127,6 @@ class VisionEngine(
                                 certainty = certainty?.certainty ?: 0f,
                                 scanState = certainty?.state ?: MarkerScanState.DETECTED
                             )
-
                         } else {
                             event
                         }
@@ -117,10 +137,11 @@ class VisionEngine(
                         listener(enrichedEvent)
                     }
                 }
-
             } catch (t: Throwable) {
                 Log.e("VisionEngine", "Frame processing failed", t)
-                _events.tryEmit(VisionEvent.AnalysisError(t.message ?: "frame processing failed", t))
+                _events.tryEmit(
+                    VisionEvent.AnalysisError(t.message ?: "frame processing failed", t)
+                )
             } finally {
                 gray?.release()
                 color?.release()
@@ -128,7 +149,6 @@ class VisionEngine(
 
             updateFps(now)
             lastFrameTimestampMs = now
-
         } finally {
             frame.close()
         }

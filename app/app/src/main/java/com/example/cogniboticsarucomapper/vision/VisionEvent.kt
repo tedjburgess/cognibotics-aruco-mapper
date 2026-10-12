@@ -1,8 +1,6 @@
 package com.example.cogniboticsarucomapper.vision
 
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 
 sealed interface VisionEvent {
     data class MarkerDetected(

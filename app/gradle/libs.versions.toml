@@ -1,4 +1,5 @@
 [versions]
+ktlintPlugin = "14.2.0"
 retrofit = "3.0.0"
 agp = "9.4.1"
 coreKtx = "1.19.0"
@@ -43,3 +44,5 @@ androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lif
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }

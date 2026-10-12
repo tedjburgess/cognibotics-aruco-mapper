@@ -7,16 +7,11 @@ data class MarkerCertainty(
     val state: MarkerScanState
 )
 
-class MarkerCertaintyTracker(
-    private val stableThreshold: Int = 10
-) {
+class MarkerCertaintyTracker(private val stableThreshold: Int = 10) {
 
     private val frameCounts = mutableMapOf<Int, Int>()
 
-    fun update(
-        detectedIds: Set<Int>
-    ): Map<Int, MarkerCertainty> {
-
+    fun update(detectedIds: Set<Int>): Map<Int, MarkerCertainty> {
         val allKnownIds = frameCounts.keys union detectedIds
 
         allKnownIds.forEach { id ->
