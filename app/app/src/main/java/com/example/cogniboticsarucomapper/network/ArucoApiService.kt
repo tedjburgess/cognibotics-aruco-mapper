@@ -16,7 +16,5 @@ interface ArucoApiService {
     suspend fun getScans(): List<ScanResponse>
 
     @POST("api/v1/scans")
-    suspend fun createScan(
-        @Body scan: ScanRequest
-    ): ScanResponse
+    suspend fun createScan(@Body scan: ScanRequest): ScanResponse
 }

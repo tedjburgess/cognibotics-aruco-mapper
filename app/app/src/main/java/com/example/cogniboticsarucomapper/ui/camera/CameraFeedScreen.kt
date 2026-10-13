@@ -1,32 +1,31 @@
 package com.example.cogniboticsarucomapper.ui.camera
 
 import android.Manifest
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
-import androidx.compose.ui.draw.clip
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,21 +37,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cogniboticsarucomapper.vision.ArucoAnalyzer
+import com.example.cogniboticsarucomapper.vision.MarkerScanState
 import com.example.cogniboticsarucomapper.vision.OpenCv
 import com.example.cogniboticsarucomapper.vision.VisionEngine
 import com.example.cogniboticsarucomapper.vision.VisionEvent
-import com.example.cogniboticsarucomapper.vision.MarkerScanState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -65,7 +65,9 @@ private const val TAG = "CameraFeedScreen"
 @Composable
 fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val controlsMaxHeight = (LocalConfiguration.current.screenHeightDp.dp * 0.35f).coerceAtMost(200.dp)
+    val controlsMaxHeight = (LocalConfiguration.current.screenHeightDp.dp * 0.35f).coerceAtMost(
+        200.dp
+    )
     val lifecycleOwner = LocalLifecycleOwner.current
     val permissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
@@ -84,28 +86,42 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                 is VisionEvent.MarkerDetected -> {
                     visibleMarkers.removeAll { it.markerId == event.markerId }
                     visibleMarkers.add(0, event)
-                    while (visibleMarkers.size > 10) visibleMarkers.removeAt(visibleMarkers.lastIndex)
+                    while (visibleMarkers.size >
+                        10
+                    ) {
+                        visibleMarkers.removeAt(visibleMarkers.lastIndex)
+                    }
                 }
                 is VisionEvent.MarkersCleared -> visibleMarkers.clear()
-                is VisionEvent.AnalysisError -> Log.e(TAG, "Vision error: ${event.message}", event.throwable)
+                is VisionEvent.AnalysisError -> Log.e(
+                    TAG,
+                    "Vision error: ${event.message}",
+                    event.throwable
+                )
             }
         }
     }
 
     Column(modifier = modifier.fillMaxSize()) {
-        Text("Live measurement", style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp))
+        Text(
+            "Live measurement",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+        )
         when {
             permissionState.status.isGranted -> {
                 var controller by remember { mutableStateOf<LifecycleCameraController?>(null) }
 
-                Box(modifier = Modifier.fillMaxWidth().weight(1f).padding(horizontal = 16.dp).clip(RoundedCornerShape(20.dp))) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().weight(
+                        1f
+                    ).padding(horizontal = 16.dp).clip(RoundedCornerShape(20.dp))
+                ) {
                     AndroidView(
                         modifier = Modifier.fillMaxSize(),
                         factory = { ctx ->
 
                             val camController = LifecycleCameraController(ctx).apply {
-
                                 setEnabledUseCases(
                                     CameraController.IMAGE_ANALYSIS
                                 )
@@ -138,32 +154,61 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                         modifier = Modifier.fillMaxSize()
                     )
 
-                    Surface(color = Color(0xD9102A43), contentColor = Color.White,
+                    Surface(
+                        color = Color(0xD9102A43),
+                        contentColor = Color.White,
                         shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.align(Alignment.TopEnd).padding(12.dp)) {
-                        Text(text = "%.0f fps".format(fps),
+                        modifier = Modifier.align(Alignment.TopEnd).padding(12.dp)
+                    ) {
+                        Text(
+                            text = "%.0f fps".format(fps),
                             style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp))
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                        )
                     }
                 }
 
                 controller?.enableTorch(torchEnabled)
 
-                Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(
+                        horizontal = 16.dp,
+                        vertical = 12.dp
+                    ),
                     shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
-                    Column(Modifier.heightIn(max = controlsMaxHeight).verticalScroll(rememberScrollState()).padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Text("${visibleMarkers.size} marker(s)", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    Column(
+                        Modifier.heightIn(
+                            max = controlsMaxHeight
+                        ).verticalScroll(rememberScrollState()).padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "${visibleMarkers.size} marker(s)",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.weight(1f)
+                            )
                             Badge { Text("OPENCV ${if (opencvReady) "OK" else "FAIL"}") }
                         }
-                        OptionToggle(label = "Analysis", checked = analysisEnabled,
-                            onCheckedChange = visionEngine::setAnalysisEnabled)
-                        OptionToggle(label = "Torch", checked = torchEnabled,
-                            onCheckedChange = { torchEnabled = it })
+                        OptionToggle(
+                            label = "Analysis",
+                            checked = analysisEnabled,
+                            onCheckedChange = visionEngine::setAnalysisEnabled
+                        )
+                        OptionToggle(
+                            label = "Torch",
+                            checked = torchEnabled,
+                            onCheckedChange = { torchEnabled = it }
+                        )
                         if (visibleMarkers.isNotEmpty()) {
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 visibleMarkers
@@ -224,24 +269,30 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     }
 }
 
-private fun markerOutlineColor(state: MarkerScanState): Color {
-    return when (state) {
-        MarkerScanState.DETECTED -> Color.Gray
-        MarkerScanState.CONFIRMING -> Color.Yellow
-        MarkerScanState.STABLE -> Color.Green
-    }
+private fun markerOutlineColor(state: MarkerScanState): Color = when (state) {
+    MarkerScanState.DETECTED -> Color.Gray
+    MarkerScanState.CONFIRMING -> Color.Yellow
+    MarkerScanState.STABLE -> Color.Green
 }
 
 @Composable
 private fun OptionToggle(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         Text(label, style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }
 
 @Composable
-private fun PermissionPrompt(message: String, onRequest: () -> Unit, modifier: Modifier = Modifier) {
+private fun PermissionPrompt(
+    message: String,
+    onRequest: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
@@ -258,7 +309,6 @@ private fun MarkerOverlay(
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier) {
-
         markers.forEach { marker ->
 
             if (marker.corners.size < 4) {
@@ -280,7 +330,6 @@ private fun MarkerOverlay(
             val color = markerOutlineColor(marker.scanState)
 
             val path = Path().apply {
-
                 moveTo(
                     transformedCorners[0].x,
                     transformedCorners[0].y
@@ -321,13 +370,11 @@ private fun transformPoint(
     canvasWidth: Float,
     canvasHeight: Float
 ): Offset {
-
     val rotatedPoint: Offset
     val rotatedWidth: Float
     val rotatedHeight: Float
 
     when (rotationDegrees) {
-
         90 -> {
             rotatedPoint = Offset(
                 x = frameHeight - point.y,

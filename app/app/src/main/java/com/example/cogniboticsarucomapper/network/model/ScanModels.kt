@@ -1,17 +1,8 @@
 package com.example.cogniboticsarucomapper.network.model
 
-data class PositionDto(
-    val x: Double,
-    val y: Double,
-    val z: Double
-)
+data class PositionDto(val x: Double, val y: Double, val z: Double)
 
-data class OrientationDto(
-    val x: Double,
-    val y: Double,
-    val z: Double,
-    val w: Double
-)
+data class OrientationDto(val x: Double, val y: Double, val z: Double, val w: Double)
 
 data class ObservationRequest(
     val aruco_id: Int,
