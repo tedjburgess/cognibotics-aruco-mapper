@@ -18,7 +18,7 @@ class Scan(Base):
     cell_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cells.id"), nullable=False)
     device_id: Mapped[str] = mapped_column(String(255), nullable=False)
     measured_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     cell = relationship("Cell", back_populates="scans")
     observations = relationship("Observation", back_populates="scan", cascade="all, delete-orphan")
