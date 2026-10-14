@@ -1,7 +1,7 @@
 package com.example.cogniboticsarucomapper.ui.calibration
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
@@ -81,28 +81,32 @@ fun CalibrationScreen(
         Text("Camera matrix", style = MaterialTheme.typography.titleMedium)
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             CalibrationValueField(
-                "Focal length X (fx)", draft.focalLengthX,
-                { draft = draft.copy(focalLengthX = it) },
+                label = "Focal length X (fx)",
+                value = draft.focalLengthX,
+                onValueChange = { draft = draft.copy(focalLengthX = it) },
                 isError = !draft.isValidDouble(draft.focalLengthX, mustBePositive = true),
                 modifier = Modifier.weight(1f)
             )
             CalibrationValueField(
-                "Focal length Y (fy)", draft.focalLengthY,
-                { draft = draft.copy(focalLengthY = it) },
+                label = "Focal length Y (fy)",
+                value = draft.focalLengthY,
+                onValueChange = { draft = draft.copy(focalLengthY = it) },
                 isError = !draft.isValidDouble(draft.focalLengthY, mustBePositive = true),
                 modifier = Modifier.weight(1f)
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             CalibrationValueField(
-                "Principal point X (cx)", draft.principalPointX,
-                { draft = draft.copy(principalPointX = it) },
+                label = "Principal point X (cx)",
+                value = draft.principalPointX,
+                onValueChange = { draft = draft.copy(principalPointX = it) },
                 isError = !draft.isValidDouble(draft.principalPointX),
                 modifier = Modifier.weight(1f)
             )
             CalibrationValueField(
-                "Principal point Y (cy)", draft.principalPointY,
-                { draft = draft.copy(principalPointY = it) },
+                label = "Principal point Y (cy)",
+                value = draft.principalPointY,
+                onValueChange = { draft = draft.copy(principalPointY = it) },
                 isError = !draft.isValidDouble(draft.principalPointY),
                 modifier = Modifier.weight(1f)
             )
@@ -111,42 +115,48 @@ fun CalibrationScreen(
         Text("Distortion coefficients", style = MaterialTheme.typography.titleMedium)
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             CalibrationValueField(
-                "Radial k1", draft.radialDistortionK1,
-                { draft = draft.copy(radialDistortionK1 = it) },
+                label = "Radial k1",
+                value = draft.radialDistortionK1,
+                onValueChange = { draft = draft.copy(radialDistortionK1 = it) },
                 isError = !draft.isValidDouble(draft.radialDistortionK1),
                 modifier = Modifier.weight(1f)
             )
             CalibrationValueField(
-                "Radial k2", draft.radialDistortionK2,
-                { draft = draft.copy(radialDistortionK2 = it) },
+                label = "Radial k2",
+                value = draft.radialDistortionK2,
+                onValueChange = { draft = draft.copy(radialDistortionK2 = it) },
                 isError = !draft.isValidDouble(draft.radialDistortionK2),
                 modifier = Modifier.weight(1f)
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             CalibrationValueField(
-                "Radial k3", draft.radialDistortionK3,
-                { draft = draft.copy(radialDistortionK3 = it) },
+                label = "Radial k3",
+                value = draft.radialDistortionK3,
+                onValueChange = { draft = draft.copy(radialDistortionK3 = it) },
                 isError = !draft.isValidDouble(draft.radialDistortionK3),
                 modifier = Modifier.weight(1f)
             )
             CalibrationValueField(
-                "Tangential p1", draft.tangentialDistortionP1,
-                { draft = draft.copy(tangentialDistortionP1 = it) },
+                label = "Tangential p1",
+                value = draft.tangentialDistortionP1,
+                onValueChange = { draft = draft.copy(tangentialDistortionP1 = it) },
                 isError = !draft.isValidDouble(draft.tangentialDistortionP1),
                 modifier = Modifier.weight(1f)
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             CalibrationValueField(
-                "Tangential p2", draft.tangentialDistortionP2,
-                { draft = draft.copy(tangentialDistortionP2 = it) },
+                label = "Tangential p2",
+                value = draft.tangentialDistortionP2,
+                onValueChange = { draft = draft.copy(tangentialDistortionP2 = it) },
                 isError = !draft.isValidDouble(draft.tangentialDistortionP2),
                 modifier = Modifier.weight(1f)
             )
             CalibrationValueField(
-                "Reprojection error (px)", draft.reprojectionErrorPx,
-                { draft = draft.copy(reprojectionErrorPx = it) },
+                label = "Reprojection error (px)",
+                value = draft.reprojectionErrorPx,
+                onValueChange = { draft = draft.copy(reprojectionErrorPx = it) },
                 isError = !draft.isValidDouble(draft.reprojectionErrorPx, mustBeNonNegative = true),
                 modifier = Modifier.weight(1f)
             )
@@ -237,19 +247,18 @@ private data class CalibrationDraft(
     val tangentialDistortionP2: String = "",
     val reprojectionErrorPx: String = ""
 ) {
-    fun hasInvalidValues(): Boolean =
-        !isValidImageDimension(imageWidth) ||
-            !isValidImageDimension(imageHeight) ||
-            !isValidDouble(focalLengthX, mustBePositive = true) ||
-            !isValidDouble(focalLengthY, mustBePositive = true) ||
-            !isValidDouble(principalPointX) ||
-            !isValidDouble(principalPointY) ||
-            !isValidDouble(radialDistortionK1) ||
-            !isValidDouble(radialDistortionK2) ||
-            !isValidDouble(radialDistortionK3) ||
-            !isValidDouble(tangentialDistortionP1) ||
-            !isValidDouble(tangentialDistortionP2) ||
-            !isValidDouble(reprojectionErrorPx, mustBeNonNegative = true)
+    fun hasInvalidValues(): Boolean = !isValidImageDimension(imageWidth)
+        || !isValidImageDimension(imageHeight)
+        || !isValidDouble(focalLengthX, mustBePositive = true)
+        || !isValidDouble(focalLengthY, mustBePositive = true)
+        || !isValidDouble(principalPointX)
+        || !isValidDouble(principalPointY)
+        || !isValidDouble(radialDistortionK1)
+        || !isValidDouble(radialDistortionK2)
+        || !isValidDouble(radialDistortionK3)
+        || !isValidDouble(tangentialDistortionP1)
+        || !isValidDouble(tangentialDistortionP2)
+        || !isValidDouble(reprojectionErrorPx, mustBeNonNegative = true)
 
     fun hasAnyValue(): Boolean = listOf(
         imageWidth,
@@ -313,9 +322,15 @@ private fun CalibrationMeasurement.toDraft() = CalibrationDraft(
     reprojectionErrorPx = reprojectionErrorPx?.toString().orEmpty()
 )
 
-private fun CalibrationMeasurement.isEmpty(): Boolean =
-    imageWidth == null && imageHeight == null && focalLengthX == null && focalLengthY == null &&
-        principalPointX == null && principalPointY == null && radialDistortionK1 == null &&
-        radialDistortionK2 == null && radialDistortionK3 == null &&
-        tangentialDistortionP1 == null && tangentialDistortionP2 == null &&
-        reprojectionErrorPx == null
+private fun CalibrationMeasurement.isEmpty(): Boolean = imageWidth == null
+    && imageHeight == null
+    && focalLengthX == null
+    && focalLengthY == null
+    && principalPointX == null
+    && principalPointY == null
+    && radialDistortionK1 == null
+    && radialDistortionK2 == null
+    && radialDistortionK3 == null
+    && tangentialDistortionP1 == null
+    && tangentialDistortionP2 == null
+    && reprojectionErrorPx == null
