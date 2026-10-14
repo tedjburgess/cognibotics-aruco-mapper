@@ -1,7 +1,6 @@
 package com.example.cogniboticsarucomapper.ui.calibration
 
 import androidx.compose.foundation.layout.Arrangement
-
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
@@ -247,18 +246,18 @@ private data class CalibrationDraft(
     val tangentialDistortionP2: String = "",
     val reprojectionErrorPx: String = ""
 ) {
-    fun hasInvalidValues(): Boolean = !isValidImageDimension(imageWidth)
-        || !isValidImageDimension(imageHeight)
-        || !isValidDouble(focalLengthX, mustBePositive = true)
-        || !isValidDouble(focalLengthY, mustBePositive = true)
-        || !isValidDouble(principalPointX)
-        || !isValidDouble(principalPointY)
-        || !isValidDouble(radialDistortionK1)
-        || !isValidDouble(radialDistortionK2)
-        || !isValidDouble(radialDistortionK3)
-        || !isValidDouble(tangentialDistortionP1)
-        || !isValidDouble(tangentialDistortionP2)
-        || !isValidDouble(reprojectionErrorPx, mustBeNonNegative = true)
+    fun hasInvalidValues(): Boolean = !isValidImageDimension(imageWidth) ||
+        !isValidImageDimension(imageHeight) ||
+        !isValidDouble(focalLengthX, mustBePositive = true) ||
+        !isValidDouble(focalLengthY, mustBePositive = true) ||
+        !isValidDouble(principalPointX) ||
+        !isValidDouble(principalPointY) ||
+        !isValidDouble(radialDistortionK1) ||
+        !isValidDouble(radialDistortionK2) ||
+        !isValidDouble(radialDistortionK3) ||
+        !isValidDouble(tangentialDistortionP1) ||
+        !isValidDouble(tangentialDistortionP2) ||
+        !isValidDouble(reprojectionErrorPx, mustBeNonNegative = true)
 
     fun hasAnyValue(): Boolean = listOf(
         imageWidth,
@@ -322,15 +321,15 @@ private fun CalibrationMeasurement.toDraft() = CalibrationDraft(
     reprojectionErrorPx = reprojectionErrorPx?.toString().orEmpty()
 )
 
-private fun CalibrationMeasurement.isEmpty(): Boolean = imageWidth == null
-    && imageHeight == null
-    && focalLengthX == null
-    && focalLengthY == null
-    && principalPointX == null
-    && principalPointY == null
-    && radialDistortionK1 == null
-    && radialDistortionK2 == null
-    && radialDistortionK3 == null
-    && tangentialDistortionP1 == null
-    && tangentialDistortionP2 == null
-    && reprojectionErrorPx == null
+private fun CalibrationMeasurement.isEmpty(): Boolean = imageWidth == null &&
+    imageHeight == null &&
+    focalLengthX == null &&
+    focalLengthY == null &&
+    principalPointX == null &&
+    principalPointY == null &&
+    radialDistortionK1 == null &&
+    radialDistortionK2 == null &&
+    radialDistortionK3 == null &&
+    tangentialDistortionP1 == null &&
+    tangentialDistortionP2 == null &&
+    reprojectionErrorPx == null
