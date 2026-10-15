@@ -5,9 +5,8 @@ import org.opencv.core.Mat
 import org.opencv.objdetect.ArucoDetector
 import org.opencv.objdetect.Objdetect
 
-class ArucoAnalyzer(
-    dictionaryType: ArucoDictionaryType = ArucoDictionaryType.DICT_4X4_50
-) : VisionEngine.FrameAnalyzer {
+class ArucoAnalyzer(dictionaryType: ArucoDictionaryType = ArucoDictionaryType.DICT_4X4_50) :
+    VisionEngine.FrameAnalyzer {
 
     private val dictionary =
         Objdetect.getPredefinedDictionary(dictionaryType.openCvId)
