@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is an Android application prototype built for Cognibotics located in Lund, Sweden. The core app functionality is the use of a phone camera to detect ArUco markers and calculate the distance between them. Marker data is then stored in an API, and the information can be retrieved through the application's export function. The data is intended to be used by robots in industrial automation. 
+This project is an Android application prototype built for Cognibotics, located in Lund, Sweden. The core app functionality is the use of a phone camera to detect ArUco markers and calculate the distance between them. Measurement data is stored in a database through the application's API, allowing it to be retrieved and used by other parts of the application or external systems. The data is intended to be used by robots in industrial automation.
 
 ## Supported ArUco Dictionaries
 
