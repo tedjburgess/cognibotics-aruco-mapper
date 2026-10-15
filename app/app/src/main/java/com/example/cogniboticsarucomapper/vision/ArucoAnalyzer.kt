@@ -24,14 +24,11 @@ class ArucoAnalyzer(dictionaryType: ArucoDictionaryType? = null) : VisionEngine.
 
     private val solver = MarkerPoseSolver()
 
-    // Test mode only accepts the IDs printed in our accuracy pack; normal mode accepts all IDs.
+    // Test mode only accepts the IDs printed in our accuracy pack; normal mode accepts IDs 0–49.
     @Volatile var testSheetMode: Boolean = true
-    private val dictionaries = dictionaryType?.let { listOf(it) } ?: listOf(
-        ArucoDictionaryType.DICT_4X4_1000,
-        ArucoDictionaryType.DICT_5X5_1000,
-        ArucoDictionaryType.DICT_6X6_1000,
-        ArucoDictionaryType.DICT_7X7_1000
-    )
+
+    // Use the shared supported-dictionary enum so detection stays consistent with the app.
+    private val dictionaries = dictionaryType?.let { listOf(it) } ?: ArucoDictionaryType.entries
     private val detectors = dictionaries.map { dictionary ->
         val family = dictionary.family
         val parameters = DetectorParameters().apply {

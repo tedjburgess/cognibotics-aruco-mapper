@@ -14,14 +14,19 @@ import org.opencv.objdetect.Objdetect
 
 @RunWith(AndroidJUnit4::class)
 class DetectionGuardTest {
-    private fun withMarker(id: Int, corrupt: Boolean, check: (Mat) -> Unit) {
+    private fun withMarker(
+        id: Int,
+        corrupt: Boolean,
+        dictionaryId: Int = Objdetect.DICT_4X4_50,
+        check: (Mat) -> Unit
+    ) {
         assertTrue(OpenCv.ensureInitialized())
         val board = Mat(240, 240, CvType.CV_8UC1, Scalar(255.0))
         val image = Mat()
         val area = board.submat(Rect(60, 60, 120, 120))
         try {
             Objdetect.generateImageMarker(
-                Objdetect.getPredefinedDictionary(Objdetect.DICT_4X4_1000),
+                Objdetect.getPredefinedDictionary(dictionaryId),
                 id,
                 120,
                 image
@@ -63,6 +68,17 @@ class DetectionGuardTest {
                     it.family == MarkerFamily.FOUR_BY_FOUR && it.markerId == 42
                 }
             )
+        }
+    }
+
+    @Test
+    fun normalModeRejectsIdsOutsideTheSupportedDictionary() {
+        // A valid code from a larger dictionary must not become a supported 4x4 marker.
+        withMarker(50, false, Objdetect.DICT_4X4_1000) { board ->
+            val analyzer = ArucoAnalyzer().apply { testSheetMode = false }
+            val frame = analyzer.processFrame(board, board, 0, 0)
+                .single() as VisionEvent.FrameMeasured
+            assertTrue(frame.markers.none { it.family == MarkerFamily.FOUR_BY_FOUR })
         }
     }
 

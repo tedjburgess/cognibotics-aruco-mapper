@@ -10,12 +10,12 @@ Physical sizes are currently fixed in code, not editable in settings. Print the 
 
 | Dictionary | Physical size | Description |
 |---|---:|---|
-| `DICT_4X4_1000` | 20 mm | 4×4 marker grid with 1000 available marker IDs |
-| `DICT_5X5_1000` | 50 mm | 5×5 marker grid with 1000 available marker IDs |
-| `DICT_6X6_1000` | 75 mm | 6×6 marker grid with 1000 available marker IDs |
-| `DICT_7X7_1000` | 100 mm | 7×7 marker grid with 1000 available marker IDs |
+| `DICT_4X4_50` | 20 mm | 4×4 marker grid with 50 available marker IDs |
+| `DICT_5X5_50` | 50 mm | 5×5 marker grid with 50 available marker IDs |
+| `DICT_6X6_50` | 75 mm | 6×6 marker grid with 50 available marker IDs |
+| `DICT_7X7_50` | 100 mm | 7×7 marker grid with 50 available marker IDs |
 
-The detector uses the 1000-entry variants for mixed-family live measurement; compatible codes from the smaller predefined variants can also be detected. The dictionary enum retains the 50-entry variants for explicit selection in code. **Test sheets** mode starts enabled and accepts IDs 0–3 only; switch it off for other IDs.
+Mixed-family live measurement uses the shared supported-dictionary enum: the 50-entry variant of each family, with IDs 0–49. Codes outside those dictionaries are not supported. **Test sheets** mode starts enabled and accepts IDs 0–3 only; switch it off for other IDs.
 
 ## Application Usage
 

@@ -4,6 +4,8 @@ Recorded results: [all three physical measurement runs and estimated ±3 mm refe
 
 This is a physical experiment, not camera calibration. The ticket needs a known marker centre-to-centre distance, app results at **0°, 15°, 35° and 60°**, and a comparison shared with the group. The local #57 implementation now shows fresh distances in **Measurement → Start measurement**. The history display separately shows `relations[].distance_mm` returned by the backend. Follow [the live measurement guide](../measurement/README.md) for the known-size mapping and calibration limitations.
 
+Additional results: [15 October angle test](angle-observations-2026-10-15.md), including partial results at 30° and 60°. The original three-run averages are unchanged.
+
 ## Recorded run conditions
 
 The tester described the setups in [PR #63](https://github.com/tedjburgess/cognibotics-aruco-mapper/pull/63):
