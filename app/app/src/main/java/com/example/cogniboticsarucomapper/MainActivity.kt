@@ -20,6 +20,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurement
 import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurementStore
 import com.example.cogniboticsarucomapper.network.ApiClient
+import com.example.cogniboticsarucomapper.network.model.ScanResponse
 import com.example.cogniboticsarucomapper.ui.calibration.CalibrationScreen
 import com.example.cogniboticsarucomapper.ui.calibration.CheckerboardCameraScreen
 import com.example.cogniboticsarucomapper.ui.camera.CameraFeedScreen
@@ -28,7 +29,6 @@ import com.example.cogniboticsarucomapper.ui.home.HomeScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementScreen
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
-import com.example.cogniboticsarucomapper.network.model.ScanResponse
 
 private const val SPLASH_MIN_DURATION_MS = 1_500L
 
@@ -73,45 +73,43 @@ class MainActivity : ComponentActivity() {
 
                 var scans by remember {
                     mutableStateOf<List<ScanResponse>>(emptyList())
+                }
 
+                var scansLoading by remember {
+                    mutableStateOf(false)
+                }
 
-                    }
+                var scansError by remember {
+                    mutableStateOf<String?>(null)
+                }
 
-                    var scansLoading by remember {
-                        mutableStateOf(false)
-                    }
+                var scansReloadKey by remember {
+                    mutableStateOf(0)
+                }
 
-                    var scansError by remember {
-                        mutableStateOf<String?>(null)
-                    }
+                LaunchedEffect(currentScreen, scansReloadKey) {
+                    if (
+                        currentScreen == AppScreen.MeasurementHistory ||
+                        currentScreen == AppScreen.Export
+                    ) {
+                        scansLoading = true
+                        scansError = null
 
-                    var scansReloadKey by remember {
-                        mutableStateOf(0)
-                    }
+                        try {
+                            scans = ApiClient.service.getScans()
+                        } catch (e: Exception) {
+                            Log.e(
+                                "MainActivity",
+                                "Failed to load scans",
+                                e
+                            )
 
-                    LaunchedEffect(currentScreen, scansReloadKey) {
-                        if (
-                            currentScreen == AppScreen.MeasurementHistory ||
-                            currentScreen == AppScreen.Export
-                        ) {
-                            scansLoading = true
-                            scansError = null
-
-                            try {
-                                scans = ApiClient.service.getScans()
-                            } catch (e: Exception) {
-                                Log.e(
-                                    "MainActivity",
-                                    "Failed to load scans",
-                                    e
-                                )
-
-                                scansError = "Check that the API is running and try again."
-                            } finally {
-                                scansLoading = false
-                            }
+                            scansError = "Check that the API is running and try again."
+                        } finally {
+                            scansLoading = false
                         }
                     }
+                }
 
                 LaunchedEffect(currentScreen, scansReloadKey) {
                     if (

@@ -168,11 +168,7 @@ fun ExportScreen(
 }
 
 @Composable
-private fun ScanSelectionCard(
-    scan: ScanResponse,
-    selected: Boolean,
-    onSelect: () -> Unit
-) {
+private fun ScanSelectionCard(scan: ScanResponse, selected: Boolean, onSelect: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -223,9 +219,7 @@ private fun ScanSelectionCard(
 }
 
 @Composable
-private fun ExportSummary(
-    scan: ScanResponse
-) {
+private fun ExportSummary(scan: ScanResponse) {
     Column(
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
@@ -237,7 +231,8 @@ private fun ExportSummary(
         SummaryRow("Relations", scan.relations.size.toString())
 
         Text(
-            text = "The JSON file contains the complete marker observations, positions, orientations, physical sizes and relations returned by the API.",
+            text = "The JSON file contains the complete marker observations, positions, " +
+                "orientations, physical sizes and relations returned by the API.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 8.dp)
@@ -246,19 +241,14 @@ private fun ExportSummary(
 }
 
 @Composable
-private fun SummaryRow(
-    label: String,
-    value: String
-) {
+private fun SummaryRow(label: String, value: String) {
     Text(
         text = "$label: $value",
         style = MaterialTheme.typography.bodyMedium
     )
 }
 
-private fun createExportFileName(
-    scan: ScanResponse
-): String {
+private fun createExportFileName(scan: ScanResponse): String {
     val workspace = scan.cell_name
         .replace(Regex("[^A-Za-z0-9_-]"), "_")
 
@@ -266,5 +256,5 @@ private fun createExportFileName(
         .replace(":", "-")
         .replace(Regex("[^A-Za-z0-9_-]"), "_")
 
-    return "${workspace}_${timestamp}.json"
+    return "${workspace}_$timestamp.json"
 }

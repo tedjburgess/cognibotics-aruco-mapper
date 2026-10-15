@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -25,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.Button
 import com.example.cogniboticsarucomapper.network.model.ObservationResponse
 import com.example.cogniboticsarucomapper.network.model.RelationResponse
 import com.example.cogniboticsarucomapper.network.model.ScanResponse
@@ -254,10 +254,7 @@ private fun ScanDetails(scan: ScanResponse) {
 }
 
 @Composable
-private fun ObservationDetails(
-    number: Int,
-    observation: ObservationResponse
-) {
+private fun ObservationDetails(number: Int, observation: ObservationResponse) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -351,10 +348,7 @@ private fun RelationDetails(
 }
 
 @Composable
-private fun DetailSection(
-    title: String,
-    content: @Composable () -> Unit
-) {
+private fun DetailSection(title: String, content: @Composable () -> Unit) {
     Column(
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
@@ -367,10 +361,7 @@ private fun DetailSection(
 }
 
 @Composable
-private fun DetailRow(
-    label: String,
-    value: String
-) {
+private fun DetailRow(label: String, value: String) {
     Text(
         text = "$label: $value",
         style = MaterialTheme.typography.bodySmall,
@@ -378,16 +369,11 @@ private fun DetailRow(
     )
 }
 
-private fun markerLabel(
-    observation: ObservationResponse
-): String {
-    return "Marker ${observation.aruco_id} (${observation.dictionary})"
-}
+private fun markerLabel(observation: ObservationResponse): String =
+    "Marker ${observation.aruco_id} (${observation.dictionary})"
 
-private fun formatNumber(value: Double): String {
-    return String.format(
-        Locale.getDefault(),
-        "%.3f",
-        value
-    )
-}
+private fun formatNumber(value: Double): String = String.format(
+    Locale.getDefault(),
+    "%.3f",
+    value
+)
