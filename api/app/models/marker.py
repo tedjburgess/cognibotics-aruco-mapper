@@ -19,6 +19,6 @@ class Marker(Base):
         default=ArucoDictionary.DICT_6X6_50,
         nullable=False,
     )
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     observations = relationship("Observation", back_populates="marker")

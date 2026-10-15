@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 from app.schemas.observation_out import ObservationOut
 from app.schemas.relation_out import RelationOut
@@ -19,6 +19,14 @@ class ScanOut(BaseModel):
     created_at: datetime
     observations: list[ObservationOut]
     relations: list[RelationOut]
+
+    @field_validator("measured_at", "created_at")
+    @classmethod
+    def normalize_timestamps(cls, value: datetime) -> datetime:
+        if value.tzinfo is None or value.utcoffset() is None:
+            return value.replace(tzinfo=UTC)
+
+        return value.astimezone(UTC)
 
     @model_validator(mode="before")
     @classmethod
