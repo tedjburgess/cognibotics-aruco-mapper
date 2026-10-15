@@ -118,14 +118,16 @@ fun CalibrationScreen(
                 value = draft.radialDistortionK1,
                 onValueChange = { draft = draft.copy(radialDistortionK1 = it) },
                 isError = !draft.isValidDouble(draft.radialDistortionK1),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                keyboardType = KeyboardType.Text
             )
             CalibrationValueField(
                 label = "Radial k2",
                 value = draft.radialDistortionK2,
                 onValueChange = { draft = draft.copy(radialDistortionK2 = it) },
                 isError = !draft.isValidDouble(draft.radialDistortionK2),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                keyboardType = KeyboardType.Text
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -134,14 +136,16 @@ fun CalibrationScreen(
                 value = draft.radialDistortionK3,
                 onValueChange = { draft = draft.copy(radialDistortionK3 = it) },
                 isError = !draft.isValidDouble(draft.radialDistortionK3),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                keyboardType = KeyboardType.Text
             )
             CalibrationValueField(
                 label = "Tangential p1",
                 value = draft.tangentialDistortionP1,
                 onValueChange = { draft = draft.copy(tangentialDistortionP1 = it) },
                 isError = !draft.isValidDouble(draft.tangentialDistortionP1),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                keyboardType = KeyboardType.Text
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -150,7 +154,8 @@ fun CalibrationScreen(
                 value = draft.tangentialDistortionP2,
                 onValueChange = { draft = draft.copy(tangentialDistortionP2 = it) },
                 isError = !draft.isValidDouble(draft.tangentialDistortionP2),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                keyboardType = KeyboardType.Text
             )
             CalibrationValueField(
                 label = "Reprojection error (px)",
@@ -194,6 +199,7 @@ fun CalibrationScreen(
                 TextButton(
                     onClick = {
                         showResetConfirmation = false
+                        draft = CalibrationDraft()
                         onReset()
                     }
                 ) {
