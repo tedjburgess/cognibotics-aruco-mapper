@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -20,6 +21,7 @@ import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasuremen
 import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurementStore
 import com.example.cogniboticsarucomapper.network.ApiClient
 import com.example.cogniboticsarucomapper.ui.calibration.CalibrationScreen
+import com.example.cogniboticsarucomapper.ui.calibration.CheckerboardCameraScreen
 import com.example.cogniboticsarucomapper.ui.camera.CameraFeedScreen
 import com.example.cogniboticsarucomapper.ui.export.ExportScreen
 import com.example.cogniboticsarucomapper.ui.home.HomeScreen
@@ -34,6 +36,7 @@ private const val SPLASH_MIN_DURATION_MS = 1_500L
 private enum class AppScreen {
     Home,
     Calibration,
+    CheckerboardCamera,
     Measurement,
     MeasurementHistory,
     Camera,
@@ -58,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CogniboticsArucoMapperTheme {
-                var currentScreen by remember {
+                var currentScreen by rememberSaveable {
                     mutableStateOf(AppScreen.Home)
                 }
 
@@ -112,6 +115,7 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Calibration -> {
                             CalibrationScreen(
+                                onOpenCamera = { currentScreen = AppScreen.CheckerboardCamera },
                                 measurement = calibrationMeasurement,
                                 onUpdate = { updatedMeasurement ->
                                     calibrationStore.update(updatedMeasurement)
@@ -124,6 +128,13 @@ class MainActivity : ComponentActivity() {
                                 onBack = {
                                     currentScreen = AppScreen.Home
                                 },
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
+
+                        AppScreen.CheckerboardCamera -> {
+                            CheckerboardCameraScreen(
+                                onBack = { currentScreen = AppScreen.Calibration },
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }

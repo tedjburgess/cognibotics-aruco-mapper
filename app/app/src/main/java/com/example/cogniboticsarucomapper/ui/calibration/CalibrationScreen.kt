@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurement
+import com.example.cogniboticsarucomapper.ui.components.ActionCard
 import com.example.cogniboticsarucomapper.ui.components.FeatureLayout
 import com.example.cogniboticsarucomapper.ui.components.InfoPanel
 import java.text.DateFormat
@@ -30,6 +31,7 @@ import java.util.Date
 @Composable
 fun CalibrationScreen(
     measurement: CalibrationMeasurement,
+    onOpenCamera: () -> Unit,
     onUpdate: (CalibrationMeasurement) -> Unit,
     onReset: () -> Unit,
     onBack: () -> Unit,
@@ -63,6 +65,13 @@ fun CalibrationScreen(
                     ?: "Calibration values are saved on this device."
             )
         }
+
+        ActionCard(
+            "01",
+            "Checkerboard camera",
+            "Set up your board and capture different views",
+            onOpenCamera
+        )
 
         Text("Image", style = MaterialTheme.typography.titleMedium)
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
