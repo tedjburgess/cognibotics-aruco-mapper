@@ -14,7 +14,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,7 +34,12 @@ fun CalibrationScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var draft by remember(measurement) { mutableStateOf(measurement.toDraft()) }
+    var draft by rememberSaveable(
+        measurement,
+        stateSaver = calibrationDraftSaver
+    ) {
+        mutableStateOf(measurement.toDraft())
+    }
     var showResetConfirmation by remember { mutableStateOf(false) }
     val originalDraft = measurement.toDraft()
     val hasChanges = draft != originalDraft
@@ -311,6 +317,41 @@ private data class CalibrationDraft(
         updatedAtMillis = updatedAtMillis
     )
 }
+
+private val calibrationDraftSaver = listSaver<CalibrationDraft, String>(
+    save = { draft ->
+        listOf(
+            draft.imageWidth,
+            draft.imageHeight,
+            draft.focalLengthX,
+            draft.focalLengthY,
+            draft.principalPointX,
+            draft.principalPointY,
+            draft.radialDistortionK1,
+            draft.radialDistortionK2,
+            draft.radialDistortionK3,
+            draft.tangentialDistortionP1,
+            draft.tangentialDistortionP2,
+            draft.reprojectionErrorPx
+        )
+    },
+    restore = { saved ->
+        CalibrationDraft(
+            imageWidth = saved[0],
+            imageHeight = saved[1],
+            focalLengthX = saved[2],
+            focalLengthY = saved[3],
+            principalPointX = saved[4],
+            principalPointY = saved[5],
+            radialDistortionK1 = saved[6],
+            radialDistortionK2 = saved[7],
+            radialDistortionK3 = saved[8],
+            tangentialDistortionP1 = saved[9],
+            tangentialDistortionP2 = saved[10],
+            reprojectionErrorPx = saved[11]
+        )
+    }
+)
 
 private fun CalibrationMeasurement.toDraft() = CalibrationDraft(
     imageWidth = imageWidth?.toString().orEmpty(),
