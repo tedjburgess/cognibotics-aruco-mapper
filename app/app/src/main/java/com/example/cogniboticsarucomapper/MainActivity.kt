@@ -17,6 +17,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurement
+import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurementStore
 import com.example.cogniboticsarucomapper.network.ApiClient
 import com.example.cogniboticsarucomapper.ui.calibration.CalibrationScreen
 import com.example.cogniboticsarucomapper.ui.calibration.CheckerboardCameraScreen
@@ -60,6 +62,13 @@ class MainActivity : ComponentActivity() {
             CogniboticsArucoMapperTheme {
                 var currentScreen by rememberSaveable {
                     mutableStateOf(AppScreen.Home)
+                }
+
+                val calibrationStore = remember {
+                    CalibrationMeasurementStore(applicationContext)
+                }
+                var calibrationMeasurement by remember {
+                    mutableStateOf(calibrationStore.load())
                 }
 
                 var measurements by remember {
@@ -111,6 +120,15 @@ class MainActivity : ComponentActivity() {
                         AppScreen.Calibration -> {
                             CalibrationScreen(
                                 onOpenCamera = { currentScreen = AppScreen.CheckerboardCamera },
+                                measurement = calibrationMeasurement,
+                                onUpdate = { updatedMeasurement ->
+                                    calibrationStore.update(updatedMeasurement)
+                                    calibrationMeasurement = updatedMeasurement
+                                },
+                                onReset = {
+                                    calibrationStore.reset()
+                                    calibrationMeasurement = CalibrationMeasurement()
+                                },
                                 onBack = {
                                     currentScreen = AppScreen.Home
                                 },
