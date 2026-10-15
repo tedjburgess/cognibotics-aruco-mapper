@@ -1,6 +1,6 @@
 # Issue #39: marker distance accuracy
 
-Recorded preliminary results: [14 October physical test and estimated ±3 mm reference uncertainty](results-2026-10-14.md). One physical angle-test run is recorded; its observations still need mapping to the four requested angles.
+Recorded results: [all three physical measurement runs and estimated ±3 mm reference uncertainty](results-2026-10-14.md). The report includes 42 readings, a like-for-like 36-reading comparison (12 cross-sheet pairs per run), and one video angle-test run. The video observations still need mapping to the four requested angles.
 
 This is a physical experiment, not camera calibration. The ticket needs a known marker centre-to-centre distance, app results at **0°, 15°, 35° and 60°**, and a comparison shared with the group. The local #57 implementation now shows fresh distances in **Measurement → Start measurement**. The history display separately shows `relations[].distance_mm` returned by the backend. Follow [the live measurement guide](../measurement/README.md) for the known-size mapping and calibration limitations.
 
