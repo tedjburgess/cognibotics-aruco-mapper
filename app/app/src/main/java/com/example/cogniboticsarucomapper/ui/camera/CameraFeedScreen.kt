@@ -70,11 +70,7 @@ private const val TAG = "CameraFeedScreen"
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraFeedScreen(
-    workspaceName: String,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val controlsMaxHeight = (LocalConfiguration.current.screenHeightDp.dp * 0.35f).coerceAtMost(
         300.dp
