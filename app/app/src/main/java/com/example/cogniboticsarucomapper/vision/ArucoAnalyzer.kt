@@ -14,7 +14,8 @@ import org.opencv.objdetect.ArucoDetector
 import org.opencv.objdetect.DetectorParameters
 import org.opencv.objdetect.Objdetect
 
-class ArucoAnalyzer : VisionEngine.FrameAnalyzer {
+// Default to mixed-family measurement; callers can still select a single dictionary explicitly.
+class ArucoAnalyzer(dictionaryType: ArucoDictionaryType? = null) : VisionEngine.FrameAnalyzer {
     @Volatile var sensorGeometry: SensorGeometry? = null
 
     // Calibration capture/persistence can supply a profile here without changing the solver.
@@ -25,18 +26,20 @@ class ArucoAnalyzer : VisionEngine.FrameAnalyzer {
 
     // Test mode only accepts the IDs printed in our accuracy pack; normal mode accepts all IDs.
     @Volatile var testSheetMode: Boolean = true
-    private val detectors = listOf(
-        MarkerFamily.FOUR_BY_FOUR to Objdetect.DICT_4X4_1000,
-        MarkerFamily.FIVE_BY_FIVE to Objdetect.DICT_5X5_1000,
-        MarkerFamily.SIX_BY_SIX to Objdetect.DICT_6X6_1000,
-        MarkerFamily.SEVEN_BY_SEVEN to Objdetect.DICT_7X7_1000
-    ).map { (family, code) ->
+    private val dictionaries = dictionaryType?.let { listOf(it) } ?: listOf(
+        ArucoDictionaryType.DICT_4X4_1000,
+        ArucoDictionaryType.DICT_5X5_1000,
+        ArucoDictionaryType.DICT_6X6_1000,
+        ArucoDictionaryType.DICT_7X7_1000
+    )
+    private val detectors = dictionaries.map { dictionary ->
+        val family = dictionary.family
         val parameters = DetectorParameters().apply {
             _cornerRefinementMethod = Objdetect.CORNER_REFINE_SUBPIX
             // Small 4x4 codes must match exactly rather than repair background patterns.
             _errorCorrectionRate = if (family == MarkerFamily.FOUR_BY_FOUR) 0.0 else 0.4
         }
-        family to ArucoDetector(Objdetect.getPredefinedDictionary(code), parameters)
+        family to ArucoDetector(Objdetect.getPredefinedDictionary(dictionary.openCvId), parameters)
     }
 
     override fun processFrame(
