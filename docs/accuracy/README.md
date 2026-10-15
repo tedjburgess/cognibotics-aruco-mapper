@@ -4,6 +4,20 @@ Recorded results: [all three physical measurement runs and estimated ±3 mm refe
 
 This is a physical experiment, not camera calibration. The ticket needs a known marker centre-to-centre distance, app results at **0°, 15°, 35° and 60°**, and a comparison shared with the group. The local #57 implementation now shows fresh distances in **Measurement → Start measurement**. The history display separately shows `relations[].distance_mm` returned by the backend. Follow [the live measurement guide](../measurement/README.md) for the known-size mapping and calibration limitations.
 
+## Recorded run conditions
+
+The tester described the setups in [PR #63](https://github.com/tedjburgess/cognibotics-aruco-mapper/pull/63):
+
+| Run | Reported camera conditions | Marker arrangement | Mean absolute percentage error |
+|---|---|---|---:|
+| 1 | Fixed view, approximately 0–5° tilt | Fixed marker spacing, 43 mm height difference | 0.81% |
+| 2 | Fixed view, approximately 30° tilt | Fixed marker spacing, 43 mm height difference | 1.60% |
+| 3 | Camera moving through different angles | Fixed marker spacing, all markers at the same elevation | 0.89% |
+
+Each result uses the same 12 cross-sheet pairs against that run's own reference distances. Combined mean absolute percentage error: **1.10%**, with estimated **±3 mm manual reference uncertainty**. The report retains all 42 supplied readings. Run 3's percentage uses the documented 30–35 second samples, not every angle or frame in the video.
+
+These approximate angles are tester-reported conditions, not independently verified angle measurements. Manual reference error, viewing angle, height differences and estimated camera parameters may contribute to run 2's higher error; these runs do not isolate the cause. This setup summary does not establish a separate result at each of the four angles requested by #39.
+
 ## Before recording results
 
 1. Use a physical phone and measured printed markers. Measure the black square including its black border, excluding the white quiet zone. Mathias's notes specify 4×4: 20 mm, 5×5: 50 mm, 6×6: 75 mm and 7×7: 100 mm. Record the actual dictionary including capacity, e.g. `DICT_4X4_50`; 4×4 describes the payload grid, not the physical size.
@@ -16,8 +30,8 @@ This is a physical experiment, not camera calibration. The ticket needs a known 
 1. Fix two distinct markers to a rigid board. Use a centre spacing that leaves room for both printed markers; the ticket's example of 30 mm cannot accommodate two 100 mm markers without overlap. A larger spacing such as 300 mm is a possible setup, not a recorded result. Measure and enter the actual spacing.
 2. Mark the physical centres and measure centre-to-centre, not edge-to-edge. Secure the board so this distance stays fixed.
 3. Define **0°** as the camera optical axis perpendicular to the board. Tilt in one recorded direction to 15°, 35° and 60°, keeping the lens-to-board-centre distance fixed where possible. Record the actual camera distance and angle; avoid changing both unknowingly.
-4. At each angle, start three separate captures/scans. Do not count three adjacent video frames as three independent trials. Record the live marker-pair distance and identify the capture with a timestamp/screenshot. If no distance is produced, record a failed detection or rejected run; do not write zero or omit the attempt.
-5. Record all 12 trials in a copy of `runs-template.csv`. Add rows if more repetitions are needed. The template contains planned trials only, with no invented measurements.
+4. For repeatability, three separate captures/scans per angle are recommended; this is not an extra requirement in #39. Do not count three adjacent video frames as three independent trials. Record the live marker-pair distance and identify the capture with a timestamp/screenshot. If no distance is produced, record a failed detection or rejected run; do not write zero or omit the attempt.
+5. If following the recommended three captures per angle, record the 12 trials in a copy of `runs-template.csv`. Add rows if more repetitions are needed. The template contains planned trials only, with no invented measurements.
 
 ## Extension: markers at different heights
 
