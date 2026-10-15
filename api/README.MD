@@ -17,6 +17,15 @@ make run
 
 Open http://localhost:8000 (or `/docs` for swagger).
 
+## Docker
+
+Build the API image:
+
+```bash
+docker build -t cognibotics-aruco-api .
+docker run --rm -p 8000:8000 cognibotics-aruco-api
+```
+
 ## Scan endpoints
 
 ### `POST /api/v1/scans`
