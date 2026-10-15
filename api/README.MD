@@ -15,6 +15,14 @@ make install
 make run
 ```
 
+## Docker
+
+Build the API image:
+
+```bash
+docker build -t cognibotics-aruco-api .
+
+
 Open http://localhost:8000 (or `/docs` for swagger).
 
 ## Scan endpoints
