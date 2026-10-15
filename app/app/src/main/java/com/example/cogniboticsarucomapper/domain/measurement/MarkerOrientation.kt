@@ -9,14 +9,9 @@ import kotlin.math.sqrt
  * Unit quaternion representing the marker-to-camera rotation from OpenCV solvePnP.
  * This is a domain measurement, not an API DTO.
  */
-data class MarkerOrientation(
-    val x: Double,
-    val y: Double,
-    val z: Double,
-    val w: Double
-) {
+data class MarkerOrientation(val x: Double, val y: Double, val z: Double, val w: Double) {
     val isValid: Boolean
-        get() = x.isFinite() && y.isFinite() && z.isFinite() && w.isFinite() &&
+        get() = listOf(x, y, z, w).all { it.isFinite() } &&
             abs(x * x + y * y + z * z + w * w - 1.0) < 1e-6
 
     companion object {
