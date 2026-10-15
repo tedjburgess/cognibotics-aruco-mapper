@@ -2,7 +2,6 @@ package com.example.cogniboticsarucomapper.data.measurement
 
 import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerFamily
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerKey
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrientation
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerPairDistance
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
