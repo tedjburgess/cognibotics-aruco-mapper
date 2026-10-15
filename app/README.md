@@ -27,3 +27,7 @@ Build the debug app and run local unit tests (no emulator required):
 A passing run ends with `BUILD SUCCESSFUL`. If `ktlintCheck` fails, run `ktlintFormat`, review the changes, and run the checks again. Some violations, such as wildcard imports, require a manual fix.
 
 Use Android Studio's terminal with a supported JDK available (`JAVA_HOME` or `PATH`). Instrumented tests require a device or emulator and are separate from these local checks.
+
+## Live measurement and physical tests
+
+See the [measurement guide](../docs/measurement/README.md) for supported marker sizes and controls, and the [accuracy guide](../docs/accuracy/README.md#recorded-run-conditions) for the three physical run setups and results. The manual reference distances have estimated ±3 mm uncertainty; camera parameters are still estimated.

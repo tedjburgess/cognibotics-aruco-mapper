@@ -1,6 +1,7 @@
 package com.example.cogniboticsarucomapper.ui.camera
 
 import android.Manifest
+import android.os.SystemClock
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
@@ -29,6 +30,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -46,9 +48,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.cogniboticsarucomapper.data.measurement.sensorGeometryFor
+import com.example.cogniboticsarucomapper.domain.measurement.DistanceDisplayTracker
+import com.example.cogniboticsarucomapper.domain.measurement.PairReading
 import com.example.cogniboticsarucomapper.vision.ArucoAnalyzer
+import com.example.cogniboticsarucomapper.vision.CameraParameterSource
 import com.example.cogniboticsarucomapper.vision.MarkerScanState
 import com.example.cogniboticsarucomapper.vision.OpenCv
 import com.example.cogniboticsarucomapper.vision.VisionEngine
@@ -66,13 +73,22 @@ private const val TAG = "CameraFeedScreen"
 fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val controlsMaxHeight = (LocalConfiguration.current.screenHeightDp.dp * 0.35f).coerceAtMost(
-        200.dp
+        300.dp
     )
     val lifecycleOwner = LocalLifecycleOwner.current
     val permissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
     val opencvReady = remember { OpenCv.ensureInitialized() }
-    val visionEngine = remember { VisionEngine(analyzers = listOf(ArucoAnalyzer())) }
+    val markerAnalyzer = remember(opencvReady) { if (opencvReady) ArucoAnalyzer() else null }
+    val visionEngine =
+        remember(markerAnalyzer) { VisionEngine(analyzers = listOfNotNull(markerAnalyzer)) }
+    // Fixed rows and a short median window make results readable without hiding missing readings.
+    val displayTracker = remember { DistanceDisplayTracker() }
+    var distances by remember { mutableStateOf<List<PairReading>>(emptyList()) }
+    var steadyDisplay by remember { mutableStateOf(true) }
+    var testSheetMode by remember { mutableStateOf(true) }
+    var cameraParameters by remember { mutableStateOf(CameraParameterSource.UNAVAILABLE) }
+    var measurementError by remember { mutableStateOf<String?>(null) }
     val visibleMarkers = remember { mutableStateListOf<VisionEvent.MarkerDetected>() }
     val analysisEnabled by visionEngine.analysisEnabled.collectAsStateWithLifecycle()
     val fps by visionEngine.fps.collectAsStateWithLifecycle()
@@ -83,8 +99,25 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
     LaunchedEffect(visionEngine) {
         visionEngine.events.collect { event ->
             when (event) {
+                is VisionEvent.FrameMeasured -> {
+                    if (visionEngine.analysisEnabled.value &&
+                        event.testSheetMode == testSheetMode
+                    ) {
+                        visibleMarkers.clear()
+                        visibleMarkers.addAll(event.markers.filter { it.certainty >= 0.3f })
+                        distances = displayTracker.update(
+                            visibleMarkers.map {
+                                it.key
+                            }.toSet(),
+                            event.distances,
+                            SystemClock.elapsedRealtime()
+                        )
+                        cameraParameters = event.cameraParameters
+                        measurementError = null
+                    }
+                }
                 is VisionEvent.MarkerDetected -> {
-                    visibleMarkers.removeAll { it.markerId == event.markerId }
+                    visibleMarkers.removeAll { it.key == event.key }
                     visibleMarkers.add(0, event)
                     while (visibleMarkers.size >
                         10
@@ -92,12 +125,26 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                         visibleMarkers.removeAt(visibleMarkers.lastIndex)
                     }
                 }
-                is VisionEvent.MarkersCleared -> visibleMarkers.clear()
-                is VisionEvent.AnalysisError -> Log.e(
-                    TAG,
-                    "Vision error: ${event.message}",
-                    event.throwable
-                )
+                is VisionEvent.MarkersCleared -> {
+                    visibleMarkers.clear()
+                    distances =
+                        displayTracker.update(
+                            emptySet(),
+                            emptyList(),
+                            SystemClock.elapsedRealtime()
+                        )
+                }
+                is VisionEvent.AnalysisError -> {
+                    visibleMarkers.clear()
+                    distances =
+                        displayTracker.update(
+                            emptySet(),
+                            emptyList(),
+                            SystemClock.elapsedRealtime()
+                        )
+                    measurementError = "Measurement unavailable for this frame."
+                    Log.e(TAG, "Vision error: ${event.message}", event.throwable)
+                }
             }
         }
     }
@@ -111,6 +158,14 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
         when {
             permissionState.status.isGranted -> {
                 var controller by remember { mutableStateOf<LifecycleCameraController?>(null) }
+                val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
+                DisposableEffect(lifecycleOwner) {
+                    onDispose {
+                        controller?.clearImageAnalysisAnalyzer()
+                        controller?.unbind()
+                        analysisExecutor.shutdownNow()
+                    }
+                }
 
                 Box(
                     modifier = Modifier.fillMaxWidth().weight(
@@ -130,10 +185,11 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                                     CameraSelector.DEFAULT_BACK_CAMERA
 
                                 setImageAnalysisAnalyzer(
-                                    Executors.newSingleThreadExecutor(),
+                                    analysisExecutor,
                                     visionEngine
                                 )
 
+                                isPinchToZoomEnabled = false
                                 bindToLifecycle(lifecycleOwner)
                             }
 
@@ -141,6 +197,11 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
 
                             PreviewView(ctx).apply {
                                 this.controller = camController
+                                camController.initializationFuture.addListener({
+                                    camController.cameraInfo?.let { info ->
+                                        markerAnalyzer?.sensorGeometry = sensorGeometryFor(info)
+                                    }
+                                }, ContextCompat.getMainExecutor(ctx))
 
                                 implementationMode =
                                     PreviewView.ImplementationMode.PERFORMANCE
@@ -202,22 +263,99 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                         OptionToggle(
                             label = "Analysis",
                             checked = analysisEnabled,
-                            onCheckedChange = visionEngine::setAnalysisEnabled
+                            onCheckedChange = { enabled ->
+                                visionEngine.setAnalysisEnabled(enabled)
+                                if (!enabled) {
+                                    visibleMarkers.clear()
+                                    displayTracker.reset()
+                                    distances = emptyList()
+                                }
+                            }
                         )
                         OptionToggle(
                             label = "Torch",
                             checked = torchEnabled,
                             onCheckedChange = { torchEnabled = it }
                         )
+                        OptionToggle(
+                            label = "Test sheets (IDs 0–3)",
+                            checked = testSheetMode,
+                            onCheckedChange = {
+                                testSheetMode = it
+                                markerAnalyzer?.testSheetMode = it
+                                displayTracker.reset()
+                                distances = emptyList()
+                                visibleMarkers.clear()
+                            }
+                        )
+                        OptionToggle(
+                            label = "Steady display (up to 5 frames)",
+                            checked = steadyDisplay,
+                            onCheckedChange = { steadyDisplay = it }
+                        )
+                        Text(
+                            text = measurementError ?: when {
+                                !analysisEnabled -> "Analysis paused."
+                                !opencvReady -> "OpenCV could not start."
+                                cameraParameters == CameraParameterSource.UNAVAILABLE ->
+                                    "Camera parameters unavailable — distances cannot be measured."
+                                cameraParameters == CameraParameterSource.ESTIMATED ->
+                                    "Estimated camera parameters — accuracy not validated."
+                                else -> "Using calibrated camera parameters."
+                            },
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        if (distances.isNotEmpty()) {
+                            Text(
+                                "Centre-to-centre distances",
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                            distances.forEach { pair ->
+                                val value = if (steadyDisplay) pair.steadyMm else pair.rawMm
+                                Text(
+                                    "${pair.from.label} → ${pair.to.label}: ${value?.let {
+                                        "%.1f mm".format(it)
+                                    } ?: "—"}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                // Compare raw measurements only, and only for pairs on the same test sheet.
+                                if (testSheetMode && pair.isTestSheetPair && pair.rawMm != null) {
+                                    Text(
+                                        "135 mm reference · raw error %.1f mm (%.1f%%)".format(
+                                            pair.absoluteTestErrorMm,
+                                            pair.absoluteTestErrorMm!! / 135.0 * 100
+                                        ),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
+                        } else if (analysisEnabled && visibleMarkers.size < 2) {
+                            Text(
+                                "Show two different markers together to measure a distance.",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                         if (visibleMarkers.isNotEmpty()) {
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 visibleMarkers
-                                    .sortedBy { it.markerId }
+                                    .sortedWith(compareBy({ it.family.ordinal }, { it.markerId }))
                                     .forEach { event ->
                                         Text(
                                             text = buildString {
-                                                append("Marker ${event.markerId}")
-                                                append(" - ${(event.certainty * 100).toInt()}%")
+                                                append(
+                                                    "${event.key.label} (${event.family.sizeMm.toInt()} mm)"
+                                                )
+                                                event.tiltDegrees?.let {
+                                                    append(" · tilt ≈%.0f°".format(it))
+                                                }
+                                                if (event.positionMm ==
+                                                    null
+                                                ) {
+                                                    append(" · pose unavailable")
+                                                }
+                                                append(
+                                                    " - tracking ${(event.certainty * 100).toInt()}%"
+                                                )
                                                 append(
                                                     when (event.scanState) {
                                                         MarkerScanState.DETECTED ->

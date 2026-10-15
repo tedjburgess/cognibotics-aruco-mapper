@@ -107,11 +107,14 @@ class VisionEngine(
                 }
 
                 val detectedMarkerEvents =
-                    produced.filterIsInstance<VisionEvent.MarkerDetected>()
+                    produced.filterIsInstance<VisionEvent.MarkerDetected>() +
+                        produced.filterIsInstance<VisionEvent.FrameMeasured>().flatMap {
+                            it.markers
+                        }
 
                 val detectedIds =
                     detectedMarkerEvents
-                        .map { it.markerId }
+                        .map { it.key }
                         .toSet()
 
                 val certaintyMap =
@@ -121,11 +124,26 @@ class VisionEngine(
                     val enrichedEvent =
                         if (event is VisionEvent.MarkerDetected) {
                             val certainty =
-                                certaintyMap[event.markerId]
+                                certaintyMap[event.key]
 
                             event.copy(
                                 certainty = certainty?.certainty ?: 0f,
                                 scanState = certainty?.state ?: MarkerScanState.DETECTED
+                            )
+                        } else if (event is VisionEvent.FrameMeasured) {
+                            // A single accidental detection must not create a distance reading.
+                            event.copy(
+                                distances = event.distances.filter { pair ->
+                                    (certaintyMap[pair.from]?.consecutiveFrames ?: 0) >= 3 &&
+                                        (certaintyMap[pair.to]?.consecutiveFrames ?: 0) >= 3
+                                },
+                                markers = event.markers.map { marker ->
+                                    val certainty = certaintyMap[marker.key]
+                                    marker.copy(
+                                        certainty = certainty?.certainty ?: 0f,
+                                        scanState = certainty?.state ?: MarkerScanState.DETECTED
+                                    )
+                                }
                             )
                         } else {
                             event

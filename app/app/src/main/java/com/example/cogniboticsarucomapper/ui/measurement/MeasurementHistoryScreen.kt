@@ -22,13 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cogniboticsarucomapper.ui.components.InfoPanel
 import com.example.cogniboticsarucomapper.ui.components.PageHeading
+import java.util.Locale
 
 data class MeasurementHistoryItem(
     val id: String,
     val siteName: String,
     val cellName: String,
     val measuredAt: String,
-    val observationCount: Int
+    val observationCount: Int,
+    val distances: List<MarkerDistanceItem> = emptyList()
 )
 
 @Composable
@@ -88,6 +90,31 @@ fun MeasurementHistoryScreen(
                             Text(
                                 text = "${measurement.observationCount} detected markers"
                             )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = "Marker distances",
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                            if (measurement.distances.isEmpty()) {
+                                Text(
+                                    text = "No distances returned for this scan.",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            } else {
+                                measurement.distances.forEach { distance ->
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = "${distance.fromLabel} → ${distance.toLabel}",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                    Text(
+                                        text = distance.distanceMm?.let {
+                                            String.format(Locale.getDefault(), "%.3f mm", it)
+                                        } ?: "Distance unavailable",
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
+                                }
+                            }
                         }
                     }
                 }

@@ -26,6 +26,7 @@ import com.example.cogniboticsarucomapper.ui.home.HomeScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementScreen
+import com.example.cogniboticsarucomapper.ui.measurement.toMeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
 
 private const val SPLASH_MIN_DURATION_MS = 1_500L
@@ -75,15 +76,10 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(currentScreen) {
                     if (currentScreen == AppScreen.MeasurementHistory) {
                         try {
-                            measurements = ApiClient.service.getScans().map { scan ->
-                                MeasurementHistoryItem(
-                                    id = scan.id,
-                                    siteName = scan.site_name,
-                                    cellName = scan.cell_name,
-                                    measuredAt = scan.measured_at,
-                                    observationCount = scan.observations.size
-                                )
-                            }
+                            measurements =
+                                ApiClient.service.getScans().map { scan ->
+                                    scan.toMeasurementHistoryItem()
+                                }
                         } catch (e: Exception) {
                             Log.e(
                                 "MainActivity",
