@@ -25,11 +25,10 @@ import com.example.cogniboticsarucomapper.ui.calibration.CheckerboardCameraScree
 import com.example.cogniboticsarucomapper.ui.camera.CameraFeedScreen
 import com.example.cogniboticsarucomapper.ui.export.ExportScreen
 import com.example.cogniboticsarucomapper.ui.home.HomeScreen
-import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementScreen
-import com.example.cogniboticsarucomapper.ui.measurement.toMeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
+import com.example.cogniboticsarucomapper.network.model.ScanResponse
 
 private const val SPLASH_MIN_DURATION_MS = 1_500L
 
@@ -72,23 +71,68 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(calibrationStore.load())
                 }
 
-                var measurements by remember {
-                    mutableStateOf<List<MeasurementHistoryItem>>(emptyList())
-                }
+                var scans by remember {
+                    mutableStateOf<List<ScanResponse>>(emptyList())
 
-                LaunchedEffect(currentScreen) {
-                    if (currentScreen == AppScreen.MeasurementHistory) {
+
+                    }
+
+                    var scansLoading by remember {
+                        mutableStateOf(false)
+                    }
+
+                    var scansError by remember {
+                        mutableStateOf<String?>(null)
+                    }
+
+                    var scansReloadKey by remember {
+                        mutableStateOf(0)
+                    }
+
+                    LaunchedEffect(currentScreen, scansReloadKey) {
+                        if (
+                            currentScreen == AppScreen.MeasurementHistory ||
+                            currentScreen == AppScreen.Export
+                        ) {
+                            scansLoading = true
+                            scansError = null
+
+                            try {
+                                scans = ApiClient.service.getScans()
+                            } catch (e: Exception) {
+                                Log.e(
+                                    "MainActivity",
+                                    "Failed to load scans",
+                                    e
+                                )
+
+                                scansError = "Check that the API is running and try again."
+                            } finally {
+                                scansLoading = false
+                            }
+                        }
+                    }
+
+                LaunchedEffect(currentScreen, scansReloadKey) {
+                    if (
+                        currentScreen == AppScreen.MeasurementHistory ||
+                        currentScreen == AppScreen.Export
+                    ) {
+                        scansLoading = true
+                        scansError = null
+
                         try {
-                            measurements =
-                                ApiClient.service.getScans().map { scan ->
-                                    scan.toMeasurementHistoryItem()
-                                }
+                            scans = ApiClient.service.getScans()
                         } catch (e: Exception) {
                             Log.e(
                                 "MainActivity",
-                                "Failed to load measurement history",
+                                "Failed to load scans",
                                 e
                             )
+
+                            scansError = "Check that the API is running and try again."
+                        } finally {
+                            scansLoading = false
                         }
                     }
                 }
@@ -156,7 +200,12 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.MeasurementHistory -> {
                             MeasurementHistoryScreen(
-                                measurements = measurements,
+                                scans = scans,
+                                isLoading = scansLoading,
+                                errorMessage = scansError,
+                                onRetry = {
+                                    scansReloadKey++
+                                },
                                 onBack = {
                                     currentScreen = AppScreen.Measurement
                                 },
@@ -175,6 +224,12 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Export -> {
                             ExportScreen(
+                                scans = scans,
+                                isLoading = scansLoading,
+                                errorMessage = scansError,
+                                onRetry = {
+                                    scansReloadKey++
+                                },
                                 onBack = {
                                     currentScreen = AppScreen.Home
                                 },
