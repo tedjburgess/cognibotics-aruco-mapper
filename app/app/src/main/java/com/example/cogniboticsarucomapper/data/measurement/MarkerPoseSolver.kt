@@ -3,7 +3,6 @@ package com.example.cogniboticsarucomapper.data.measurement
 import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.domain.measurement.ImagePoint
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerImageQuality
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrientation
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
 import kotlin.math.abs
 import kotlin.math.acos
@@ -20,8 +19,7 @@ import org.opencv.core.Point3
 data class MarkerPoseEstimate(
     val position: PositionMm,
     val tiltDegrees: Double,
-    val errorPixels: Double,
-    val orientation: MarkerOrientation
+    val errorPixels: Double
 )
 
 // Based on Simon's PR #37 solver; each known-size marker is still solved independently in 3D.
@@ -111,21 +109,11 @@ class MarkerPoseSolver {
                 val error = sqrt(squaredError / 4)
                 // This checks the image fit, not the millimetre accuracy of the camera calibration.
                 if (error.isFinite() && error <= minOf(2.0, thickness * 0.05)) {
-                    val rotationVector = DoubleArray(3)
-                    // Mat.get(double[]) reports bytes copied, not the number of doubles.
-                    val bytesRead = rotation.get(0, 0, rotationVector)
-                    if (bytesRead != rotationVector.size * java.lang.Double.BYTES) return
-                    val orientation = MarkerOrientation.fromRotationVector(
-                        rotationVector[0],
-                        rotationVector[1],
-                        rotationVector[2]
-                    ) ?: return
                     candidates.add(
                         MarkerPoseEstimate(
                             position,
                             Math.toDegrees(acos(abs(zz).coerceIn(0.0, 1.0))),
-                            error,
-                            orientation
+                            error
                         )
                     )
                 }

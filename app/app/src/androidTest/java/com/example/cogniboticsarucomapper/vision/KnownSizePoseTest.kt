@@ -80,21 +80,6 @@ class KnownSizePoseTest {
     }
 
     @Test
-    fun opencvMatGetReportsBytesForThreeDoubles() {
-        assertTrue(OpenCv.ensureInitialized())
-        val rotationVector = Mat(3, 1, CvType.CV_64F)
-        try {
-            rotationVector.put(0, 0, doubleArrayOf(0.0, 0.0, 0.5))
-            val result = DoubleArray(3)
-            val bytesRead = rotationVector.get(0, 0, result)
-            assertEquals(3 * java.lang.Double.BYTES, bytesRead)
-            assertEquals(0.5, result[2], 1e-12)
-        } finally {
-            rotationVector.release()
-        }
-    }
-
-    @Test
     fun sameImageScalesTranslationWithKnownPhysicalSize() {
         assertTrue(OpenCv.ensureInitialized())
         val model = CameraModel(640, 480, 800.0, 800.0, 320.0, 240.0, calibrated = true)
@@ -107,11 +92,6 @@ class KnownSizePoseTest {
         assertEquals(50.0, small!!.x, 0.01)
         assertEquals(20.0, small.y, 0.01)
         assertEquals(500.0, small.z, 0.01)
-
-        // The same OpenCV pose solution must retain a real, normalized rotation for API mapping.
-        val fullPose = solver.estimate(corners, 20.0, model)
-        assertNotNull(fullPose)
-        assertTrue(fullPose!!.orientation.isValid)
         val large = solver.solve(corners, 100.0, model)!!
         assertEquals(small.z * 5, large.z, 0.05)
     }
