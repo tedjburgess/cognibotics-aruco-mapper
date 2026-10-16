@@ -1,4 +1,4 @@
-.PHONY: help install run lint format format-check types check
+.PHONY: help install run lint format format-check types test check
 
 install:
 	uv sync --all-groups
@@ -19,4 +19,7 @@ format-check:
 types: 
 	uv run mypy
 
-check: lint format-check types
+test:
+	uv run python -m unittest discover -s tests
+
+check: lint format-check types test

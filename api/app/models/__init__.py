@@ -4,6 +4,7 @@ from app.models.marker import Marker
 from app.models.observation import Observation
 from app.models.relation import Relation
 from app.models.scan import Scan
+from app.models.scan_submission import ScanSubmission
 from app.models.site import Site
 
-__all__ = ["Base", "Cell", "Marker", "Observation", "Relation", "Scan", "Site"]
+__all__ = ["Base", "Cell", "Marker", "Observation", "Relation", "Scan", "ScanSubmission", "Site"]

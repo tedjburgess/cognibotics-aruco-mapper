@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -22,18 +23,17 @@ import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasuremen
 import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurementStore
 import com.example.cogniboticsarucomapper.data.measurement.MeasurementRequestMapper
 import com.example.cogniboticsarucomapper.network.ApiClient
-import com.example.cogniboticsarucomapper.network.model.ScanRequest
 import com.example.cogniboticsarucomapper.ui.calibration.CalibrationScreen
 import com.example.cogniboticsarucomapper.ui.calibration.CheckerboardCameraScreen
 import com.example.cogniboticsarucomapper.ui.camera.CameraFeedScreen
 import com.example.cogniboticsarucomapper.ui.export.ExportScreen
+import com.example.cogniboticsarucomapper.ui.export.ExportViewModel
 import com.example.cogniboticsarucomapper.ui.home.HomeScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementScreen
 import com.example.cogniboticsarucomapper.ui.measurement.toMeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
-import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -52,6 +52,7 @@ private enum class AppScreen {
 }
 
 class MainActivity : ComponentActivity() {
+    private val exportViewModel: ExportViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashStartedAt = SystemClock.uptimeMillis()
@@ -79,18 +80,6 @@ class MainActivity : ComponentActivity() {
                 var siteName by rememberSaveable {
                     mutableStateOf("")
                 }
-                // Store the captured API payload, not a mutable camera frame, across rotation.
-                var capturedScanJson by rememberSaveable {
-                    mutableStateOf<String?>(null)
-                }
-                var savedScanId by rememberSaveable {
-                    mutableStateOf<String?>(null)
-                }
-                val gson = remember { Gson() }
-                val capturedScan = remember(capturedScanJson) {
-                    capturedScanJson?.let { gson.fromJson(it, ScanRequest::class.java) }
-                }
-
                 val calibrationStore = remember {
                     CalibrationMeasurementStore(applicationContext)
                 }
@@ -174,9 +163,9 @@ class MainActivity : ComponentActivity() {
                                 onStartMeasurement = { normalizedSite, normalizedCell ->
                                     siteName = normalizedSite
                                     workspaceName = normalizedCell
-                                    capturedScanJson = null
-                                    savedScanId = null
-                                    currentScreen = AppScreen.Camera
+                                    if (exportViewModel.startNewMeasurement()) {
+                                        currentScreen = AppScreen.Camera
+                                    }
                                 },
                                 onHistoryClick = {
                                     currentScreen = AppScreen.MeasurementHistory
@@ -212,9 +201,7 @@ class MainActivity : ComponentActivity() {
                                             .ifBlank { "Android device" },
                                         measuredAt = utcMeasurementTime()
                                     )
-                                    if (request != null) {
-                                        capturedScanJson = gson.toJson(request)
-                                        savedScanId = null
+                                    if (request != null && exportViewModel.capture(request)) {
                                         currentScreen = AppScreen.Export
                                         true
                                     } else {
@@ -230,12 +217,12 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Export -> {
                             ExportScreen(
-                                scan = capturedScan,
-                                savedScanId = savedScanId,
-                                onSave = { scan -> ApiClient.service.createScan(scan) },
-                                onSaved = { savedId -> savedScanId = savedId },
+                                state = exportViewModel.uiState,
+                                onSave = exportViewModel::save,
                                 onStartMeasurement = {
-                                    currentScreen = AppScreen.Measurement
+                                    if (exportViewModel.startNewMeasurement()) {
+                                        currentScreen = AppScreen.Measurement
+                                    }
                                 },
                                 onBack = {
                                     currentScreen = AppScreen.Home

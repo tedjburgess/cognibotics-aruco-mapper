@@ -1,8 +1,11 @@
 from collections.abc import Sequence
+from hashlib import sha256
 from typing import Annotated
+from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
 from app import models, schemas
@@ -39,8 +42,63 @@ def _resolve_markers(
     return resolved
 
 
+def _find_previous_submission(
+    db: Session, request_id: str, payload_hash: str
+) -> models.Scan | None:
+    submission = db.get(models.ScanSubmission, request_id)
+    if submission is None:
+        return None
+    if submission.payload_hash != payload_hash:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Request ID was previously used with a different scan payload",
+        )
+    if submission.scan_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="The request is still being processed; retry with the same request ID",
+        )
+    return db.scalars(
+        select(models.Scan)
+        .where(models.Scan.id == submission.scan_id)
+        .options(
+            selectinload(models.Scan.cell).selectinload(models.Cell.site),
+            selectinload(models.Scan.observations).selectinload(models.Observation.marker),
+            selectinload(models.Scan.relations),
+        )
+    ).one()
+
+
 @router.post("", response_model=schemas.ScanOut, status_code=status.HTTP_201_CREATED)
-def create_scan(payload: schemas.ScanIn, db: Annotated[Session, Depends(get_db)]) -> models.Scan:
+def create_scan(
+    payload: schemas.ScanIn,
+    db: Annotated[Session, Depends(get_db)],
+    idempotency_key: Annotated[UUID | None, Header(alias="Idempotency-Key")] = None,
+) -> models.Scan:
+    submission: models.ScanSubmission | None = None
+    if idempotency_key is not None:
+        request_id = str(idempotency_key)
+        payload_hash = sha256(payload.model_dump_json().encode("utf-8")).hexdigest()
+        previous = _find_previous_submission(db, request_id, payload_hash)
+        if previous is not None:
+            return previous
+
+        # This unique-key reservation is in the SAME transaction as the scan.
+        # If another request already committed the key, return its scan instead.
+        submission = models.ScanSubmission(request_id=request_id, payload_hash=payload_hash)
+        db.add(submission)
+        try:
+            db.flush()
+        except IntegrityError:
+            db.rollback()
+            previous = _find_previous_submission(db, request_id, payload_hash)
+            if previous is not None:
+                return previous
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Could not reserve request ID; retry with the same ID",
+            ) from None
+
     site = db.scalars(select(models.Site).where(models.Site.name == payload.site_name)).first()
     if site is None:
         site = models.Site(name=payload.site_name)
@@ -112,6 +170,8 @@ def create_scan(payload: schemas.ScanIn, db: Annotated[Session, Depends(get_db)]
             )
         )
 
+    if submission is not None:
+        submission.scan_id = scan.id
     db.commit()
 
     return scan
