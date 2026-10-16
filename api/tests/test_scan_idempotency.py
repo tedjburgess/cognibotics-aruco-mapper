@@ -4,13 +4,12 @@ from collections.abc import Generator
 from pathlib import Path
 from uuid import uuid4
 
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, func, select
-from sqlalchemy.orm import Session, sessionmaker
-
 from app import models
 from app.database import get_db
 from app.main import app
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine, func, select
+from sqlalchemy.orm import Session, sessionmaker
 
 
 class ScanIdempotencyTest(unittest.TestCase):
