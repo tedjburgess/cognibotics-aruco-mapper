@@ -64,6 +64,10 @@ class MainActivity : ComponentActivity() {
                 var currentScreen by rememberSaveable {
                     mutableStateOf(AppScreen.Home)
                 }
+                // Keep the pending cell name across screen navigation and activity recreation.
+                var workspaceName by rememberSaveable {
+                    mutableStateOf("")
+                }
 
                 val calibrationStore = remember {
                     CalibrationMeasurementStore(applicationContext)
@@ -141,7 +145,10 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Measurement -> {
                             MeasurementScreen(
-                                onStartMeasurement = {
+                                workspaceName = workspaceName,
+                                onWorkspaceNameChange = { workspaceName = it },
+                                onStartMeasurement = { normalizedName ->
+                                    workspaceName = normalizedName
                                     currentScreen = AppScreen.Camera
                                 },
                                 onHistoryClick = {
@@ -166,6 +173,7 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Camera -> {
                             CameraFeedScreen(
+                                workspaceName = workspaceName,
                                 onBack = {
                                     currentScreen = AppScreen.Measurement
                                 },

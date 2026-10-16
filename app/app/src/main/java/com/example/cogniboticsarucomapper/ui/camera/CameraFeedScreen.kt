@@ -70,7 +70,7 @@ private const val TAG = "CameraFeedScreen"
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
+fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val controlsMaxHeight = (LocalConfiguration.current.screenHeightDp.dp * 0.35f).coerceAtMost(
         300.dp
@@ -154,6 +154,11 @@ fun CameraFeedScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
             "Live measurement",
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+        )
+        Text(
+            text = "Cell / workspace: $workspaceName",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(horizontal = 20.dp)
         )
         when {
             permissionState.status.isGranted -> {
