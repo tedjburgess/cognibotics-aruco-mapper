@@ -412,14 +412,18 @@ fun CameraFeedScreen(
             }
         }
 
-        val capturable = latestFrame?.let { frame ->
-            frame.cameraParameters != CameraParameterSource.UNAVAILABLE &&
-                frame.markers.any { marker ->
-                    marker.scanState == MarkerScanState.STABLE &&
-                        marker.positionMm?.isValid == true &&
-                        marker.orientation?.isValid == true
-                }
-        } == true && analysisEnabled
+        val capturable = if (!analysisEnabled) {
+            false
+        } else {
+            latestFrame?.let { frame ->
+                frame.cameraParameters != CameraParameterSource.UNAVAILABLE &&
+                    frame.markers.any { marker ->
+                        marker.scanState == MarkerScanState.STABLE &&
+                            marker.positionMm?.isValid == true &&
+                            marker.orientation?.isValid == true
+                    }
+            } == true
+        }
 
         Button(
             onClick = {
