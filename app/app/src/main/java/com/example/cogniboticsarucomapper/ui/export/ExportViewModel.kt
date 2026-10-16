@@ -64,8 +64,9 @@ class ExportViewModel(
             } catch (error: Exception) {
                 Log.e("ExportViewModel", "Saving scan failed", error)
                 uiState = uiState.copy(
-                    errorMessage = "The API could not confirm this measurement. " +
-                        "Retrying will reuse the same request ID."
+                    errorMessage = "Could not contact or confirm the API. " +
+                        "Check the server address and connection, then retry. " +
+                        "The same request ID will be reused."
                 )
             } finally {
                 uiState = uiState.copy(isSaving = false)

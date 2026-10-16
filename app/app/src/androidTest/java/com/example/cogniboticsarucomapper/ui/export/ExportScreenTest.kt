@@ -36,6 +36,8 @@ class ExportScreenTest {
             CogniboticsArucoMapperTheme {
                 ExportScreen(
                     state = ExportUiState(),
+                    serverAddress = "http://10.0.2.2:8000/",
+                    onServerAddressChange = {},
                     onSave = {},
                     onStartMeasurement = {},
                     onBack = {}
@@ -65,6 +67,8 @@ class ExportScreenTest {
                 if (showExport) {
                     ExportScreen(
                         state = vm.uiState,
+                        serverAddress = "http://10.0.2.2:8000/",
+                        onServerAddressChange = {},
                         onSave = vm::save,
                         onStartMeasurement = {},
                         onBack = { showExport = false }
@@ -107,6 +111,8 @@ class ExportScreenTest {
             CogniboticsArucoMapperTheme {
                 ExportScreen(
                     state = vm.uiState,
+                    serverAddress = "http://10.0.2.2:8000/",
+                    onServerAddressChange = {},
                     onSave = vm::save,
                     onStartMeasurement = {},
                     onBack = {}

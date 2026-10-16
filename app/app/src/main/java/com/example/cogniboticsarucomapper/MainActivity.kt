@@ -23,6 +23,7 @@ import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasuremen
 import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurementStore
 import com.example.cogniboticsarucomapper.data.measurement.MeasurementRequestMapper
 import com.example.cogniboticsarucomapper.network.ApiClient
+import com.example.cogniboticsarucomapper.network.BackendSettings
 import com.example.cogniboticsarucomapper.ui.calibration.CalibrationScreen
 import com.example.cogniboticsarucomapper.ui.calibration.CheckerboardCameraScreen
 import com.example.cogniboticsarucomapper.ui.camera.CameraFeedScreen
@@ -67,6 +68,7 @@ class MainActivity : ComponentActivity() {
         }
 
         enableEdgeToEdge()
+        ApiClient.initialize(application)
 
         setContent {
             CogniboticsArucoMapperTheme {
@@ -106,6 +108,10 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
+                }
+
+                var serverAddress by rememberSaveable {
+                    mutableStateOf(BackendSettings.getBaseUrl(applicationContext))
                 }
 
                 Scaffold(
@@ -218,6 +224,11 @@ class MainActivity : ComponentActivity() {
                         AppScreen.Export -> {
                             ExportScreen(
                                 state = exportViewModel.uiState,
+                                serverAddress = serverAddress,
+                                onServerAddressChange = {
+                                    serverAddress = it
+                                    BackendSettings.setBaseUrl(applicationContext, it)
+                                },
                                 onSave = exportViewModel::save,
                                 onStartMeasurement = {
                                     if (exportViewModel.startNewMeasurement()) {

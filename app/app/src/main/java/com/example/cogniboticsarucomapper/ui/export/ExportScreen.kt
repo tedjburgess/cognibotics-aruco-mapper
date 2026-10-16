@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,6 +16,8 @@ import com.example.cogniboticsarucomapper.ui.components.InfoPanel
 @Composable
 fun ExportScreen(
     state: ExportUiState,
+    serverAddress: String,
+    onServerAddressChange: (String) -> Unit,
     onSave: () -> Unit,
     onStartMeasurement: () -> Unit,
     onBack: () -> Unit,
@@ -27,6 +30,15 @@ fun ExportScreen(
         onBack = onBack,
         modifier = modifier
     ) {
+        OutlinedTextField(
+            value = serverAddress,
+            onValueChange = onServerAddressChange,
+            label = { Text("API server URL") },
+            supportingText = { Text("Emulator: http://10.0.2.2:8000/; phone: use your PC's LAN IP.") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !state.isSaving
+        )
         if (scan == null || scan.observations.isEmpty()) {
             InfoPanel(
                 "No measurement captured",
