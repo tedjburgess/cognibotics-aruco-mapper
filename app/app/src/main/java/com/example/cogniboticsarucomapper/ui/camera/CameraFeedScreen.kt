@@ -70,7 +70,12 @@ private const val TAG = "CameraFeedScreen"
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifier = Modifier) {
+fun CameraFeedScreen(
+    workspaceName: String,
+    onCapture: (VisionEvent.FrameMeasured) -> Boolean,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val controlsMaxHeight = (LocalConfiguration.current.screenHeightDp.dp * 0.35f).coerceAtMost(
         300.dp
@@ -89,6 +94,7 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
     var testSheetMode by remember { mutableStateOf(true) }
     var cameraParameters by remember { mutableStateOf(CameraParameterSource.UNAVAILABLE) }
     var measurementError by remember { mutableStateOf<String?>(null) }
+    var latestFrame by remember { mutableStateOf<VisionEvent.FrameMeasured?>(null) }
     val visibleMarkers = remember { mutableStateListOf<VisionEvent.MarkerDetected>() }
     val analysisEnabled by visionEngine.analysisEnabled.collectAsStateWithLifecycle()
     val fps by visionEngine.fps.collectAsStateWithLifecycle()
@@ -103,6 +109,7 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                     if (visionEngine.analysisEnabled.value &&
                         event.testSheetMode == testSheetMode
                     ) {
+                        latestFrame = event
                         visibleMarkers.clear()
                         visibleMarkers.addAll(event.markers.filter { it.certainty >= 0.3f })
                         distances = displayTracker.update(
@@ -126,6 +133,7 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                     }
                 }
                 is VisionEvent.MarkersCleared -> {
+                    latestFrame = null
                     visibleMarkers.clear()
                     distances =
                         displayTracker.update(
@@ -135,6 +143,7 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                         )
                 }
                 is VisionEvent.AnalysisError -> {
+                    latestFrame = null
                     visibleMarkers.clear()
                     distances =
                         displayTracker.update(
@@ -271,6 +280,7 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                             onCheckedChange = { enabled ->
                                 visionEngine.setAnalysisEnabled(enabled)
                                 if (!enabled) {
+                                    latestFrame = null
                                     visibleMarkers.clear()
                                     displayTracker.reset()
                                     distances = emptyList()
@@ -287,6 +297,7 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                             checked = testSheetMode,
                             onCheckedChange = {
                                 testSheetMode = it
+                                latestFrame = null
                                 markerAnalyzer?.testSheetMode = it
                                 displayTracker.reset()
                                 distances = emptyList()
@@ -399,6 +410,62 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                     onRequest = { permissionState.launchPermissionRequest() }
                 )
             }
+        }
+
+        val capturable = if (!analysisEnabled) {
+            false
+        } else {
+            latestFrame?.let { frame ->
+                frame.cameraParameters != CameraParameterSource.UNAVAILABLE &&
+                    frame.markers.any { marker ->
+                        marker.scanState == MarkerScanState.STABLE &&
+                            marker.positionMm?.isValid == true &&
+                            marker.orientation?.isValid == true
+                    }
+            } == true
+        }
+
+        Button(
+            onClick = {
+                val frame = latestFrame
+                if (frame != null) {
+                    val isRecent = frame.markers.any { marker ->
+                        System.currentTimeMillis() - marker.timestampMs in 0..1_500
+                    }
+                    if (isRecent) {
+                        val stable = frame.markers.filter { marker ->
+                            marker.scanState == MarkerScanState.STABLE &&
+                                marker.positionMm?.isValid == true &&
+                                marker.orientation?.isValid == true
+                        }
+                        val stableKeys = stable.map { it.key }.toSet()
+                        val snapshot = frame.copy(
+                            markers = stable,
+                            distances = frame.distances.filter {
+                                it.from in stableKeys && it.to in stableKeys
+                            }
+                        )
+                        if (!onCapture(snapshot)) {
+                            measurementError = "Measurement could not be prepared for saving."
+                        }
+                    } else {
+                        latestFrame = null
+                        measurementError = "Camera measurement expired. Keep markers in view."
+                    }
+                }
+            },
+            enabled = capturable,
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
+        ) {
+            Text("Capture measurement")
+        }
+
+        if (!capturable) {
+            Text(
+                "Hold a marker steady until its position and rotation are available.",
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
         }
 
         OutlinedButton(

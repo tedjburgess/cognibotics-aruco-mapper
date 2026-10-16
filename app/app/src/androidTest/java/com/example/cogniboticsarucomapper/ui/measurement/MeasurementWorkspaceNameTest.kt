@@ -23,15 +23,22 @@ class MeasurementWorkspaceNameTest {
     val compose = createComposeRule()
 
     @Test
-    fun requiresNameAndPassesTrimmedNameWhenStartingMeasurement() {
-        var startedWith: String? = null
+    fun requiresBothNamesAndPassesTrimmedMetadata() {
+        var site: String? = null
+        var cell: String? = null
         compose.setContent {
+            var siteName by remember { mutableStateOf("") }
             var workspaceName by remember { mutableStateOf("") }
             CogniboticsArucoMapperTheme {
                 MeasurementScreen(
+                    siteName = siteName,
+                    onSiteNameChange = { siteName = it },
                     workspaceName = workspaceName,
                     onWorkspaceNameChange = { workspaceName = it },
-                    onStartMeasurement = { startedWith = it },
+                    onStartMeasurement = { selectedSite, selectedCell ->
+                        site = selectedSite
+                        cell = selectedCell
+                    },
                     onHistoryClick = {},
                     onBack = {}
                 )
@@ -39,21 +46,28 @@ class MeasurementWorkspaceNameTest {
         }
 
         compose.onNodeWithText("Start Measurement").assertIsNotEnabled()
-        compose.onNodeWithText("Cell / workspace name")
-            .performTextInput("  Assembly cell A  ")
+        compose.onNodeWithText("Cell / workspace name").performTextInput("  Assembly cell A  ")
+        compose.onNodeWithText("Start Measurement").assertIsNotEnabled()
+        compose.onNodeWithText("Site name").performTextInput("  Test lab  ")
         compose.onNodeWithText("Start Measurement").assertIsEnabled().performClick()
-        compose.runOnIdle { assertEquals("Assembly cell A", startedWith) }
+        compose.runOnIdle {
+            assertEquals("Test lab", site)
+            assertEquals("Assembly cell A", cell)
+        }
     }
 
     @Test
-    fun whitespaceOnlyNameDoesNotEnableStart() {
+    fun whitespaceOnlyWorkspaceDoesNotEnableStart() {
         compose.setContent {
+            var siteName by remember { mutableStateOf("Test lab") }
             var workspaceName by remember { mutableStateOf("") }
             CogniboticsArucoMapperTheme {
                 MeasurementScreen(
+                    siteName = siteName,
+                    onSiteNameChange = { siteName = it },
                     workspaceName = workspaceName,
                     onWorkspaceNameChange = { workspaceName = it },
-                    onStartMeasurement = {},
+                    onStartMeasurement = { _, _ -> },
                     onHistoryClick = {},
                     onBack = {}
                 )
@@ -61,6 +75,28 @@ class MeasurementWorkspaceNameTest {
         }
 
         compose.onNodeWithText("Cell / workspace name").performTextInput("    ")
+        compose.onNodeWithText("Start Measurement").assertIsNotEnabled()
+    }
+
+    @Test
+    fun whitespaceOnlySiteDoesNotEnableStart() {
+        compose.setContent {
+            var siteName by remember { mutableStateOf("") }
+            var workspaceName by remember { mutableStateOf("Cell A") }
+            CogniboticsArucoMapperTheme {
+                MeasurementScreen(
+                    siteName = siteName,
+                    onSiteNameChange = { siteName = it },
+                    workspaceName = workspaceName,
+                    onWorkspaceNameChange = { workspaceName = it },
+                    onStartMeasurement = { _, _ -> },
+                    onHistoryClick = {},
+                    onBack = {}
+                )
+            }
+        }
+
+        compose.onNodeWithText("Site name").performTextInput("   ")
         compose.onNodeWithText("Start Measurement").assertIsNotEnabled()
     }
 }
