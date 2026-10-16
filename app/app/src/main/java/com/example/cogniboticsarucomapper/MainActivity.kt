@@ -1,5 +1,6 @@
 package com.example.cogniboticsarucomapper
 
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -19,16 +20,24 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurement
 import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurementStore
+import com.example.cogniboticsarucomapper.data.measurement.MeasurementRequestMapper
 import com.example.cogniboticsarucomapper.network.ApiClient
-import com.example.cogniboticsarucomapper.network.model.ScanResponse
+import com.example.cogniboticsarucomapper.network.model.ScanRequest
 import com.example.cogniboticsarucomapper.ui.calibration.CalibrationScreen
 import com.example.cogniboticsarucomapper.ui.calibration.CheckerboardCameraScreen
 import com.example.cogniboticsarucomapper.ui.camera.CameraFeedScreen
 import com.example.cogniboticsarucomapper.ui.export.ExportScreen
 import com.example.cogniboticsarucomapper.ui.home.HomeScreen
+import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementScreen
+import com.example.cogniboticsarucomapper.ui.measurement.toMeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
+import com.google.gson.Gson
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 private const val SPLASH_MIN_DURATION_MS = 1_500L
 
@@ -63,6 +72,24 @@ class MainActivity : ComponentActivity() {
                 var currentScreen by rememberSaveable {
                     mutableStateOf(AppScreen.Home)
                 }
+                // Keep the pending cell name across screen navigation and activity recreation.
+                var workspaceName by rememberSaveable {
+                    mutableStateOf("")
+                }
+                var siteName by rememberSaveable {
+                    mutableStateOf("")
+                }
+                // Store the captured API payload, not a mutable camera frame, across rotation.
+                var capturedScanJson by rememberSaveable {
+                    mutableStateOf<String?>(null)
+                }
+                var savedScanId by rememberSaveable {
+                    mutableStateOf<String?>(null)
+                }
+                val gson = remember { Gson() }
+                val capturedScan = remember(capturedScanJson) {
+                    capturedScanJson?.let { gson.fromJson(it, ScanRequest::class.java) }
+                }
 
                 val calibrationStore = remember {
                     CalibrationMeasurementStore(applicationContext)
@@ -71,66 +98,23 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(calibrationStore.load())
                 }
 
-                var scans by remember {
-                    mutableStateOf<List<ScanResponse>>(emptyList())
+                var measurements by remember {
+                    mutableStateOf<List<MeasurementHistoryItem>>(emptyList())
                 }
 
-                var scansLoading by remember {
-                    mutableStateOf(false)
-                }
-
-                var scansError by remember {
-                    mutableStateOf<String?>(null)
-                }
-
-                var scansReloadKey by remember {
-                    mutableStateOf(0)
-                }
-
-                LaunchedEffect(currentScreen, scansReloadKey) {
-                    if (
-                        currentScreen == AppScreen.MeasurementHistory ||
-                        currentScreen == AppScreen.Export
-                    ) {
-                        scansLoading = true
-                        scansError = null
-
+                LaunchedEffect(currentScreen) {
+                    if (currentScreen == AppScreen.MeasurementHistory) {
                         try {
-                            scans = ApiClient.service.getScans()
+                            measurements =
+                                ApiClient.service.getScans().map { scan ->
+                                    scan.toMeasurementHistoryItem()
+                                }
                         } catch (e: Exception) {
                             Log.e(
                                 "MainActivity",
-                                "Failed to load scans",
+                                "Failed to load measurement history",
                                 e
                             )
-
-                            scansError = "Check that the API is running and try again."
-                        } finally {
-                            scansLoading = false
-                        }
-                    }
-                }
-
-                LaunchedEffect(currentScreen, scansReloadKey) {
-                    if (
-                        currentScreen == AppScreen.MeasurementHistory ||
-                        currentScreen == AppScreen.Export
-                    ) {
-                        scansLoading = true
-                        scansError = null
-
-                        try {
-                            scans = ApiClient.service.getScans()
-                        } catch (e: Exception) {
-                            Log.e(
-                                "MainActivity",
-                                "Failed to load scans",
-                                e
-                            )
-
-                            scansError = "Check that the API is running and try again."
-                        } finally {
-                            scansLoading = false
                         }
                     }
                 }
@@ -183,7 +167,15 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Measurement -> {
                             MeasurementScreen(
-                                onStartMeasurement = {
+                                siteName = siteName,
+                                onSiteNameChange = { siteName = it },
+                                workspaceName = workspaceName,
+                                onWorkspaceNameChange = { workspaceName = it },
+                                onStartMeasurement = { normalizedSite, normalizedCell ->
+                                    siteName = normalizedSite
+                                    workspaceName = normalizedCell
+                                    capturedScanJson = null
+                                    savedScanId = null
                                     currentScreen = AppScreen.Camera
                                 },
                                 onHistoryClick = {
@@ -198,12 +190,7 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.MeasurementHistory -> {
                             MeasurementHistoryScreen(
-                                scans = scans,
-                                isLoading = scansLoading,
-                                errorMessage = scansError,
-                                onRetry = {
-                                    scansReloadKey++
-                                },
+                                measurements = measurements,
                                 onBack = {
                                     currentScreen = AppScreen.Measurement
                                 },
@@ -213,6 +200,27 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Camera -> {
                             CameraFeedScreen(
+                                workspaceName = workspaceName,
+                                onCapture = { frame ->
+                                    val request = MeasurementRequestMapper.fromFrame(
+                                        frame = frame,
+                                        siteName = siteName,
+                                        cellName = workspaceName,
+                                        deviceId = listOf(Build.MANUFACTURER, Build.MODEL)
+                                            .filter { it.isNotBlank() }
+                                            .joinToString(" ")
+                                            .ifBlank { "Android device" },
+                                        measuredAt = utcMeasurementTime()
+                                    )
+                                    if (request != null) {
+                                        capturedScanJson = gson.toJson(request)
+                                        savedScanId = null
+                                        currentScreen = AppScreen.Export
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                },
                                 onBack = {
                                     currentScreen = AppScreen.Measurement
                                 },
@@ -222,11 +230,12 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Export -> {
                             ExportScreen(
-                                scans = scans,
-                                isLoading = scansLoading,
-                                errorMessage = scansError,
-                                onRetry = {
-                                    scansReloadKey++
+                                scan = capturedScan,
+                                savedScanId = savedScanId,
+                                onSave = { scan -> ApiClient.service.createScan(scan) },
+                                onSaved = { savedId -> savedScanId = savedId },
+                                onStartMeasurement = {
+                                    currentScreen = AppScreen.Measurement
                                 },
                                 onBack = {
                                     currentScreen = AppScreen.Home
@@ -240,3 +249,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+private fun utcMeasurementTime(): String = SimpleDateFormat(
+    "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+    Locale.US
+).apply {
+    timeZone = TimeZone.getTimeZone("UTC")
+}.format(Date())

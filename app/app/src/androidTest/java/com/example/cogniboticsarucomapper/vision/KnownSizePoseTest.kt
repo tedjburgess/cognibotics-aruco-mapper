@@ -92,6 +92,11 @@ class KnownSizePoseTest {
         assertEquals(50.0, small!!.x, 0.01)
         assertEquals(20.0, small.y, 0.01)
         assertEquals(500.0, small.z, 0.01)
+
+        // The same OpenCV pose solution must retain a real, normalized rotation for API mapping.
+        val fullPose = solver.estimate(corners, 20.0, model)
+        assertNotNull(fullPose)
+        assertTrue(fullPose!!.orientation.isValid)
         val large = solver.solve(corners, 100.0, model)!!
         assertEquals(small.z * 5, large.z, 0.05)
     }
