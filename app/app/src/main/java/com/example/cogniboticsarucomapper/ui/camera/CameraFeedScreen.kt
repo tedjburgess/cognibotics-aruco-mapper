@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -65,8 +64,12 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 private const val TAG = "CameraFeedScreen"
+private const val CAMERA_UI_REFRESH_MS = 180L
+private const val MARKER_HOLD_MS = 600L
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -94,8 +97,13 @@ fun CameraFeedScreen(
     var testSheetMode by remember { mutableStateOf(true) }
     var cameraParameters by remember { mutableStateOf(CameraParameterSource.UNAVAILABLE) }
     var measurementError by remember { mutableStateOf<String?>(null) }
-    var latestFrame by remember { mutableStateOf<VisionEvent.FrameMeasured?>(null) }
-    val visibleMarkers = remember { mutableStateListOf<VisionEvent.MarkerDetected>() }
+    // Camera frames arrive much faster than Compose needs to redraw.
+    // Keep the capture snapshot separate from observable UI state.
+    val latestFrame = remember { AtomicReference<VisionEvent.FrameMeasured?>(null) }
+    val lastUiUpdateAt = remember { AtomicLong(0L) }
+    val lastMarkerSeenAt = remember { AtomicLong(0L) }
+    var visibleMarkers by remember { mutableStateOf<List<VisionEvent.MarkerDetected>>(emptyList()) }
+    var captureReady by remember { mutableStateOf(false) }
     val analysisEnabled by visionEngine.analysisEnabled.collectAsStateWithLifecycle()
     val fps by visionEngine.fps.collectAsStateWithLifecycle()
     var torchEnabled by remember { mutableStateOf(false) }
@@ -109,48 +117,62 @@ fun CameraFeedScreen(
                     if (visionEngine.analysisEnabled.value &&
                         event.testSheetMode == testSheetMode
                     ) {
-                        latestFrame = event
-                        visibleMarkers.clear()
-                        visibleMarkers.addAll(event.markers.filter { it.certainty >= 0.3f })
-                        distances = displayTracker.update(
-                            visibleMarkers.map {
-                                it.key
-                            }.toSet(),
-                            event.distances,
-                            SystemClock.elapsedRealtime()
-                        )
-                        cameraParameters = event.cameraParameters
-                        measurementError = null
+                        val now = SystemClock.elapsedRealtime()
+                        // Only the current camera frame is eligible for capture.
+                        latestFrame.set(event.takeIf { it.markers.isNotEmpty() })
+                        val shown = event.markers.filter { it.certainty >= 0.3f }.take(10)
+                        if (shown.isNotEmpty()) lastMarkerSeenAt.set(now)
+
+                        // Render at about 5 FPS, not once per analyzed camera frame.
+                        if (now - lastUiUpdateAt.get() >= CAMERA_UI_REFRESH_MS ||
+                            (visibleMarkers.isEmpty() && shown.isNotEmpty())
+                        ) {
+                            lastUiUpdateAt.set(now)
+                            // A single missed frame must not make the marker list flash empty.
+                            if (shown.isNotEmpty() ||
+                                now - lastMarkerSeenAt.get() >= MARKER_HOLD_MS
+                            ) {
+                                visibleMarkers = shown
+                            }
+                            captureReady = event.cameraParameters !=
+                                CameraParameterSource.UNAVAILABLE &&
+                                shown.any { marker ->
+                                    marker.scanState == MarkerScanState.STABLE &&
+                                        marker.positionMm?.isValid == true &&
+                                        marker.orientation?.isValid == true
+                                }
+                            distances = displayTracker.update(
+                                shown.map { it.key }.toSet(),
+                                event.distances,
+                                now
+                            )
+                            cameraParameters = event.cameraParameters
+                            measurementError = null
+                        }
                     }
                 }
                 is VisionEvent.MarkerDetected -> {
-                    visibleMarkers.removeAll { it.key == event.key }
-                    visibleMarkers.add(0, event)
-                    while (visibleMarkers.size >
-                        10
-                    ) {
-                        visibleMarkers.removeAt(visibleMarkers.lastIndex)
-                    }
+                    // Use full FrameMeasured snapshots rather than updating the UI per marker.
                 }
                 is VisionEvent.MarkersCleared -> {
-                    latestFrame = null
-                    visibleMarkers.clear()
-                    distances =
-                        displayTracker.update(
-                            emptySet(),
-                            emptyList(),
-                            SystemClock.elapsedRealtime()
-                        )
+                    latestFrame.set(null)
+                    captureReady = false
+                    visibleMarkers = emptyList()
+                    distances = displayTracker.update(
+                        emptySet(),
+                        emptyList(),
+                        SystemClock.elapsedRealtime()
+                    )
                 }
                 is VisionEvent.AnalysisError -> {
-                    latestFrame = null
-                    visibleMarkers.clear()
-                    distances =
-                        displayTracker.update(
-                            emptySet(),
-                            emptyList(),
-                            SystemClock.elapsedRealtime()
-                        )
+                    latestFrame.set(null)
+                    captureReady = false
+                    visibleMarkers = emptyList()
+                    distances = displayTracker.update(
+                        emptySet(),
+                        emptyList(),
+                        SystemClock.elapsedRealtime()
+                    )
                     measurementError = "Measurement unavailable for this frame."
                     Log.e(TAG, "Vision error: ${event.message}", event.throwable)
                 }
@@ -179,6 +201,10 @@ fun CameraFeedScreen(
                         controller?.unbind()
                         analysisExecutor.shutdownNow()
                     }
+                }
+                // Torch updates must be a side effect, not repeated on every frame redraw.
+                LaunchedEffect(controller, torchEnabled) {
+                    controller?.enableTorch(torchEnabled)
                 }
 
                 Box(
@@ -243,8 +269,6 @@ fun CameraFeedScreen(
                     }
                 }
 
-                controller?.enableTorch(torchEnabled)
-
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(
                         horizontal = 16.dp,
@@ -280,8 +304,9 @@ fun CameraFeedScreen(
                             onCheckedChange = { enabled ->
                                 visionEngine.setAnalysisEnabled(enabled)
                                 if (!enabled) {
-                                    latestFrame = null
-                                    visibleMarkers.clear()
+                                    latestFrame.set(null)
+                                    captureReady = false
+                                    visibleMarkers = emptyList()
                                     displayTracker.reset()
                                     distances = emptyList()
                                 }
@@ -297,11 +322,12 @@ fun CameraFeedScreen(
                             checked = testSheetMode,
                             onCheckedChange = {
                                 testSheetMode = it
-                                latestFrame = null
+                                latestFrame.set(null)
+                                captureReady = false
                                 markerAnalyzer?.testSheetMode = it
                                 displayTracker.reset()
                                 distances = emptyList()
-                                visibleMarkers.clear()
+                                visibleMarkers = emptyList()
                             }
                         )
                         OptionToggle(
@@ -412,22 +438,11 @@ fun CameraFeedScreen(
             }
         }
 
-        val capturable = if (!analysisEnabled) {
-            false
-        } else {
-            latestFrame?.let { frame ->
-                frame.cameraParameters != CameraParameterSource.UNAVAILABLE &&
-                    frame.markers.any { marker ->
-                        marker.scanState == MarkerScanState.STABLE &&
-                            marker.positionMm?.isValid == true &&
-                            marker.orientation?.isValid == true
-                    }
-            } == true
-        }
+        val capturable = analysisEnabled && captureReady
 
         Button(
             onClick = {
-                val frame = latestFrame
+                val frame = latestFrame.get()
                 if (frame != null) {
                     val isRecent = frame.markers.any { marker ->
                         System.currentTimeMillis() - marker.timestampMs in 0..1_500
@@ -449,7 +464,8 @@ fun CameraFeedScreen(
                             measurementError = "Measurement could not be prepared for saving."
                         }
                     } else {
-                        latestFrame = null
+                        latestFrame.set(null)
+                        captureReady = false
                         measurementError = "Camera measurement expired. Keep markers in view."
                     }
                 }

@@ -18,7 +18,8 @@ data class PairReading(
 class DistanceDisplayTracker {
     private data class PairKey(val from: MarkerKey, val to: MarkerKey)
     private data class Sample(val value: Double, val timeMs: Long)
-    private val known = mutableSetOf<PairKey>()
+    private val known = mutableMapOf<PairKey, Long>()
+    private val rowRetentionMs = 1_500L
     private val windows = mutableMapOf<PairKey, ArrayDeque<Sample>>()
     private var lastTimeMs = Long.MIN_VALUE
 
@@ -27,27 +28,29 @@ class DistanceDisplayTracker {
         distances: List<MarkerPairDistance>,
         timeMs: Long
     ): List<PairReading> {
-        if (timeMs < lastTimeMs) windows.clear()
+        if (timeMs < lastTimeMs) {
+            windows.clear()
+            known.clear()
+        }
         lastTimeMs = timeMs
+        known.entries.removeAll { (_, lastSeen) -> timeMs - lastSeen > rowRetentionMs }
         val sorted = keys.sortedWith(compareBy({ it.family.ordinal }, { it.id }))
         for (left in sorted.indices) {
             for (right in left + 1 until sorted.size) {
-                known.add(
-                    PairKey(sorted[left], sorted[right])
-                )
+                known[PairKey(sorted[left], sorted[right])] = timeMs
             }
         }
         val current = distances.filter { it.distanceMm.isFinite() && it.distanceMm >= 0.0 }
             .associateBy { PairKey(it.from, it.to) }
         windows.keys.retainAll(current.keys)
         for ((pair, measurement) in current) {
-            known.add(pair)
+            known[pair] = timeMs
             val window = windows.getOrPut(pair) { ArrayDeque() }
             while (window.isNotEmpty() && timeMs - window.first().timeMs > 500) window.removeFirst()
             window.addLast(Sample(measurement.distanceMm, timeMs))
             while (window.size > 5) window.removeFirst()
         }
-        return known.sortedWith(
+        return known.keys.sortedWith(
             compareBy(
                 { it.from.family.ordinal },
                 { it.from.id },

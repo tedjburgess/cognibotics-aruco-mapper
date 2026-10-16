@@ -21,6 +21,14 @@ class DistanceDisplayTrackerTest {
         assertTrue(tracker.update(emptySet(), emptyList(), 60).isEmpty())
     }
 
+    @Test fun oldMarkerPairsExpireRatherThanAccumulatingForever() {
+        val tracker = DistanceDisplayTracker()
+        tracker.update(setOf(a, b), listOf(MarkerPairDistance(a, b, 135.0)), 0)
+        assertEquals(1, tracker.update(emptySet(), emptyList(), 500).size)
+        assertTrue(tracker.update(emptySet(), emptyList(), 1_501).isEmpty())
+        assertTrue(tracker.update(emptySet(), emptyList(), 2_000).isEmpty())
+    }
+
     @Test fun medianResistsAnOutlierAndRawErrorStaysHonest() {
         val tracker = DistanceDisplayTracker()
         for ((index, value) in listOf(134.0, 135.0, 136.0, 135.0, 220.0).withIndex()) {

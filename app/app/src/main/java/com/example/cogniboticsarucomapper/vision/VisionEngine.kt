@@ -37,9 +37,10 @@ class VisionEngine(
         ): List<VisionEvent>
     }
 
+    // Never replay old camera frames or queue dozens of snapshots on the UI thread.
     private val _events = MutableSharedFlow<VisionEvent>(
-        replay = 16,
-        extraBufferCapacity = 64,
+        replay = 0,
+        extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     val events: SharedFlow<VisionEvent> = _events.asSharedFlow()
