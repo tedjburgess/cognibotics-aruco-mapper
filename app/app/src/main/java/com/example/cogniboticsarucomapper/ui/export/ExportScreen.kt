@@ -34,7 +34,9 @@ fun ExportScreen(
             value = serverAddress,
             onValueChange = onServerAddressChange,
             label = { Text("API server URL") },
-            supportingText = { Text("Emulator: http://10.0.2.2:8000/; phone: use your PC's LAN IP.") },
+            supportingText = {
+                Text("Emulator: 10.0.2.2; phone: use your computer's LAN IP.")
+            },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
             enabled = !state.isSaving
