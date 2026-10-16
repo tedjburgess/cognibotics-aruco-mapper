@@ -1,13 +1,11 @@
 package com.example.cogniboticsarucomapper
 
-import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -21,23 +19,17 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurement
 import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurementStore
-import com.example.cogniboticsarucomapper.data.measurement.MeasurementRequestMapper
 import com.example.cogniboticsarucomapper.network.ApiClient
 import com.example.cogniboticsarucomapper.ui.calibration.CalibrationScreen
 import com.example.cogniboticsarucomapper.ui.calibration.CheckerboardCameraScreen
 import com.example.cogniboticsarucomapper.ui.camera.CameraFeedScreen
 import com.example.cogniboticsarucomapper.ui.export.ExportScreen
-import com.example.cogniboticsarucomapper.ui.export.ExportViewModel
 import com.example.cogniboticsarucomapper.ui.home.HomeScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementScreen
 import com.example.cogniboticsarucomapper.ui.measurement.toMeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
 
 private const val SPLASH_MIN_DURATION_MS = 1_500L
 
@@ -52,7 +44,6 @@ private enum class AppScreen {
 }
 
 class MainActivity : ComponentActivity() {
-    private val exportViewModel: ExportViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashStartedAt = SystemClock.uptimeMillis()
@@ -77,9 +68,7 @@ class MainActivity : ComponentActivity() {
                 var workspaceName by rememberSaveable {
                     mutableStateOf("")
                 }
-                var siteName by rememberSaveable {
-                    mutableStateOf("")
-                }
+
                 val calibrationStore = remember {
                     CalibrationMeasurementStore(applicationContext)
                 }
@@ -156,16 +145,11 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Measurement -> {
                             MeasurementScreen(
-                                siteName = siteName,
-                                onSiteNameChange = { siteName = it },
                                 workspaceName = workspaceName,
                                 onWorkspaceNameChange = { workspaceName = it },
-                                onStartMeasurement = { normalizedSite, normalizedCell ->
-                                    siteName = normalizedSite
-                                    workspaceName = normalizedCell
-                                    if (exportViewModel.startNewMeasurement()) {
-                                        currentScreen = AppScreen.Camera
-                                    }
+                                onStartMeasurement = { normalizedName ->
+                                    workspaceName = normalizedName
+                                    currentScreen = AppScreen.Camera
                                 },
                                 onHistoryClick = {
                                     currentScreen = AppScreen.MeasurementHistory
@@ -190,24 +174,6 @@ class MainActivity : ComponentActivity() {
                         AppScreen.Camera -> {
                             CameraFeedScreen(
                                 workspaceName = workspaceName,
-                                onCapture = { frame ->
-                                    val request = MeasurementRequestMapper.fromFrame(
-                                        frame = frame,
-                                        siteName = siteName,
-                                        cellName = workspaceName,
-                                        deviceId = listOf(Build.MANUFACTURER, Build.MODEL)
-                                            .filter { it.isNotBlank() }
-                                            .joinToString(" ")
-                                            .ifBlank { "Android device" },
-                                        measuredAt = utcMeasurementTime()
-                                    )
-                                    if (request != null && exportViewModel.capture(request)) {
-                                        currentScreen = AppScreen.Export
-                                        true
-                                    } else {
-                                        false
-                                    }
-                                },
                                 onBack = {
                                     currentScreen = AppScreen.Measurement
                                 },
@@ -217,13 +183,6 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Export -> {
                             ExportScreen(
-                                state = exportViewModel.uiState,
-                                onSave = exportViewModel::save,
-                                onStartMeasurement = {
-                                    if (exportViewModel.startNewMeasurement()) {
-                                        currentScreen = AppScreen.Measurement
-                                    }
-                                },
                                 onBack = {
                                     currentScreen = AppScreen.Home
                                 },
@@ -236,10 +195,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-private fun utcMeasurementTime(): String = SimpleDateFormat(
-    "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-    Locale.US
-).apply {
-    timeZone = TimeZone.getTimeZone("UTC")
-}.format(Date())

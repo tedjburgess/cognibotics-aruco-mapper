@@ -53,7 +53,6 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     testImplementation(libs.junit)

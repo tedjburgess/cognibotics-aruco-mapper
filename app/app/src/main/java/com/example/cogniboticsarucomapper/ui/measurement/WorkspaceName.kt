@@ -8,6 +8,3 @@ internal fun normalizeWorkspaceName(value: String): String? {
     val name = value.trim()
     return name.takeIf { it.isNotEmpty() && it.length <= MAX_WORKSPACE_NAME_LENGTH }
 }
-
-// A site has the same 255-character database limit and cannot be blank.
-internal fun normalizeSiteName(value: String): String? = normalizeWorkspaceName(value)
