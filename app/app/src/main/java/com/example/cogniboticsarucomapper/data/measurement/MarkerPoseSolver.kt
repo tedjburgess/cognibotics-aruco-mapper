@@ -112,7 +112,9 @@ class MarkerPoseSolver {
                 // This checks the image fit, not the millimetre accuracy of the camera calibration.
                 if (error.isFinite() && error <= minOf(2.0, thickness * 0.05)) {
                     val rotationVector = DoubleArray(3)
-                    if (rotation.get(0, 0, rotationVector) != 3) return
+                    // Mat.get(double[]) reports bytes copied, not the number of doubles.
+                    val bytesRead = rotation.get(0, 0, rotationVector)
+                    if (bytesRead != rotationVector.size * java.lang.Double.BYTES) return
                     val orientation = MarkerOrientation.fromRotationVector(
                         rotationVector[0],
                         rotationVector[1],
