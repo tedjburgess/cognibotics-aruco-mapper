@@ -3,7 +3,6 @@ package com.example.cogniboticsarucomapper.vision
 import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerFamily
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerKey
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrientation
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerPairDistance
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
 
@@ -22,8 +21,7 @@ sealed interface VisionEvent {
         val rotationDegrees: Int,
         val family: MarkerFamily = MarkerFamily.FOUR_BY_FOUR,
         val positionMm: PositionMm? = null,
-        val tiltDegrees: Double? = null,
-        val orientation: MarkerOrientation? = null
+        val tiltDegrees: Double? = null
     ) : VisionEvent {
         val key: MarkerKey get() = MarkerKey(family, markerId)
     }

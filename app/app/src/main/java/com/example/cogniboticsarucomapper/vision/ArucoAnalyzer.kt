@@ -91,8 +91,7 @@ class ArucoAnalyzer(dictionaryType: ArucoDictionaryType? = null) : VisionEngine.
                             rotationDegrees = rotationDegrees,
                             family = family,
                             positionMm = pose?.position,
-                            tiltDegrees = pose?.tiltDegrees,
-                            orientation = pose?.orientation
+                            tiltDegrees = pose?.tiltDegrees
                         )
                     )
                 }
