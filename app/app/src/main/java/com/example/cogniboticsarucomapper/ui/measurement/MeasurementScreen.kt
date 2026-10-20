@@ -140,7 +140,7 @@ fun MeasurementScreen(
                     },
                     modifier = Modifier.fillMaxWidth()
                         .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
-                    label = { Text("Cell / Workspace") },
+                    label = { Text("Cell") },
                     singleLine = true,
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(cellMenuExpanded)
