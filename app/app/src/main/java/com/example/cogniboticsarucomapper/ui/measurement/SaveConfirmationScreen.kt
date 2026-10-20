@@ -31,6 +31,7 @@ import com.example.cogniboticsarucomapper.domain.measurement.toApiDictionary
 import com.example.cogniboticsarucomapper.network.ApiClient
 import com.example.cogniboticsarucomapper.ui.components.PageHeading
 import com.example.cogniboticsarucomapper.vision.VisionEvent
+import java.time.Instant
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -145,7 +146,7 @@ fun SaveConfirmationScreen(
                     context.contentResolver,
                     android.provider.Settings.Secure.ANDROID_ID
                 ) ?: "android-device"
-                val measuredAt = java.time.OffsetDateTime.now().toString()
+                val measuredAt = Instant.now().toString()
 
                 val request = com.example.cogniboticsarucomapper.network.model.ScanRequest(
                     site_name = siteName,

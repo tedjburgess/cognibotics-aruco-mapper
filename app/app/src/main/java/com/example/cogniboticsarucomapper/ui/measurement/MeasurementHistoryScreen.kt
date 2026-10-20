@@ -31,9 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.cogniboticsarucomapper.ui.components.InfoPanel
 import com.example.cogniboticsarucomapper.ui.components.PageHeading
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import com.example.cogniboticsarucomapper.util.DateTimeFormats
 import java.util.Locale
 import kotlinx.coroutines.launch
 
@@ -125,7 +123,7 @@ fun MeasurementHistoryScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                formatMeasurementTime(measurement.measuredAt),
+                                DateTimeFormats.formatUtcTimestampForDevice(measurement.measuredAt),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -170,9 +168,3 @@ fun MeasurementHistoryScreen(
         }
     }
 }
-
-private fun formatMeasurementTime(value: String): String = runCatching {
-    OffsetDateTime.parse(value)
-        .atZoneSameInstant(ZoneId.systemDefault())
-        .format(DateTimeFormatter.ofPattern("EEE, d MMM yyyy, HH:mm z", Locale.getDefault()))
-}.getOrDefault(value)
