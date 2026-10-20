@@ -163,7 +163,6 @@ fun SaveConfirmationScreen(
                 android.util.Log.d("SaveConfirmationScreen", "Measurement saved: ${response.id}")
 
                 saveSuccess = true
-                onConfirm()
             } catch (e: Exception) {
                 android.util.Log.e("SaveConfirmationScreen", "Failed to save measurement", e)
                 saveError = "Failed to save: ${e.message}"
@@ -241,11 +240,11 @@ fun SaveConfirmationScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             OutlinedButton(
-                onClick = { onCancel() },
-                enabled = !saving && !saveSuccess,
+                onClick = { if (saveSuccess) onConfirm() else onCancel() },
+                enabled = !saving,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Cancel")
+                Text(if (saveSuccess) "Done" else "Cancel")
             }
             Button(
                 onClick = { if (!saving && !saveSuccess) doSaveMeasurement() },

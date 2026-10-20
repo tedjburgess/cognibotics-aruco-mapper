@@ -167,7 +167,7 @@ fun MeasurementScreen(
             if (loading) Text("Loading saved sites", style = MaterialTheme.typography.bodySmall)
             if (error != null) {
                 Text(
-                    "API unavailable: $error. You can still enter a site and cell.",
+                    "API unavailable: $error",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error
                 )

@@ -51,7 +51,7 @@ fun HomeScreen(
             Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("ArUco Mapper", style = MaterialTheme.typography.headlineLarge)
                 Text(
-                    "Calibration · Measurement",
+                    "Scan and measure marker distances",
                     style = MaterialTheme.typography.bodyMedium,
                     color = CogniTealLight
                 )

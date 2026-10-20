@@ -1,0 +1,5 @@
+# Copy this file to local.properties and set the API URL for your setup.
+# USB with `adb reverse tcp:8000 tcp:8000` or Android emulator:
+apiBaseUrl=http://127.0.0.1:8000/
+# Wireless phone: use your computer's LAN IP instead, for example:
+# apiBaseUrl=http://192.168.1.100:8000/

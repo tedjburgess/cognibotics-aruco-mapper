@@ -2,6 +2,8 @@
 
 Open this directory in Android Studio and sync Gradle after changing build configuration.
 
+Set the API URL in `local.properties`: copy `local.properties.example` to `local.properties` and adjust `apiBaseUrl` for your connection. Use `http://127.0.0.1:8000/` with USB plus `adb reverse tcp:8000 tcp:8000`; use `http://10.0.2.2:8000/` with the Android emulator. For a phone over Wi-Fi, use your computer's LAN IP. `local.properties` is ignored by Git, so each developer can use their own URL.
+
 Run checks from this directory:
 
 ```powershell
