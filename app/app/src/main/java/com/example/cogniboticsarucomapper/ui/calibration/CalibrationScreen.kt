@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -70,7 +70,7 @@ fun CalibrationScreen(
         }
 
         ActionCard(
-            Icons.Filled.PlayArrow,
+            Icons.Filled.CameraAlt,
             "Checkerboard camera",
             "Set up your board and capture different views",
             onOpenCamera
