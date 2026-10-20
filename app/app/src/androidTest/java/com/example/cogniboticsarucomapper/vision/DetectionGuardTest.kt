@@ -50,10 +50,10 @@ class DetectionGuardTest {
     }
 
     @Test
-    fun testSheetsRejectOtherIdsButNormalModeAcceptsThem() {
+    fun supportedDictionaryAcceptsIdsAboveThree() {
         withMarker(42, false) { board ->
             val analyzer = ArucoAnalyzer()
-            fun markers() = (
+            val markers = (
                 analyzer.processFrame(
                     board,
                     board,
@@ -61,10 +61,8 @@ class DetectionGuardTest {
                     0
                 ).single() as VisionEvent.FrameMeasured
                 ).markers
-            assertTrue(markers().none { it.dictionary == ArucoDictionary.DICT_4X4_50 })
-            analyzer.testSheetMode = false
             assertTrue(
-                markers().any {
+                markers.any {
                     it.dictionary == ArucoDictionary.DICT_4X4_50 && it.markerId == 42
                 }
             )
@@ -72,10 +70,10 @@ class DetectionGuardTest {
     }
 
     @Test
-    fun normalModeRejectsIdsOutsideTheSupportedDictionary() {
+    fun supportedDictionaryRejectsIdsOutsideItsRange() {
         // A valid code from a larger dictionary must not become a supported 4x4 marker.
         withMarker(50, false, Objdetect.DICT_4X4_1000) { board ->
-            val analyzer = ArucoAnalyzer().apply { testSheetMode = false }
+            val analyzer = ArucoAnalyzer()
             val frame = analyzer.processFrame(board, board, 0, 0)
                 .single() as VisionEvent.FrameMeasured
             assertTrue(frame.markers.none { it.dictionary == ArucoDictionary.DICT_4X4_50 })

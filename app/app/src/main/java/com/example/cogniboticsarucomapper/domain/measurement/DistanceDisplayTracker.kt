@@ -1,18 +1,11 @@
 package com.example.cogniboticsarucomapper.domain.measurement
 
-import kotlin.math.abs
-
 data class PairReading(
     val from: MarkerKey,
     val to: MarkerKey,
     val rawMm: Double?,
     val steadyMm: Double?
-) {
-    // Only the named pairs on our flat test sheets have a known 135 mm reference.
-    val isTestSheetPair: Boolean get() = from.dictionary == to.dictionary &&
-        ((from.id == 0 && to.id == 1) || (from.id == 2 && to.id == 3))
-    val absoluteTestErrorMm: Double? get() = rawMm?.let { abs(it - 135.0) }
-}
+)
 
 // Keep pair rows in a fixed order; an unavailable current reading must never reuse an old number.
 class DistanceDisplayTracker {
@@ -65,7 +58,7 @@ class DistanceDisplayTracker {
         }
     }
 
-    // Starting a new sheet/session clears the roster and all smoothing history.
+    // Starting a new session clears the roster and all smoothing history.
     fun reset() {
         known.clear()
         windows.clear()

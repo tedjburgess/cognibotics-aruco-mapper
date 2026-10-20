@@ -30,8 +30,7 @@ sealed interface VisionEvent {
     data class FrameMeasured(
         val markers: List<MarkerDetected>,
         val distances: List<MarkerPairDistance>,
-        val cameraParameters: CameraParameterSource,
-        val testSheetMode: Boolean = true
+        val cameraParameters: CameraParameterSource
     ) : VisionEvent
 
     data class MarkersCleared(val timestampMs: Long) : VisionEvent

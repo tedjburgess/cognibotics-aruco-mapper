@@ -93,7 +93,6 @@ fun CameraFeedScreen(
     val displayTracker = remember { DistanceDisplayTracker() }
     var distances by remember { mutableStateOf<List<PairReading>>(emptyList()) }
     var steadyDisplay by remember { mutableStateOf(true) }
-    var testSheetMode by remember { mutableStateOf(true) }
     var cameraParameters by remember { mutableStateOf(CameraParameterSource.UNAVAILABLE) }
     var measurementError by remember { mutableStateOf<String?>(null) }
     val visibleMarkers = remember { mutableStateListOf<VisionEvent.MarkerDetected>() }
@@ -111,9 +110,7 @@ fun CameraFeedScreen(
             if (isSaving) return@collect
             when (event) {
                 is VisionEvent.FrameMeasured -> {
-                    if (visionEngine.analysisEnabled.value &&
-                        event.testSheetMode == testSheetMode
-                    ) {
+                    if (visionEngine.analysisEnabled.value) {
                         visibleMarkers.clear()
                         visibleMarkers.addAll(event.markers.filter { it.certainty >= 0.3f })
                         distances = displayTracker.update(
@@ -300,19 +297,6 @@ fun CameraFeedScreen(
                             onCheckedChange = { torchEnabled = it }
                         )
                         OptionToggle(
-                            label = "Test sheets (IDs 0-3)",
-                            checked = testSheetMode,
-                            onCheckedChange = {
-                                testSheetMode = it
-                                markerAnalyzer?.testSheetMode = it
-                                displayTracker.reset()
-                                distances = emptyList()
-                                visibleMarkers.clear()
-                                latestFrameMeasured = null
-                                latestMarkers = emptyList()
-                            }
-                        )
-                        OptionToggle(
                             label = "Steady display (up to 5 frames)",
                             checked = steadyDisplay,
                             onCheckedChange = { steadyDisplay = it }
@@ -349,21 +333,6 @@ fun CameraFeedScreen(
                                         } ?: "N/A"}",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
-                                // Compare raw measurements only, and only for pairs on the same test sheet.
-                                if (testSheetMode && pair.isTestSheetPair && pair.rawMm != null) {
-                                    Text(
-                                        "135 mm reference · raw error " +
-                                            "${MeasurementFormats.millimeters(
-                                                pair.absoluteTestErrorMm!!,
-                                                1
-                                            )} " +
-                                            "(${MeasurementFormats.percentage(
-                                                pair.absoluteTestErrorMm!! / 135.0 * 100,
-                                                1
-                                            )})",
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                }
                             }
                         } else if (analysisEnabled && visibleMarkers.size < 2) {
                             Text(

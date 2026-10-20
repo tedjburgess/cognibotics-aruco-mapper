@@ -24,9 +24,6 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
 
     private val solver = MarkerPoseSolver()
 
-    // Test mode only accepts the IDs printed in our accuracy pack; normal mode accepts IDs 0–49.
-    @Volatile var testSheetMode: Boolean = true
-
     private val dictionaries = dictionary?.let { listOf(it) } ?: ArucoDictionary.entries
     private val detectors = dictionaries.map { dictionary ->
         val parameters = DetectorParameters().apply {
@@ -45,7 +42,6 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
         timestampMs: Long,
         rotationDegrees: Int
     ): List<VisionEvent> {
-        val testing = testSheetMode
         val calibrated = calibratedCameraModel
         val model = if (calibrated != null) {
             calibrated.takeIf { it.calibrated && it.matches(gray.cols(), gray.rows()) }
@@ -64,7 +60,6 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
                         Offset(point[0].toFloat(), point[1].toFloat())
                     }
                     val id = ids.get(index, 0)[0].toInt()
-                    if (testing && id !in 0..3) continue
                     val gridCells = dictionary.markerGridCells
                     // Reject tiny or severely compressed candidates before estimating their position.
                     if (!MarkerImageQuality.hasEnoughDetail(
@@ -110,7 +105,6 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
             VisionEvent.FrameMeasured(
                 markers = markers,
                 distances = MarkerMeasurements.distances(positioned),
-                testSheetMode = testing,
                 cameraParameters = when {
                     model == null -> CameraParameterSource.UNAVAILABLE
                     model.calibrated -> CameraParameterSource.CALIBRATED

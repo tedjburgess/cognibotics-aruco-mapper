@@ -15,7 +15,7 @@ Physical sizes are currently fixed in code, not editable in settings. Print the 
 | `DICT_6X6_50` | 75 mm | 6×6 marker grid with 50 available marker IDs |
 | `DICT_7X7_50` | 100 mm | 7×7 marker grid with 50 available marker IDs |
 
-Mixed-family live measurement uses the shared supported-dictionary enum: the 50-entry variant of each family, with IDs 0–49. Codes outside those dictionaries are not supported. **Test sheets** mode starts enabled and accepts IDs 0–3 only; switch it off for other IDs.
+Mixed-family live measurement uses the shared supported-dictionary enum: the 50-entry variant of each family, with IDs 0–49. Codes outside those dictionaries are not supported.
 
 ## Application Usage
 

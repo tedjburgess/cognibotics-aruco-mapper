@@ -8,11 +8,9 @@ object MeasurementFormats {
 
     fun markerLabel(dictionary: ArucoDictionary, id: Int): String = "${dictionary.label} #$id"
 
-    fun historyMarkerLabel(id: Int, dictionary: String): String = "ID $id - $dictionary"
+    fun historyMarkerLabel(id: Int, dictionary: String): String = "$dictionary #$id"
 
     fun millimeters(value: Double, decimalPlaces: Int): String =
         String.format(Locale.getDefault(), "%.${decimalPlaces}f $MILLIMETER_UNIT", value)
 
-    fun percentage(value: Double, decimalPlaces: Int): String =
-        String.format(Locale.getDefault(), "%.${decimalPlaces}f%%", value)
 }
