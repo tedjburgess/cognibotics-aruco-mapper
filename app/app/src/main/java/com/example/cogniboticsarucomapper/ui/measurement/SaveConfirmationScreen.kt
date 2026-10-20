@@ -177,7 +177,7 @@ fun SaveConfirmationScreen(
             .fillMaxSize()
             .padding(24.dp)
     ) {
-        PageHeading("Confirm Save", "Review measurement details before saving") {
+        PageHeading("Results", "Review measurement details before saving") {
             if (!saving) onCancel()
         }
 
