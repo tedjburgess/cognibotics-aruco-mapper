@@ -320,17 +320,15 @@ fun CameraFeedScreen(
                             )
                             distances.forEach { pair ->
                                 val value = if (steadyDisplay) pair.steadyMm else pair.rawMm
+                                val pairLabel = MeasurementFormats.markerPairLabel(
+                                    pair.from,
+                                    pair.to
+                                )
+                                val formattedValue = value?.let {
+                                    MeasurementFormats.millimeters(it, 1)
+                                } ?: "N/A"
                                 Text(
-                                    "${MeasurementFormats.markerLabel(
-                                        pair.from.dictionary,
-                                        pair.from.id
-                                    )} → " +
-                                        "${MeasurementFormats.markerLabel(
-                                            pair.to.dictionary,
-                                            pair.to.id
-                                        )}: ${value?.let {
-                                            MeasurementFormats.millimeters(it, 1)
-                                        } ?: "N/A"}",
+                                    "$pairLabel: $formattedValue",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }

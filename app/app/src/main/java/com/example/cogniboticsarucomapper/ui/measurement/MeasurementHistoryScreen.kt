@@ -146,7 +146,7 @@ fun MeasurementHistoryScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            "${distance.fromLabel} to ${distance.toLabel}",
+                                            "${distance.fromLabel} ↔ ${distance.toLabel}",
                                             modifier = Modifier.weight(1f),
                                             style = MaterialTheme.typography.bodySmall
                                         )
