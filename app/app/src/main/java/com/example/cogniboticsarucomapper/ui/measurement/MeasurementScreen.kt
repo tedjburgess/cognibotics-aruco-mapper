@@ -82,8 +82,6 @@ fun MeasurementScreen(
 
     FeatureLayout("Measurement", "Scan markers or review previous measurements", onBack, modifier) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("01 · New measurement", style = MaterialTheme.typography.titleMedium)
-
             ExposedDropdownMenuBox(
                 expanded = siteMenuExpanded && siteSuggestions.isNotEmpty(),
                 onExpandedChange = {
