@@ -4,7 +4,7 @@ install:
 	uv sync --all-groups
 
 run: 
-	uv run fastapi dev app/main.py
+	uv run fastapi dev app/main.py --host 0.0.0.0 --port 8000
 
 lint: 
 	uv run ruff check .
