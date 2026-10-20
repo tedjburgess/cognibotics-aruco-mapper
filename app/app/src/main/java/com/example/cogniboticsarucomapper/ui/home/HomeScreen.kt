@@ -31,7 +31,6 @@ import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
 fun HomeScreen(
     onCalibrationClick: () -> Unit,
     onMeasurementClick: () -> Unit,
-    onExportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -52,7 +51,7 @@ fun HomeScreen(
             Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("ArUco Mapper", style = MaterialTheme.typography.headlineLarge)
                 Text(
-                    "Calibration · Measurement · Export",
+                    "Calibration · Measurement",
                     style = MaterialTheme.typography.bodyMedium,
                     color = CogniTealLight
                 )
@@ -70,7 +69,6 @@ fun HomeScreen(
             "Start a scan or view measurement history",
             onMeasurementClick
         )
-        ActionCard("03", "Export", "Open the export workspace", onExportClick)
         Column(
             Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -98,6 +96,6 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     CogniboticsArucoMapperTheme {
-        HomeScreen(onCalibrationClick = {}, onMeasurementClick = {}, onExportClick = {})
+        HomeScreen(onCalibrationClick = {}, onMeasurementClick = {})
     }
 }

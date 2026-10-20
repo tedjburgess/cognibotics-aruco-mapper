@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is an Android application prototype built for Cognibotics, located in Lund, Sweden. The core app functionality is the use of a phone camera to detect ArUco markers and calculate the distance between them. The API can store and return scan data, and the app can display returned scans in measurement history. Saving new live measurements from the app is not connected yet. The data is intended to be used by robots in industrial automation.
+This Android application detects ArUco markers, calculates distances between them, and saves confirmed measurements through the Python API to SQLite. The app can load saved sites and cells, and displays saved measurements in its history. The data is intended to be used by robots in industrial automation.
 
 ## Supported ArUco Dictionaries
 
@@ -37,9 +37,9 @@ To conduct a measurement the user should do the following:
 - **cell name**
 - **date/time** when the measurement was taken
 - **number** of detected markers
+- marker-pair distances with marker ID and dictionary
 
 ### Calibration
-### Export
 
 ## Requirements
 ### Camera Permission
