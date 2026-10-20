@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ObservationRequest(
     @SerializedName("aruco_id") val arucoId: Int,
-    val dictionary: String = "DICT_6X6_50",
+    val dictionary: String,
     val name: String? = null,
     val position: PositionDto,
     val orientation: OrientationDto,

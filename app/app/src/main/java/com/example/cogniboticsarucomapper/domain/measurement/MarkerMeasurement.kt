@@ -2,23 +2,7 @@ package com.example.cogniboticsarucomapper.domain.measurement
 
 import kotlin.math.sqrt
 
-enum class MarkerFamily(val label: String, val sizeMm: Double) {
-    FOUR_BY_FOUR("4×4", 20.0),
-    FIVE_BY_FIVE("5×5", 50.0),
-    SIX_BY_SIX("6×6", 75.0),
-    SEVEN_BY_SEVEN("7×7", 100.0)
-}
-
-fun MarkerFamily.toApiDictionary(): String = when (this) {
-    MarkerFamily.FOUR_BY_FOUR -> "DICT_4X4_50"
-    MarkerFamily.FIVE_BY_FIVE -> "DICT_5X5_50"
-    MarkerFamily.SIX_BY_SIX -> "DICT_6X6_50"
-    MarkerFamily.SEVEN_BY_SEVEN -> "DICT_7X7_50"
-}
-
-data class MarkerKey(val family: MarkerFamily, val id: Int) {
-    val label: String get() = "${family.label} #$id"
-}
+data class MarkerKey(val dictionary: ArucoDictionary, val id: Int)
 
 /** Coordinates in the same camera frame, in millimetres. */
 data class PositionMm(val x: Double, val y: Double, val z: Double) {
@@ -42,7 +26,7 @@ object MarkerMeasurements {
             .filter { it.size == 1 }
             .map { it.single() }
             .filter { it.key.id >= 0 && it.position.isValid }
-            .sortedWith(compareBy({ it.key.family.ordinal }, { it.key.id }))
+            .sortedWith(compareBy({ it.key.dictionary.ordinal }, { it.key.id }))
         return buildList {
             for (left in unique.indices) {
                 for (right in left + 1 until unique.size) {

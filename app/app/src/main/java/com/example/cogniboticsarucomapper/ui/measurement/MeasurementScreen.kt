@@ -30,7 +30,6 @@ import kotlinx.coroutines.withContext
 
 private const val DEFAULT_SITE = "Test Site"
 private const val DEFAULT_CELL = "Test Cell"
-private const val MAX_NAME_LENGTH = 255
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,7 +94,7 @@ fun MeasurementScreen(
                 OutlinedTextField(
                     value = siteName,
                     onValueChange = { value ->
-                        siteName = value.take(MAX_NAME_LENGTH)
+                        siteName = value.take(MAX_SITE_CELL_NAME_LENGTH)
                         showAllSites = false
                         siteMenuExpanded = true
                     },
@@ -137,7 +136,7 @@ fun MeasurementScreen(
                 OutlinedTextField(
                     value = cellName,
                     onValueChange = { value ->
-                        cellName = value.take(MAX_NAME_LENGTH)
+                        cellName = value.take(MAX_SITE_CELL_NAME_LENGTH)
                         showAllCells = false
                         cellMenuExpanded = true
                     },

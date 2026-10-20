@@ -53,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cogniboticsarucomapper.data.measurement.sensorGeometryFor
 import com.example.cogniboticsarucomapper.domain.measurement.DistanceDisplayTracker
 import com.example.cogniboticsarucomapper.domain.measurement.PairReading
+import com.example.cogniboticsarucomapper.util.MeasurementFormats
 import com.example.cogniboticsarucomapper.vision.ArucoAnalyzer
 import com.example.cogniboticsarucomapper.vision.CameraParameterSource
 import com.example.cogniboticsarucomapper.vision.MarkerScanState
@@ -336,18 +337,30 @@ fun CameraFeedScreen(
                             distances.forEach { pair ->
                                 val value = if (steadyDisplay) pair.steadyMm else pair.rawMm
                                 Text(
-                                    "${pair.from.label} → ${pair.to.label}: ${value?.let {
-                                        "%.1f mm".format(it)
-                                    } ?: "N/A"}",
+                                    "${MeasurementFormats.markerLabel(
+                                        pair.from.dictionary,
+                                        pair.from.id
+                                    )} → " +
+                                        "${MeasurementFormats.markerLabel(
+                                            pair.to.dictionary,
+                                            pair.to.id
+                                        )}: ${value?.let {
+                                            MeasurementFormats.millimeters(it, 1)
+                                        } ?: "N/A"}",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 // Compare raw measurements only, and only for pairs on the same test sheet.
                                 if (testSheetMode && pair.isTestSheetPair && pair.rawMm != null) {
                                     Text(
-                                        "135 mm reference · raw error %.1f mm (%.1f%%)".format(
-                                            pair.absoluteTestErrorMm,
-                                            pair.absoluteTestErrorMm!! / 135.0 * 100
-                                        ),
+                                        "135 mm reference · raw error " +
+                                            "${MeasurementFormats.millimeters(
+                                                pair.absoluteTestErrorMm!!,
+                                                1
+                                            )} " +
+                                            "(${MeasurementFormats.percentage(
+                                                pair.absoluteTestErrorMm!! / 135.0 * 100,
+                                                1
+                                            )})",
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }
@@ -361,12 +374,23 @@ fun CameraFeedScreen(
                         if (visibleMarkers.isNotEmpty()) {
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 visibleMarkers
-                                    .sortedWith(compareBy({ it.family.ordinal }, { it.markerId }))
+                                    .sortedWith(
+                                        compareBy({
+                                            it.dictionary.ordinal
+                                        }, { it.markerId })
+                                    )
                                     .forEach { event ->
                                         Text(
                                             text = buildString {
                                                 append(
-                                                    "${event.key.label} (${event.family.sizeMm.toInt()} mm)"
+                                                    "${MeasurementFormats.markerLabel(
+                                                        event.dictionary,
+                                                        event.markerId
+                                                    )} " +
+                                                        "(${MeasurementFormats.millimeters(
+                                                            event.dictionary.sizeMm,
+                                                            0
+                                                        )})"
                                                 )
                                                 event.tiltDegrees?.let {
                                                     append(" · tilt ≈%.0f°".format(it))

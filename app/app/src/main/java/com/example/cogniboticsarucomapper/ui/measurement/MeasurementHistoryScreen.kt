@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cogniboticsarucomapper.ui.components.InfoPanel
 import com.example.cogniboticsarucomapper.ui.components.PageHeading
 import com.example.cogniboticsarucomapper.util.DateTimeFormats
-import java.util.Locale
+import com.example.cogniboticsarucomapper.util.MeasurementFormats
 import kotlinx.coroutines.launch
 
 data class MeasurementHistoryItem(
@@ -152,7 +152,7 @@ fun MeasurementHistoryScreen(
                                         )
                                         Text(
                                             distance.distanceMm?.let {
-                                                String.format(Locale.getDefault(), "%.1f mm", it)
+                                                MeasurementFormats.millimeters(it, 1)
                                             } ?: "Unavailable",
                                             modifier = Modifier.padding(start = 8.dp),
                                             style = MaterialTheme.typography.titleSmall,

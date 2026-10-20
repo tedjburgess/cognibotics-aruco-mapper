@@ -4,8 +4,8 @@ import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.data.measurement.CameraModel
 import com.example.cogniboticsarucomapper.data.measurement.MarkerPoseSolver
 import com.example.cogniboticsarucomapper.data.measurement.SensorGeometry
+import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
 import com.example.cogniboticsarucomapper.domain.measurement.ImagePoint
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerFamily
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerImageQuality
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerMeasurements
 import com.example.cogniboticsarucomapper.domain.measurement.PositionedMarker
@@ -14,8 +14,8 @@ import org.opencv.objdetect.ArucoDetector
 import org.opencv.objdetect.DetectorParameters
 import org.opencv.objdetect.Objdetect
 
-// Default to mixed-family measurement; callers can still select a single dictionary explicitly.
-class ArucoAnalyzer(dictionaryType: ArucoDictionaryType? = null) : VisionEngine.FrameAnalyzer {
+// Default to mixed-family measurement; callers can still select a single family explicitly.
+class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAnalyzer {
     @Volatile var sensorGeometry: SensorGeometry? = null
 
     // Calibration capture/persistence can supply a profile here without changing the solver.
@@ -27,16 +27,16 @@ class ArucoAnalyzer(dictionaryType: ArucoDictionaryType? = null) : VisionEngine.
     // Test mode only accepts the IDs printed in our accuracy pack; normal mode accepts IDs 0–49.
     @Volatile var testSheetMode: Boolean = true
 
-    // Use the shared supported-dictionary enum so detection stays consistent with the app.
-    private val dictionaries = dictionaryType?.let { listOf(it) } ?: ArucoDictionaryType.entries
+    private val dictionaries = dictionary?.let { listOf(it) } ?: ArucoDictionary.entries
     private val detectors = dictionaries.map { dictionary ->
-        val family = dictionary.family
         val parameters = DetectorParameters().apply {
             _cornerRefinementMethod = Objdetect.CORNER_REFINE_SUBPIX
-            // Small 4x4 codes must match exactly rather than repair background patterns.
-            _errorCorrectionRate = if (family == MarkerFamily.FOUR_BY_FOUR) 0.0 else 0.4
+            _errorCorrectionRate = dictionary.errorCorrectionRate
         }
-        family to ArucoDetector(Objdetect.getPredefinedDictionary(dictionary.openCvId), parameters)
+        dictionary to ArucoDetector(
+            Objdetect.getPredefinedDictionary(dictionary.toOpenCvDictionaryId()),
+            parameters
+        )
     }
 
     override fun processFrame(
@@ -53,7 +53,7 @@ class ArucoAnalyzer(dictionaryType: ArucoDictionaryType? = null) : VisionEngine.
             sensorGeometry?.estimate(gray.cols(), gray.rows())
         }
         val markers = mutableListOf<VisionEvent.MarkerDetected>()
-        for ((family, detector) in detectors) {
+        for ((dictionary, detector) in detectors) {
             val corners = mutableListOf<Mat>()
             val ids = Mat()
             try {
@@ -65,7 +65,7 @@ class ArucoAnalyzer(dictionaryType: ArucoDictionaryType? = null) : VisionEngine.
                     }
                     val id = ids.get(index, 0)[0].toInt()
                     if (testing && id !in 0..3) continue
-                    val gridCells = family.ordinal + 6
+                    val gridCells = dictionary.markerGridCells
                     // Reject tiny or severely compressed candidates before estimating their position.
                     if (!MarkerImageQuality.hasEnoughDetail(
                             offsets.map {
@@ -76,7 +76,9 @@ class ArucoAnalyzer(dictionaryType: ArucoDictionaryType? = null) : VisionEngine.
                     ) {
                         continue
                     }
-                    val pose = model?.let { solver.estimate(offsets, family.sizeMm, it, gridCells) }
+                    val pose = model?.let {
+                        solver.estimate(offsets, dictionary.sizeMm, it, gridCells)
+                    }
                     markers.add(
                         VisionEvent.MarkerDetected(
                             markerId = id,
@@ -89,7 +91,7 @@ class ArucoAnalyzer(dictionaryType: ArucoDictionaryType? = null) : VisionEngine.
                             frameWidth = gray.cols(),
                             frameHeight = gray.rows(),
                             rotationDegrees = rotationDegrees,
-                            family = family,
+                            dictionary = dictionary,
                             positionMm = pose?.position,
                             tiltDegrees = pose?.tiltDegrees
                         )
@@ -117,4 +119,11 @@ class ArucoAnalyzer(dictionaryType: ArucoDictionaryType? = null) : VisionEngine.
             )
         )
     }
+}
+
+private fun ArucoDictionary.toOpenCvDictionaryId(): Int = when (this) {
+    ArucoDictionary.DICT_4X4_50 -> Objdetect.DICT_4X4_50
+    ArucoDictionary.DICT_5X5_50 -> Objdetect.DICT_5X5_50
+    ArucoDictionary.DICT_6X6_50 -> Objdetect.DICT_6X6_50
+    ArucoDictionary.DICT_7X7_50 -> Objdetect.DICT_7X7_50
 }

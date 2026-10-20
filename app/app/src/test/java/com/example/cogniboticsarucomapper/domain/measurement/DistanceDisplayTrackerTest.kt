@@ -5,9 +5,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DistanceDisplayTrackerTest {
-    private val a = MarkerKey(MarkerFamily.FOUR_BY_FOUR, 0)
-    private val b = MarkerKey(MarkerFamily.FOUR_BY_FOUR, 1)
-    private val c = MarkerKey(MarkerFamily.FIVE_BY_FIVE, 0)
+    private val a = MarkerKey(ArucoDictionary.DICT_4X4_50, 0)
+    private val b = MarkerKey(ArucoDictionary.DICT_4X4_50, 1)
+    private val c = MarkerKey(ArucoDictionary.DICT_5X5_50, 0)
 
     @Test fun missingReadingKeepsItsRowButNeverItsValue() {
         val tracker = DistanceDisplayTracker()

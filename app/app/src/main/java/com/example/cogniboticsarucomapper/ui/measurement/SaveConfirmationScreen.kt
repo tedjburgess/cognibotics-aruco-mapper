@@ -27,12 +27,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.cogniboticsarucomapper.domain.measurement.toApiDictionary
 import com.example.cogniboticsarucomapper.network.ApiClient
 import com.example.cogniboticsarucomapper.ui.components.PageHeading
+import com.example.cogniboticsarucomapper.util.MeasurementFormats
 import com.example.cogniboticsarucomapper.vision.VisionEvent
 import java.time.Instant
-import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -68,11 +67,12 @@ fun SaveConfirmationScreen(
                 capturedFrame?.distances?.forEach { dist ->
                     add(
                         ConfirmationItem(
-                            "${dist.from.label} → ${dist.to.label}",
-                            dist.distanceMm?.let {
-                                String.format(Locale.getDefault(), "%.3f mm", it)
-                            }
-                                ?: "N/A"
+                            "${MeasurementFormats.markerLabel(
+                                dist.from.dictionary,
+                                dist.from.id
+                            )} → " +
+                                MeasurementFormats.markerLabel(dist.to.dictionary, dist.to.id),
+                            dist.distanceMm?.let { MeasurementFormats.millimeters(it, 3) } ?: "N/A"
                         )
                     )
                 }
@@ -110,8 +110,8 @@ fun SaveConfirmationScreen(
                     val pos = marker.positionMm!!
                     com.example.cogniboticsarucomapper.network.model.ObservationRequest(
                         arucoId = marker.markerId,
-                        dictionary = marker.family.toApiDictionary(),
-                        name = marker.key.label,
+                        dictionary = marker.dictionary.name,
+                        name = MeasurementFormats.markerLabel(marker.dictionary, marker.markerId),
                         position = com.example.cogniboticsarucomapper.network.model.PositionDto(
                             pos.x,
                             pos.y,
@@ -124,7 +124,7 @@ fun SaveConfirmationScreen(
                             0.0,
                             1.0
                         ),
-                        sizeMm = marker.family.sizeMm
+                        sizeMm = marker.dictionary.sizeMm
                     )
                 }
 
@@ -134,9 +134,9 @@ fun SaveConfirmationScreen(
                 }.map { dist ->
                     com.example.cogniboticsarucomapper.network.model.RelationRequest(
                         fromArucoId = dist.from.id,
-                        fromDictionary = dist.from.family.toApiDictionary(),
+                        fromDictionary = dist.from.dictionary.name,
                         toArucoId = dist.to.id,
-                        toDictionary = dist.to.family.toApiDictionary(),
+                        toDictionary = dist.to.dictionary.name,
                         distanceMm = dist.distanceMm,
                         relativePosition = null
                     )

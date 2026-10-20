@@ -1,7 +1,7 @@
 package com.example.cogniboticsarucomapper.vision
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerFamily
+import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -61,11 +61,11 @@ class DetectionGuardTest {
                     0
                 ).single() as VisionEvent.FrameMeasured
                 ).markers
-            assertTrue(markers().none { it.family == MarkerFamily.FOUR_BY_FOUR })
+            assertTrue(markers().none { it.dictionary == ArucoDictionary.DICT_4X4_50 })
             analyzer.testSheetMode = false
             assertTrue(
                 markers().any {
-                    it.family == MarkerFamily.FOUR_BY_FOUR && it.markerId == 42
+                    it.dictionary == ArucoDictionary.DICT_4X4_50 && it.markerId == 42
                 }
             )
         }
@@ -78,7 +78,7 @@ class DetectionGuardTest {
             val analyzer = ArucoAnalyzer().apply { testSheetMode = false }
             val frame = analyzer.processFrame(board, board, 0, 0)
                 .single() as VisionEvent.FrameMeasured
-            assertTrue(frame.markers.none { it.family == MarkerFamily.FOUR_BY_FOUR })
+            assertTrue(frame.markers.none { it.dictionary == ArucoDictionary.DICT_4X4_50 })
         }
     }
 
@@ -91,7 +91,7 @@ class DetectionGuardTest {
                 0,
                 0
             ).single() as VisionEvent.FrameMeasured
-            assertTrue(frame.markers.none { it.family == MarkerFamily.FOUR_BY_FOUR })
+            assertTrue(frame.markers.none { it.dictionary == ArucoDictionary.DICT_4X4_50 })
         }
     }
 }

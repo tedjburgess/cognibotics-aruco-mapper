@@ -2,6 +2,7 @@ package com.example.cogniboticsarucomapper.ui.measurement
 
 import com.example.cogniboticsarucomapper.network.model.ObservationResponse
 import com.example.cogniboticsarucomapper.network.model.ScanResponse
+import com.example.cogniboticsarucomapper.util.MeasurementFormats
 
 data class MarkerDistanceItem(
     val id: String,
@@ -33,5 +34,5 @@ fun ScanResponse.toMeasurementHistoryItem(): MeasurementHistoryItem {
 private fun ObservationResponse?.markerLabel(): String = if (this == null) {
     "Unknown marker"
 } else {
-    "ID $arucoId - $dictionary"
+    MeasurementFormats.historyMarkerLabel(arucoId, dictionary)
 }

@@ -25,8 +25,7 @@ import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasuremen
 import com.example.cogniboticsarucomapper.ui.components.ActionCard
 import com.example.cogniboticsarucomapper.ui.components.FeatureLayout
 import com.example.cogniboticsarucomapper.ui.components.InfoPanel
-import java.text.DateFormat
-import java.util.Date
+import com.example.cogniboticsarucomapper.util.DateTimeFormats
 
 @Composable
 fun CalibrationScreen(
@@ -61,7 +60,9 @@ fun CalibrationScreen(
         } else {
             InfoPanel(
                 "Saved calibration",
-                measurement.updatedAtMillis?.let { "Last updated ${formatTimestamp(it)}" }
+                measurement.updatedAtMillis?.let {
+                    "Last updated ${DateTimeFormats.formatEpochMillisForDevice(it)}"
+                }
                     ?: "Calibration values are saved on this device."
             )
         }
@@ -250,9 +251,6 @@ private fun CalibrationValueField(
         modifier = modifier.fillMaxWidth()
     )
 }
-
-private fun formatTimestamp(timestamp: Long): String =
-    DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(timestamp))
 
 private data class CalibrationDraft(
     val imageWidth: String = "",

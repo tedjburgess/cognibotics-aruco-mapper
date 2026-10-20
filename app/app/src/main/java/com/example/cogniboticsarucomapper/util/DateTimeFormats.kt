@@ -7,9 +7,13 @@ import java.util.Locale
 
 object DateTimeFormats {
     fun formatUtcTimestampForDevice(value: String): String = runCatching {
-        DateTimeFormatter
-            .ofPattern("EEE, d MMM yyyy, HH:mm z", Locale.getDefault())
-            .withZone(ZoneId.systemDefault())
-            .format(Instant.parse(value))
+        formatInstant(Instant.parse(value))
     }.getOrDefault(value)
+
+    fun formatEpochMillisForDevice(value: Long): String = formatInstant(Instant.ofEpochMilli(value))
+
+    private fun formatInstant(value: Instant): String = DateTimeFormatter
+        .ofPattern("EEE, d MMM yyyy, HH:mm z", Locale.getDefault())
+        .withZone(ZoneId.systemDefault())
+        .format(value)
 }
