@@ -33,5 +33,5 @@ fun ScanResponse.toMeasurementHistoryItem(): MeasurementHistoryItem {
 private fun ObservationResponse?.markerLabel(): String = if (this == null) {
     "Unknown marker"
 } else {
-    "Marker $aruco_id ($dictionary)"
+    "ID $aruco_id - $dictionary"
 }
