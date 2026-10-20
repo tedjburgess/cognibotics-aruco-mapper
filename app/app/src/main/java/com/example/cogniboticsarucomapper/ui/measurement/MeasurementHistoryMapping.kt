@@ -12,19 +12,19 @@ data class MarkerDistanceItem(
 
 /** Preserve the backend's distances; do not infer a new distance from screen coordinates. */
 fun ScanResponse.toMeasurementHistoryItem(): MeasurementHistoryItem {
-    val markers = observations.associateBy { it.marker_id }
+    val markers = observations.associateBy { it.markerId }
     return MeasurementHistoryItem(
         id = id,
-        siteName = site_name,
-        cellName = cell_name,
-        measuredAt = measured_at,
+        siteName = siteName,
+        cellName = cellName,
+        measuredAt = measuredAt,
         observationCount = observations.size,
         distances = relations.map { relation ->
             MarkerDistanceItem(
                 id = relation.id,
-                fromLabel = markers[relation.from_marker_id].markerLabel(),
-                toLabel = markers[relation.to_marker_id].markerLabel(),
-                distanceMm = relation.distance_mm.takeIf { it.isFinite() && it >= 0.0 }
+                fromLabel = markers[relation.fromMarkerId].markerLabel(),
+                toLabel = markers[relation.toMarkerId].markerLabel(),
+                distanceMm = relation.distanceMm.takeIf { it.isFinite() && it >= 0.0 }
             )
         }
     )
@@ -33,5 +33,5 @@ fun ScanResponse.toMeasurementHistoryItem(): MeasurementHistoryItem {
 private fun ObservationResponse?.markerLabel(): String = if (this == null) {
     "Unknown marker"
 } else {
-    "ID $aruco_id - $dictionary"
+    "ID $arucoId - $dictionary"
 }

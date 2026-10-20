@@ -109,7 +109,7 @@ fun SaveConfirmationScreen(
                 val observations = positionedMarkers.map { marker ->
                     val pos = marker.positionMm!!
                     com.example.cogniboticsarucomapper.network.model.ObservationRequest(
-                        aruco_id = marker.markerId,
+                        arucoId = marker.markerId,
                         dictionary = marker.family.toApiDictionary(),
                         name = marker.key.label,
                         position = com.example.cogniboticsarucomapper.network.model.PositionDto(
@@ -124,7 +124,7 @@ fun SaveConfirmationScreen(
                             0.0,
                             1.0
                         ),
-                        size_mm = marker.family.sizeMm
+                        sizeMm = marker.family.sizeMm
                     )
                 }
 
@@ -133,12 +133,12 @@ fun SaveConfirmationScreen(
                         it.distanceMm >= 0.0
                 }.map { dist ->
                     com.example.cogniboticsarucomapper.network.model.RelationRequest(
-                        from_aruco_id = dist.from.id,
-                        from_dictionary = dist.from.family.toApiDictionary(),
-                        to_aruco_id = dist.to.id,
-                        to_dictionary = dist.to.family.toApiDictionary(),
-                        distance_mm = dist.distanceMm,
-                        relative_position = null
+                        fromArucoId = dist.from.id,
+                        fromDictionary = dist.from.family.toApiDictionary(),
+                        toArucoId = dist.to.id,
+                        toDictionary = dist.to.family.toApiDictionary(),
+                        distanceMm = dist.distanceMm,
+                        relativePosition = null
                     )
                 }
 
@@ -149,10 +149,10 @@ fun SaveConfirmationScreen(
                 val measuredAt = Instant.now().toString()
 
                 val request = com.example.cogniboticsarucomapper.network.model.ScanRequest(
-                    site_name = siteName,
-                    cell_name = cellName,
-                    device_id = deviceId,
-                    measured_at = measuredAt,
+                    siteName = siteName,
+                    cellName = cellName,
+                    deviceId = deviceId,
+                    measuredAt = measuredAt,
                     observations = observations,
                     relations = relations
                 )
