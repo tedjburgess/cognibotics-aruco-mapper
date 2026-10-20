@@ -1,6 +1,0 @@
-target_angle_deg,video_offset_s,pair,nominal_reference_mm,displayed_mm,absolute_difference_mm,difference_pct
-0,110,7x7 #0 -> 7x7 #1,135,135.6,0.6,0.4444
-15,100,7x7 #0 -> 7x7 #1,135,135.4,0.4,0.2963
-30,80,7x7 #0 -> 7x7 #1,135,135.2,0.2,0.1481
-45,58,7x7 #0 -> 7x7 #1,135,136.0,1.0,0.7407
-60,30,7x7 #0 -> 7x7 #1,135,133.5,1.5,1.1111
