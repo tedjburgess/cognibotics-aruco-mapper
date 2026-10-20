@@ -22,7 +22,7 @@ data class MarkerPoseEstimate(
     val errorPixels: Double
 )
 
-// Based on Simon's PR #37 solver; each known-size marker is still solved independently in 3D.
+// Each known-size marker is still solved independently in 3D.
 class MarkerPoseSolver {
     fun solve(corners: List<Offset>, sizeMm: Double, model: CameraModel): PositionMm? =
         estimate(corners, sizeMm, model)?.position

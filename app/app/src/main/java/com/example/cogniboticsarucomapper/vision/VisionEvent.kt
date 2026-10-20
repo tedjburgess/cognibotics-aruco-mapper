@@ -1,7 +1,7 @@
 package com.example.cogniboticsarucomapper.vision
 
 import androidx.compose.ui.geometry.Offset
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerFamily
+import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerKey
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerPairDistance
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
@@ -19,19 +19,18 @@ sealed interface VisionEvent {
         val frameWidth: Int,
         val frameHeight: Int,
         val rotationDegrees: Int,
-        val family: MarkerFamily = MarkerFamily.FOUR_BY_FOUR,
+        val dictionary: ArucoDictionary = ArucoDictionary.DICT_4X4_50,
         val positionMm: PositionMm? = null,
         val tiltDegrees: Double? = null
     ) : VisionEvent {
-        val key: MarkerKey get() = MarkerKey(family, markerId)
+        val key: MarkerKey get() = MarkerKey(dictionary, markerId)
     }
 
     /** A complete single-frame snapshot, including an empty snapshot when nothing is visible. */
     data class FrameMeasured(
         val markers: List<MarkerDetected>,
         val distances: List<MarkerPairDistance>,
-        val cameraParameters: CameraParameterSource,
-        val testSheetMode: Boolean = true
+        val cameraParameters: CameraParameterSource
     ) : VisionEvent
 
     data class MarkersCleared(val timestampMs: Long) : VisionEvent

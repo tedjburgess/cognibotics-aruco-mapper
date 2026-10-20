@@ -5,9 +5,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DistanceDisplayTrackerTest {
-    private val a = MarkerKey(MarkerFamily.FOUR_BY_FOUR, 0)
-    private val b = MarkerKey(MarkerFamily.FOUR_BY_FOUR, 1)
-    private val c = MarkerKey(MarkerFamily.FIVE_BY_FIVE, 0)
+    private val a = MarkerKey(ArucoDictionary.DICT_4X4_50, 0)
+    private val b = MarkerKey(ArucoDictionary.DICT_4X4_50, 1)
+    private val c = MarkerKey(ArucoDictionary.DICT_5X5_50, 0)
 
     @Test fun missingReadingKeepsItsRowButNeverItsValue() {
         val tracker = DistanceDisplayTracker()
@@ -21,7 +21,7 @@ class DistanceDisplayTrackerTest {
         assertTrue(tracker.update(emptySet(), emptyList(), 60).isEmpty())
     }
 
-    @Test fun medianResistsAnOutlierAndRawErrorStaysHonest() {
+    @Test fun medianResistsAnOutlierAndRawReadingStaysCurrent() {
         val tracker = DistanceDisplayTracker()
         for ((index, value) in listOf(134.0, 135.0, 136.0, 135.0, 220.0).withIndex()) {
             val row = tracker.update(
@@ -33,8 +33,6 @@ class DistanceDisplayTrackerTest {
         }
         val row = tracker.update(setOf(a, b), listOf(MarkerPairDistance(a, b, 140.0)), 150).single()
         assertEquals(136.0, row.steadyMm!!, 0.0)
-        assertEquals(5.0, row.absoluteTestErrorMm!!, 0.0)
-        assertTrue(row.isTestSheetPair)
         val expired = tracker.update(
             setOf(a, b),
             listOf(MarkerPairDistance(a, b, 150.0)),

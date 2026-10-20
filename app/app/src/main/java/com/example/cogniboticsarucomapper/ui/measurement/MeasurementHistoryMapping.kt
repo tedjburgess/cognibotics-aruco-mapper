@@ -2,6 +2,7 @@ package com.example.cogniboticsarucomapper.ui.measurement
 
 import com.example.cogniboticsarucomapper.network.model.ObservationResponse
 import com.example.cogniboticsarucomapper.network.model.ScanResponse
+import com.example.cogniboticsarucomapper.util.MeasurementFormats
 
 data class MarkerDistanceItem(
     val id: String,
@@ -12,19 +13,19 @@ data class MarkerDistanceItem(
 
 /** Preserve the backend's distances; do not infer a new distance from screen coordinates. */
 fun ScanResponse.toMeasurementHistoryItem(): MeasurementHistoryItem {
-    val markers = observations.associateBy { it.marker_id }
+    val markers = observations.associateBy { it.markerId }
     return MeasurementHistoryItem(
         id = id,
-        siteName = site_name,
-        cellName = cell_name,
-        measuredAt = measured_at,
+        siteName = siteName,
+        cellName = cellName,
+        measuredAt = measuredAt,
         observationCount = observations.size,
         distances = relations.map { relation ->
             MarkerDistanceItem(
                 id = relation.id,
-                fromLabel = markers[relation.from_marker_id].markerLabel(),
-                toLabel = markers[relation.to_marker_id].markerLabel(),
-                distanceMm = relation.distance_mm.takeIf { it.isFinite() && it >= 0.0 }
+                fromLabel = markers[relation.fromMarkerId].markerLabel(),
+                toLabel = markers[relation.toMarkerId].markerLabel(),
+                distanceMm = relation.distanceMm.takeIf { it.isFinite() && it >= 0.0 }
             )
         }
     )
@@ -33,5 +34,5 @@ fun ScanResponse.toMeasurementHistoryItem(): MeasurementHistoryItem {
 private fun ObservationResponse?.markerLabel(): String = if (this == null) {
     "Unknown marker"
 } else {
-    "Marker $aruco_id ($dictionary)"
+    MeasurementFormats.historyMarkerLabel(arucoId, dictionary)
 }

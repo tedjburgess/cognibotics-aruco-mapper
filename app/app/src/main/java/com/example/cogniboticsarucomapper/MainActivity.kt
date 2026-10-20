@@ -23,13 +23,14 @@ import com.example.cogniboticsarucomapper.network.ApiClient
 import com.example.cogniboticsarucomapper.ui.calibration.CalibrationScreen
 import com.example.cogniboticsarucomapper.ui.calibration.CheckerboardCameraScreen
 import com.example.cogniboticsarucomapper.ui.camera.CameraFeedScreen
-import com.example.cogniboticsarucomapper.ui.export.ExportScreen
 import com.example.cogniboticsarucomapper.ui.home.HomeScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryScreen
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementScreen
+import com.example.cogniboticsarucomapper.ui.measurement.SaveConfirmationScreen
 import com.example.cogniboticsarucomapper.ui.measurement.toMeasurementHistoryItem
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
+import com.example.cogniboticsarucomapper.vision.VisionEvent
 
 private const val SPLASH_MIN_DURATION_MS = 1_500L
 
@@ -40,7 +41,7 @@ private enum class AppScreen {
     Measurement,
     MeasurementHistory,
     Camera,
-    Export
+    SaveConfirmation
 }
 
 class MainActivity : ComponentActivity() {
@@ -64,8 +65,10 @@ class MainActivity : ComponentActivity() {
                 var currentScreen by rememberSaveable {
                     mutableStateOf(AppScreen.Home)
                 }
-                // Keep the pending cell name across screen navigation and activity recreation.
-                var workspaceName by rememberSaveable {
+                var siteName by rememberSaveable {
+                    mutableStateOf("")
+                }
+                var cellName by rememberSaveable {
                     mutableStateOf("")
                 }
 
@@ -80,11 +83,17 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf<List<MeasurementHistoryItem>>(emptyList())
                 }
 
+                var capturedFrame by remember { mutableStateOf<VisionEvent.FrameMeasured?>(null) }
+                var capturedMarkers by remember {
+                    mutableStateOf<List<VisionEvent.MarkerDetected>>(emptyList())
+                }
+                var cameraSaving by remember { mutableStateOf(false) }
+
                 LaunchedEffect(currentScreen) {
                     if (currentScreen == AppScreen.MeasurementHistory) {
                         try {
                             measurements =
-                                ApiClient.service.getScans().map { scan ->
+                                ApiClient.getService().getScans().map { scan ->
                                     scan.toMeasurementHistoryItem()
                                 }
                         } catch (e: Exception) {
@@ -109,9 +118,6 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onMeasurementClick = {
                                     currentScreen = AppScreen.Measurement
-                                },
-                                onExportClick = {
-                                    currentScreen = AppScreen.Export
                                 },
                                 modifier = Modifier.padding(innerPadding)
                             )
@@ -145,10 +151,9 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.Measurement -> {
                             MeasurementScreen(
-                                workspaceName = workspaceName,
-                                onWorkspaceNameChange = { workspaceName = it },
-                                onStartMeasurement = { normalizedName ->
-                                    workspaceName = normalizedName
+                                onStartMeasurement = { site, cell ->
+                                    siteName = site
+                                    cellName = cell
                                     currentScreen = AppScreen.Camera
                                 },
                                 onHistoryClick = {
@@ -167,24 +172,47 @@ class MainActivity : ComponentActivity() {
                                 onBack = {
                                     currentScreen = AppScreen.Measurement
                                 },
+                                onRefresh = {
+                                    measurements = ApiClient.getService().getScans()
+                                        .map { it.toMeasurementHistoryItem() }
+                                },
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
 
                         AppScreen.Camera -> {
                             CameraFeedScreen(
-                                workspaceName = workspaceName,
+                                siteName = siteName,
+                                cellName = cellName,
                                 onBack = {
                                     currentScreen = AppScreen.Measurement
                                 },
+                                onSave = { frame, markers ->
+                                    capturedFrame = frame
+                                    capturedMarkers = markers
+                                    currentScreen = AppScreen.SaveConfirmation
+                                },
+                                isSaving = cameraSaving,
+                                onSavingChanged = { cameraSaving = it },
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
 
-                        AppScreen.Export -> {
-                            ExportScreen(
-                                onBack = {
-                                    currentScreen = AppScreen.Home
+                        AppScreen.SaveConfirmation -> {
+                            SaveConfirmationScreen(
+                                siteName = siteName,
+                                cellName = cellName,
+                                capturedFrame = capturedFrame,
+                                capturedMarkers = capturedMarkers,
+                                onConfirm = {
+                                    currentScreen = AppScreen.Measurement
+                                    capturedFrame = null
+                                    capturedMarkers = emptyList()
+                                    cameraSaving = false
+                                },
+                                onCancel = {
+                                    currentScreen = AppScreen.Camera
+                                    cameraSaving = false
                                 },
                                 modifier = Modifier.padding(innerPadding)
                             )

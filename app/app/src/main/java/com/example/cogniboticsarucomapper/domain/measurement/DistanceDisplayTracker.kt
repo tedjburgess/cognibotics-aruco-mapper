@@ -1,18 +1,11 @@
 package com.example.cogniboticsarucomapper.domain.measurement
 
-import kotlin.math.abs
-
 data class PairReading(
     val from: MarkerKey,
     val to: MarkerKey,
     val rawMm: Double?,
     val steadyMm: Double?
-) {
-    // Only the named pairs on our flat test sheets have a known 135 mm reference.
-    val isTestSheetPair: Boolean get() = from.family == to.family &&
-        ((from.id == 0 && to.id == 1) || (from.id == 2 && to.id == 3))
-    val absoluteTestErrorMm: Double? get() = rawMm?.let { abs(it - 135.0) }
-}
+)
 
 // Keep pair rows in a fixed order; an unavailable current reading must never reuse an old number.
 class DistanceDisplayTracker {
@@ -29,7 +22,7 @@ class DistanceDisplayTracker {
     ): List<PairReading> {
         if (timeMs < lastTimeMs) windows.clear()
         lastTimeMs = timeMs
-        val sorted = keys.sortedWith(compareBy({ it.family.ordinal }, { it.id }))
+        val sorted = keys.sortedWith(compareBy({ it.dictionary.ordinal }, { it.id }))
         for (left in sorted.indices) {
             for (right in left + 1 until sorted.size) {
                 known.add(
@@ -49,9 +42,9 @@ class DistanceDisplayTracker {
         }
         return known.sortedWith(
             compareBy(
-                { it.from.family.ordinal },
+                { it.from.dictionary.ordinal },
                 { it.from.id },
-                { it.to.family.ordinal },
+                { it.to.dictionary.ordinal },
                 { it.to.id }
             )
         ).map { pair ->
@@ -65,7 +58,7 @@ class DistanceDisplayTracker {
         }
     }
 
-    // Starting a new sheet/session clears the roster and all smoothing history.
+    // Starting a new session clears the roster and all smoothing history.
     fun reset() {
         known.clear()
         windows.clear()

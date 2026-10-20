@@ -17,16 +17,16 @@ class MeasurementHistoryMappingTest {
     fun preservesBackendDistanceAndDistinguishesSameIdInDifferentDictionaries() {
         val distance = scan(relation(312.456789)).toMeasurementHistoryItem().distances.single()
         assertEquals(312.456789, distance.distanceMm!!, 0.0)
-        assertEquals("Marker 0 (DICT_4X4_50)", distance.fromLabel)
-        assertEquals("Marker 0 (DICT_5X5_50)", distance.toLabel)
+        assertEquals("DICT_4X4_50 #0", distance.fromLabel)
+        assertEquals("DICT_5X5_50 #0", distance.toLabel)
     }
 
     @Test
     fun missingEndpointDoesNotCrashOrMislabelTheOtherMarker() {
-        val distance = scan(relation(300.0).copy(to_marker_id = "missing"))
+        val distance = scan(relation(300.0).copy(toMarkerId = "missing"))
             .toMeasurementHistoryItem().distances.single()
         assertEquals("Unknown marker", distance.toLabel)
-        assertEquals("Marker 0 (DICT_4X4_50)", distance.fromLabel)
+        assertEquals("DICT_4X4_50 #0", distance.fromLabel)
     }
 
     @Test
@@ -48,30 +48,30 @@ class MeasurementHistoryMappingTest {
 
     private fun marker(id: String, dictionary: String) = ObservationResponse(
         id = "observation-$id",
-        marker_id = id,
-        aruco_id = 0,
+        markerId = id,
+        arucoId = 0,
         dictionary = dictionary,
         name = null,
         position = PositionDto(0.0, 0.0, 0.0),
         orientation = OrientationDto(0.0, 0.0, 0.0, 1.0),
-        size_mm = 20.0
+        sizeMm = 20.0
     )
 
     private fun relation(value: Double) = RelationResponse(
         id = "relation",
-        from_marker_id = "a",
-        to_marker_id = "b",
-        distance_mm = value,
-        relative_position = null
+        fromMarkerId = "a",
+        toMarkerId = "b",
+        distanceMm = value,
+        relativePosition = null
     )
 
     private fun scan(vararg relations: RelationResponse) = ScanResponse(
         id = "scan",
-        site_name = "Lab",
-        cell_name = "Cell",
-        device_id = "Phone",
-        measured_at = "2026-10-13T12:00:00Z",
-        created_at = "2026-10-13T12:00:00Z",
+        siteName = "Lab",
+        cellName = "Cell",
+        deviceId = "Phone",
+        measuredAt = "2026-10-13T12:00:00Z",
+        createdAt = "2026-10-13T12:00:00Z",
         observations = listOf(markerA, markerB),
         relations = relations.toList()
     )

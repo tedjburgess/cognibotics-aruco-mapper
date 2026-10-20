@@ -4,7 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.cogniboticsarucomapper.data.measurement.CameraModel
 import com.example.cogniboticsarucomapper.data.measurement.MarkerPoseSolver
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerFamily
+import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -52,18 +52,28 @@ class KnownSizePoseTest {
                 0L,
                 0
             ).single() as VisionEvent.FrameMeasured
-            assertEquals(MarkerFamily.entries.toSet(), frame.markers.map { it.family }.toSet())
+            assertEquals(
+                ArucoDictionary.entries.toSet(),
+                frame.markers.map {
+                    it.dictionary
+                }.toSet()
+            )
             assertEquals(4, frame.markers.size)
             assertEquals(CameraParameterSource.UNAVAILABLE, frame.cameraParameters)
             assertTrue(frame.distances.isEmpty())
             // An explicit enum selection must keep the requested family instead of enabling all four.
-            val selected = ArucoAnalyzer(ArucoDictionaryType.DICT_5X5_50).processFrame(
+            val selected = ArucoAnalyzer(ArucoDictionary.DICT_5X5_50).processFrame(
                 board,
                 board,
                 0L,
                 0
             ).single() as VisionEvent.FrameMeasured
-            assertEquals(listOf(MarkerFamily.FIVE_BY_FIVE), selected.markers.map { it.family })
+            assertEquals(
+                listOf(ArucoDictionary.DICT_5X5_50),
+                selected.markers.map {
+                    it.dictionary
+                }
+            )
             assertEquals(0, selected.markers.single().markerId)
             board.setTo(Scalar(255.0))
             val cleared = analyzer.processFrame(

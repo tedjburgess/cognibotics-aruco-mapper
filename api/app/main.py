@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 from app.database import engine
 from app.models import Base
-from app.routers import health, scans
+from app.routers import health, scans, sites
 
 
 @asynccontextmanager
@@ -20,3 +20,4 @@ API_PREFIX = "/api/v1"
 
 app.include_router(scans.router, prefix=API_PREFIX)
 app.include_router(health.router, prefix=API_PREFIX)
+app.include_router(sites.router, prefix=API_PREFIX)

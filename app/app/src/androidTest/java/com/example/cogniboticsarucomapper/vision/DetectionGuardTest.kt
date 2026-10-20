@@ -1,7 +1,7 @@
 package com.example.cogniboticsarucomapper.vision
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerFamily
+import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -50,10 +50,10 @@ class DetectionGuardTest {
     }
 
     @Test
-    fun testSheetsRejectOtherIdsButNormalModeAcceptsThem() {
+    fun supportedDictionaryAcceptsIdsAboveThree() {
         withMarker(42, false) { board ->
             val analyzer = ArucoAnalyzer()
-            fun markers() = (
+            val markers = (
                 analyzer.processFrame(
                     board,
                     board,
@@ -61,24 +61,22 @@ class DetectionGuardTest {
                     0
                 ).single() as VisionEvent.FrameMeasured
                 ).markers
-            assertTrue(markers().none { it.family == MarkerFamily.FOUR_BY_FOUR })
-            analyzer.testSheetMode = false
             assertTrue(
-                markers().any {
-                    it.family == MarkerFamily.FOUR_BY_FOUR && it.markerId == 42
+                markers.any {
+                    it.dictionary == ArucoDictionary.DICT_4X4_50 && it.markerId == 42
                 }
             )
         }
     }
 
     @Test
-    fun normalModeRejectsIdsOutsideTheSupportedDictionary() {
+    fun supportedDictionaryRejectsIdsOutsideItsRange() {
         // A valid code from a larger dictionary must not become a supported 4x4 marker.
         withMarker(50, false, Objdetect.DICT_4X4_1000) { board ->
-            val analyzer = ArucoAnalyzer().apply { testSheetMode = false }
+            val analyzer = ArucoAnalyzer()
             val frame = analyzer.processFrame(board, board, 0, 0)
                 .single() as VisionEvent.FrameMeasured
-            assertTrue(frame.markers.none { it.family == MarkerFamily.FOUR_BY_FOUR })
+            assertTrue(frame.markers.none { it.dictionary == ArucoDictionary.DICT_4X4_50 })
         }
     }
 
@@ -91,7 +89,7 @@ class DetectionGuardTest {
                 0,
                 0
             ).single() as VisionEvent.FrameMeasured
-            assertTrue(frame.markers.none { it.family == MarkerFamily.FOUR_BY_FOUR })
+            assertTrue(frame.markers.none { it.dictionary == ArucoDictionary.DICT_4X4_50 })
         }
     }
 }

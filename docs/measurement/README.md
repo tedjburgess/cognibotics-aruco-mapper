@@ -17,9 +17,9 @@ The detector uses the shared supported-dictionary enum with 50 entries per famil
 
 The camera overlay, tracking indicators, analysis switch and torch remain available. Distances use current-frame positions and need at least three consecutive detections of both markers. Removing a marker clears its number immediately and leaves a dash in the same row. Turn Analysis off and back on when switching sheets to clear the remembered rows. Tracking percentage means repeat detection over consecutive frames; it does not mean measurement accuracy.
 
-**Test sheets (IDs 0–3)** starts enabled for this accuracy-testing build. It accepts only those printed IDs within each family; switch it off for other supported IDs (4–49). Small 4×4 codes require an exact decoded match. All families require at least two image pixels per cell across the marker's compressed dimension. These guards reduce accidental detections but cannot prove that every accepted marker is real. A distant 20 mm marker may disappear; bring the camera closer rather than lower the guard during accuracy testing.
+Small 4×4 codes require an exact decoded match. All families require at least two image pixels per cell across the marker's compressed dimension. These guards reduce accidental detections but cannot prove that every accepted marker is real. A distant 20 mm marker may disappear; bring the camera closer rather than lower the guard during accuracy testing.
 
-**Steady display** shows the median of up to five consecutive readings, no older than 500 ms. Switch it off to record raw readings for #39. Missing readings never reuse an old value. In test-sheet mode, pairs #0–#1 and #2–#3 show their raw absolute error against 135 mm. This comparison assumes they are still on the original flat sheet at its checked print scale. Do not use it for separated markers, bent paper or raised markers. Cross-sheet pairs have no known reference. The solver never receives 135 mm or adjusts measurements to match it.
+**Steady display** shows the median of up to five consecutive readings, no older than 500 ms. Switch it off to record raw readings. Missing readings never reuse an old value.
 
 ## How the calculation works
 

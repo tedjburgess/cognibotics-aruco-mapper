@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,7 +34,6 @@ import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
 fun HomeScreen(
     onCalibrationClick: () -> Unit,
     onMeasurementClick: () -> Unit,
-    onExportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -52,7 +54,7 @@ fun HomeScreen(
             Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("ArUco Mapper", style = MaterialTheme.typography.headlineLarge)
                 Text(
-                    "Calibration · Measurement · Export",
+                    "Scan and measure marker distances",
                     style = MaterialTheme.typography.bodyMedium,
                     color = CogniTealLight
                 )
@@ -63,14 +65,18 @@ fun HomeScreen(
             modifier = Modifier.padding(top = 8.dp),
             style = MaterialTheme.typography.titleLarge
         )
-        ActionCard("01", "Calibration", "Open the calibration workspace", onCalibrationClick)
         ActionCard(
-            "02",
+            Icons.Filled.QrCode2,
             "Measurement",
             "Start a scan or view measurement history",
             onMeasurementClick
         )
-        ActionCard("03", "Export", "Open the export workspace", onExportClick)
+        ActionCard(
+            Icons.Filled.Build,
+            "Calibration",
+            "Open the calibration settings",
+            onCalibrationClick
+        )
         Column(
             Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -98,6 +104,6 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     CogniboticsArucoMapperTheme {
-        HomeScreen(onCalibrationClick = {}, onMeasurementClick = {}, onExportClick = {})
+        HomeScreen(onCalibrationClick = {}, onMeasurementClick = {})
     }
 }
