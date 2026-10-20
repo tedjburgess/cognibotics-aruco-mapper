@@ -12,5 +12,4 @@ object MeasurementFormats {
 
     fun millimeters(value: Double, decimalPlaces: Int): String =
         String.format(Locale.getDefault(), "%.${decimalPlaces}f $MILLIMETER_UNIT", value)
-
 }

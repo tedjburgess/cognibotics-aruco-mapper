@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -62,12 +65,17 @@ fun HomeScreen(
             modifier = Modifier.padding(top = 8.dp),
             style = MaterialTheme.typography.titleLarge
         )
-        ActionCard("01", "Calibration", "Open the calibration workspace", onCalibrationClick)
         ActionCard(
-            "02",
+            Icons.Filled.QrCode2,
             "Measurement",
             "Start a scan or view measurement history",
             onMeasurementClick
+        )
+        ActionCard(
+            Icons.Filled.Build,
+            "Calibration",
+            "Open the calibration settings",
+            onCalibrationClick
         )
         Column(
             Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 8.dp),

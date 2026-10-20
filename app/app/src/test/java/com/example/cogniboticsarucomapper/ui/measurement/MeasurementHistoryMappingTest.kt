@@ -17,8 +17,8 @@ class MeasurementHistoryMappingTest {
     fun preservesBackendDistanceAndDistinguishesSameIdInDifferentDictionaries() {
         val distance = scan(relation(312.456789)).toMeasurementHistoryItem().distances.single()
         assertEquals(312.456789, distance.distanceMm!!, 0.0)
-        assertEquals("ID 0 - DICT_4X4_50", distance.fromLabel)
-        assertEquals("ID 0 - DICT_5X5_50", distance.toLabel)
+        assertEquals("DICT_4X4_50 #0", distance.fromLabel)
+        assertEquals("DICT_5X5_50 #0", distance.toLabel)
     }
 
     @Test
@@ -26,7 +26,7 @@ class MeasurementHistoryMappingTest {
         val distance = scan(relation(300.0).copy(toMarkerId = "missing"))
             .toMeasurementHistoryItem().distances.single()
         assertEquals("Unknown marker", distance.toLabel)
-        assertEquals("ID 0 - DICT_4X4_50", distance.fromLabel)
+        assertEquals("DICT_4X4_50 #0", distance.fromLabel)
     }
 
     @Test

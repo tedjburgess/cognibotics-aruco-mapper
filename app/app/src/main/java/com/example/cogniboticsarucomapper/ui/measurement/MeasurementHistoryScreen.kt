@@ -119,7 +119,7 @@ fun MeasurementHistoryScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                "${measurement.siteName} / ${measurement.cellName}",
+                                "${measurement.siteName}, ${measurement.cellName}",
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(

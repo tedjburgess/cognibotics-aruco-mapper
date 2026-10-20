@@ -3,6 +3,8 @@ package com.example.cogniboticsarucomapper.ui.measurement
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.cogniboticsarucomapper.network.ApiClient
 import com.example.cogniboticsarucomapper.network.model.SiteWithCellsResponse
@@ -39,7 +40,6 @@ fun MeasurementScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     var sites by remember { mutableStateOf<List<SiteWithCellsResponse>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -82,6 +82,8 @@ fun MeasurementScreen(
 
     FeatureLayout("Measurement", "Scan markers or review previous measurements", onBack, modifier) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text("New scan", style = MaterialTheme.typography.titleMedium)
+
             ExposedDropdownMenuBox(
                 expanded = siteMenuExpanded && siteSuggestions.isNotEmpty(),
                 onExpandedChange = {
@@ -177,10 +179,15 @@ fun MeasurementScreen(
                 enabled = canStart,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Start Measurement")
+                Text("Start scan")
             }
         }
 
-        ActionCard("02", "Measurement History", "View saved measurements", onHistoryClick)
+        ActionCard(
+            Icons.Filled.DateRange,
+            "Measurement history",
+            "Review measurement history",
+            onHistoryClick
+        )
     }
 }
