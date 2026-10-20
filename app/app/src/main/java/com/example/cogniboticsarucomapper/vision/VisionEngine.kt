@@ -17,12 +17,12 @@ import org.opencv.core.Mat
  *
  * CameraX feeds frames in via [analyze]; anyone interested in results collects
  * [events] (or subscribes via [addListener] for simple callbacks). New
- * detectors (e.g. ArUco) plug into [processFrame] — all consumers react
+ * detectors (e.g. ArUco) plug into [processFrame] : all consumers react
  * uniformly to [VisionEvent] emissions.
  */
 class VisionEngine(
     // TODO: plug in the marker detection analyzer here, e.g.:
-    //   listOf(ArUcoAnalyzer()) — a VisionEngine.FrameAnalyzer that finds
+    //   listOf(ArUcoAnalyzer()) : a VisionEngine.FrameAnalyzer that finds
     //   markers in the frame and returns MarkerDetected/MarkersCleared events.
     private val analyzers: List<FrameAnalyzer> = emptyList()
 ) : ImageAnalysis.Analyzer {

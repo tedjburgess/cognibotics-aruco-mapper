@@ -45,8 +45,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -70,8 +70,15 @@ private const val TAG = "CameraFeedScreen"
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
+fun CameraFeedScreen(
+    siteName: String,
+    cellName: String,
+    onBack: () -> Unit,
+    onSave: (VisionEvent.FrameMeasured?, List<VisionEvent.MarkerDetected>) -> Unit,
+    isSaving: Boolean,
+    onSavingChanged: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val controlsMaxHeight = (LocalConfiguration.current.screenHeightDp.dp * 0.35f).coerceAtMost(
         300.dp
     )
@@ -94,10 +101,14 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
     val fps by visionEngine.fps.collectAsStateWithLifecycle()
     var torchEnabled by remember { mutableStateOf(false) }
 
+    var latestFrameMeasured by remember { mutableStateOf<VisionEvent.FrameMeasured?>(null) }
+    var latestMarkers by remember { mutableStateOf<List<VisionEvent.MarkerDetected>>(emptyList()) }
+
     // React to vision events here. Anything downstream (UI, logging, the
     // future ArUco mapping logic) hooks into the same flow.
     LaunchedEffect(visionEngine) {
         visionEngine.events.collect { event ->
+            if (isSaving) return@collect
             when (event) {
                 is VisionEvent.FrameMeasured -> {
                     if (visionEngine.analysisEnabled.value &&
@@ -114,6 +125,8 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                         )
                         cameraParameters = event.cameraParameters
                         measurementError = null
+                        latestFrameMeasured = event
+                        latestMarkers = event.markers
                     }
                 }
                 is VisionEvent.MarkerDetected -> {
@@ -133,6 +146,8 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                             emptyList(),
                             SystemClock.elapsedRealtime()
                         )
+                    latestFrameMeasured = null
+                    latestMarkers = emptyList()
                 }
                 is VisionEvent.AnalysisError -> {
                     visibleMarkers.clear()
@@ -156,7 +171,7 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
         )
         Text(
-            text = "Cell / workspace: $workspaceName",
+            text = "Site: $siteName  |  Cell: $cellName",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(horizontal = 20.dp)
         )
@@ -274,6 +289,8 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                                     visibleMarkers.clear()
                                     displayTracker.reset()
                                     distances = emptyList()
+                                    latestFrameMeasured = null
+                                    latestMarkers = emptyList()
                                 }
                             }
                         )
@@ -283,7 +300,7 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                             onCheckedChange = { torchEnabled = it }
                         )
                         OptionToggle(
-                            label = "Test sheets (IDs 0–3)",
+                            label = "Test sheets (IDs 0-3)",
                             checked = testSheetMode,
                             onCheckedChange = {
                                 testSheetMode = it
@@ -291,6 +308,8 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                                 displayTracker.reset()
                                 distances = emptyList()
                                 visibleMarkers.clear()
+                                latestFrameMeasured = null
+                                latestMarkers = emptyList()
                             }
                         )
                         OptionToggle(
@@ -303,9 +322,9 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                                 !analysisEnabled -> "Analysis paused."
                                 !opencvReady -> "OpenCV could not start."
                                 cameraParameters == CameraParameterSource.UNAVAILABLE ->
-                                    "Camera parameters unavailable — distances cannot be measured."
+                                    "Camera parameters unavailable : distances cannot be measured."
                                 cameraParameters == CameraParameterSource.ESTIMATED ->
-                                    "Estimated camera parameters — accuracy not validated."
+                                    "Estimated camera parameters : accuracy not validated."
                                 else -> "Using calibrated camera parameters."
                             },
                             style = MaterialTheme.typography.bodySmall
@@ -320,7 +339,7 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                                 Text(
                                     "${pair.from.label} → ${pair.to.label}: ${value?.let {
                                         "%.1f mm".format(it)
-                                    } ?: "—"}",
+                                    } ?: "N/A"}",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 // Compare raw measurements only, and only for pairs on the same test sheet.
@@ -382,6 +401,42 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                         }
                     }
                 }
+
+                if (distances.isNotEmpty() && visibleMarkers.size >= 2 && !isSaving) {
+                    Button(
+                        onClick = {
+                            onSavingChanged(true)
+                            onSave(latestFrameMeasured, latestMarkers)
+                        },
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .fillMaxWidth(),
+                        enabled = !isSaving
+                    ) {
+                        Text("Save Measurement")
+                    }
+                } else if (isSaving) {
+                    Text(
+                        "Preparing to save...",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                } else if (analysisEnabled && visibleMarkers.size < 2) {
+                    Text(
+                        "Detect at least 2 markers to enable saving.",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                }
+
+                OutlinedButton(
+                    onClick = onBack,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text("Back")
+                }
             }
 
             permissionState.status.shouldShowRationale -> {
@@ -399,15 +454,6 @@ fun CameraFeedScreen(workspaceName: String, onBack: () -> Unit, modifier: Modifi
                     onRequest = { permissionState.launchPermissionRequest() }
                 )
             }
-        }
-
-        OutlinedButton(
-            onClick = onBack,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 4.dp)
-                .fillMaxWidth()
-        ) {
-            Text("Back")
         }
     }
 }

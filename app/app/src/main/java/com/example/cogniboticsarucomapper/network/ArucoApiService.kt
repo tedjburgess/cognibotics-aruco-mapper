@@ -3,6 +3,7 @@ package com.example.cogniboticsarucomapper.network
 import com.example.cogniboticsarucomapper.network.model.HealthResponse
 import com.example.cogniboticsarucomapper.network.model.ScanRequest
 import com.example.cogniboticsarucomapper.network.model.ScanResponse
+import com.example.cogniboticsarucomapper.network.model.SiteWithCellsResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -17,4 +18,7 @@ interface ArucoApiService {
 
     @POST("api/v1/scans")
     suspend fun createScan(@Body scan: ScanRequest): ScanResponse
+
+    @GET("api/v1/sites")
+    suspend fun getSites(): List<SiteWithCellsResponse>
 }

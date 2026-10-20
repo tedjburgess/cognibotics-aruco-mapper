@@ -9,6 +9,13 @@ enum class MarkerFamily(val label: String, val sizeMm: Double) {
     SEVEN_BY_SEVEN("7×7", 100.0)
 }
 
+fun MarkerFamily.toApiDictionary(): String = when (this) {
+    MarkerFamily.FOUR_BY_FOUR -> "DICT_4X4_50"
+    MarkerFamily.FIVE_BY_FIVE -> "DICT_5X5_50"
+    MarkerFamily.SIX_BY_SIX -> "DICT_6X6_50"
+    MarkerFamily.SEVEN_BY_SEVEN -> "DICT_7X7_50"
+}
+
 data class MarkerKey(val family: MarkerFamily, val id: Int) {
     val label: String get() = "${family.label} #$id"
 }
