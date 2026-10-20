@@ -18,7 +18,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "API_BASE_URL", "\"${providers.gradleProperty("apiBaseUrl").getOrElse("http://127.0.0.1:8000/")}\"")
+        buildConfigField(
+            "String",
+            "API_BASE_URL",
+            "\"${providers.gradleProperty("apiBaseUrl").getOrElse("http://127.0.0.1:8000/")}\""
+        )
     }
 
     buildTypes {

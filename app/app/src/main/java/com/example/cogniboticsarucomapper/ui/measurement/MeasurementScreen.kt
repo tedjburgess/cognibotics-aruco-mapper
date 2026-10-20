@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -66,13 +66,17 @@ fun MeasurementScreen(
 
     val siteOptions = (listOf(DEFAULT_SITE) + sites.map { it.name })
         .distinctBy { it.lowercase() }
-    val siteSuggestions = if (showAllSites) siteOptions else {
+    val siteSuggestions = if (showAllSites) {
+        siteOptions
+    } else {
         siteOptions.filter { it.contains(siteName, ignoreCase = true) }
     }
     val currentSite = sites.firstOrNull { it.name == siteName.trim() }
     val cellOptions = (listOf(DEFAULT_CELL) + currentSite?.cells.orEmpty().map { it.name })
         .distinctBy { it.lowercase() }
-    val cellSuggestions = if (showAllCells) cellOptions else {
+    val cellSuggestions = if (showAllCells) {
+        cellOptions
+    } else {
         cellOptions.filter { it.contains(cellName, ignoreCase = true) }
     }
     val canStart = siteName.trim().isNotEmpty() && cellName.trim().isNotEmpty()

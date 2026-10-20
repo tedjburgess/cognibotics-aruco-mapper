@@ -29,8 +29,8 @@ import com.example.cogniboticsarucomapper.ui.measurement.MeasurementHistoryScree
 import com.example.cogniboticsarucomapper.ui.measurement.MeasurementScreen
 import com.example.cogniboticsarucomapper.ui.measurement.SaveConfirmationScreen
 import com.example.cogniboticsarucomapper.ui.measurement.toMeasurementHistoryItem
-import com.example.cogniboticsarucomapper.vision.VisionEvent
 import com.example.cogniboticsarucomapper.ui.theme.CogniboticsArucoMapperTheme
+import com.example.cogniboticsarucomapper.vision.VisionEvent
 
 private const val SPLASH_MIN_DURATION_MS = 1_500L
 
@@ -84,7 +84,9 @@ class MainActivity : ComponentActivity() {
                 }
 
                 var capturedFrame by remember { mutableStateOf<VisionEvent.FrameMeasured?>(null) }
-                var capturedMarkers by remember { mutableStateOf<List<VisionEvent.MarkerDetected>>(emptyList()) }
+                var capturedMarkers by remember {
+                    mutableStateOf<List<VisionEvent.MarkerDetected>>(emptyList())
+                }
                 var cameraSaving by remember { mutableStateOf(false) }
 
                 LaunchedEffect(currentScreen) {
@@ -215,7 +217,6 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
-
                     }
                 }
             }

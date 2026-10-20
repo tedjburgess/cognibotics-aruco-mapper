@@ -14,7 +14,5 @@ router = APIRouter(prefix="/sites", tags=["sites"])
 @router.get("", response_model=list[schemas.SiteOut])
 def get_sites(db: Annotated[Session, Depends(get_db)]) -> Sequence[models.Site]:
     return db.scalars(
-        select(models.Site)
-        .options(selectinload(models.Site.cells))
-        .order_by(models.Site.name)
+        select(models.Site).options(selectinload(models.Site.cells)).order_by(models.Site.name)
     ).all()

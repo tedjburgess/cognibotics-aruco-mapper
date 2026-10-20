@@ -61,11 +61,6 @@ data class ScanResponse(
     val relations: List<RelationResponse>
 )
 
-data class CellResponse(
-    val name: String
-)
+data class CellResponse(val name: String)
 
-data class SiteWithCellsResponse(
-    val name: String,
-    val cells: List<CellResponse> = emptyList()
-)
+data class SiteWithCellsResponse(val name: String, val cells: List<CellResponse> = emptyList())

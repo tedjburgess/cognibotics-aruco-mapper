@@ -24,24 +24,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.cogniboticsarucomapper.domain.measurement.toApiDictionary
 import com.example.cogniboticsarucomapper.network.ApiClient
 import com.example.cogniboticsarucomapper.ui.components.PageHeading
 import com.example.cogniboticsarucomapper.vision.VisionEvent
+import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Locale
 
-data class ConfirmationItem(
-    val label: String,
-    val value: String
-)
+data class ConfirmationItem(val label: String, val value: String)
 
 @Composable
 fun SaveConfirmationScreen(
@@ -62,13 +57,23 @@ fun SaveConfirmationScreen(
             add(ConfirmationItem("Site", siteName))
             add(ConfirmationItem("Cell / Workspace", cellName))
             add(ConfirmationItem("Markers Detected", capturedMarkers.size.toString()))
-            add(ConfirmationItem("Distances Measured", capturedFrame?.distances?.size?.toString() ?: "0"))
+            add(
+                ConfirmationItem(
+                    "Distances Measured",
+                    capturedFrame?.distances?.size?.toString() ?: "0"
+                )
+            )
             if (capturedFrame?.distances?.isNotEmpty() == true) {
                 capturedFrame?.distances?.forEach { dist ->
-                    add(ConfirmationItem(
-                        "${dist.from.label} → ${dist.to.label}",
-                        dist.distanceMm?.let { String.format(Locale.getDefault(), "%.3f mm", it) } ?: "N/A"
-                    ))
+                    add(
+                        ConfirmationItem(
+                            "${dist.from.label} → ${dist.to.label}",
+                            dist.distanceMm?.let {
+                                String.format(Locale.getDefault(), "%.3f mm", it)
+                            }
+                                ?: "N/A"
+                        )
+                    )
                 }
             }
         }
@@ -82,13 +87,23 @@ fun SaveConfirmationScreen(
         saving = true
         coroutineScope.launch {
             try {
-                val frame = capturedFrame ?: throw IllegalStateException("No measurement data available")
+                val frame =
+                    capturedFrame ?: throw IllegalStateException("No measurement data available")
                 val markers = capturedMarkers
 
                 if (markers.size < 2) throw IllegalStateException("At least 2 markers required")
 
-                val positionedMarkers = markers.filter { it.positionMm != null && it.positionMm!!.isValid }
-                if (positionedMarkers.size < 2) throw IllegalStateException("At least 2 markers with valid 3D positions required")
+                val positionedMarkers = markers.filter {
+                    it.positionMm != null &&
+                        it.positionMm!!.isValid
+                }
+                if (positionedMarkers.size <
+                    2
+                ) {
+                    throw IllegalStateException(
+                        "At least 2 markers with valid 3D positions required"
+                    )
+                }
 
                 val observations = positionedMarkers.map { marker ->
                     val pos = marker.positionMm!!
@@ -96,13 +111,25 @@ fun SaveConfirmationScreen(
                         aruco_id = marker.markerId,
                         dictionary = marker.family.toApiDictionary(),
                         name = marker.key.label,
-                        position = com.example.cogniboticsarucomapper.network.model.PositionDto(pos.x, pos.y, pos.z),
-                        orientation = com.example.cogniboticsarucomapper.network.model.OrientationDto(0.0, 0.0, 0.0, 1.0),
+                        position = com.example.cogniboticsarucomapper.network.model.PositionDto(
+                            pos.x,
+                            pos.y,
+                            pos.z
+                        ),
+                        orientation = com.example.cogniboticsarucomapper.network.model.OrientationDto(
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ),
                         size_mm = marker.family.sizeMm
                     )
                 }
 
-                val relations = frame.distances.filter { it.distanceMm.isFinite() && it.distanceMm >= 0.0 }.map { dist ->
+                val relations = frame.distances.filter {
+                    it.distanceMm.isFinite() &&
+                        it.distanceMm >= 0.0
+                }.map { dist ->
                     com.example.cogniboticsarucomapper.network.model.RelationRequest(
                         from_aruco_id = dist.from.id,
                         from_dictionary = dist.from.family.toApiDictionary(),
@@ -158,7 +185,9 @@ fun SaveConfirmationScreen(
         androidx.compose.material3.Card(
             modifier = Modifier.fillMaxWidth(),
             shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
-            colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            colors = androidx.compose.material3.CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -231,5 +260,4 @@ fun SaveConfirmationScreen(
             }
         }
     }
-
 }

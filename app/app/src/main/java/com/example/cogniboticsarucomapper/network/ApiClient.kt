@@ -13,7 +13,5 @@ object ApiClient {
             .build()
     }
 
-    fun getService(): ArucoApiService {
-        return retrofit.create(ArucoApiService::class.java)
-    }
+    fun getService(): ArucoApiService = retrofit.create(ArucoApiService::class.java)
 }
