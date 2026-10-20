@@ -55,6 +55,6 @@ Unit tests cover missing/stable rows, raw versus median readings, short smoothin
 .\gradlew.bat connectedDebugAndroidTest
 ```
 
-The synthetic test is not evidence of physical accuracy. Follow [the #39 experiment guide](../accuracy/README.md) and keep the measured results.
+The synthetic test is not evidence of physical accuracy. See the [physical measurement results](../../README.md#physical-measurement-results) for the recorded experiments, readings and remaining checks.
 
 Sources: [#57](https://github.com/tedjburgess/cognibotics-aruco-mapper/issues/57), [Simon’s prototype #37](https://github.com/tedjburgess/cognibotics-aruco-mapper/pull/37), [OpenCV PnP reference](https://docs.opencv.org/4.13.0/d5/d1f/calib3d_solvePnP.html), and Mathias's recorded size mapping.

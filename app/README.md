@@ -32,4 +32,4 @@ Use Android Studio's terminal with a supported JDK available (`JAVA_HOME` or `PA
 
 ## Live measurement and physical tests
 
-See the [measurement guide](../docs/measurement/README.md) for supported marker sizes and controls, and the [accuracy guide](../docs/accuracy/README.md#recorded-run-conditions) for the three physical run setups and results. The manual reference distances have estimated ±3 mm uncertainty; camera parameters are still estimated.
+See the [measurement guide](../docs/measurement/README.md) for marker sizes and controls, and [physical measurement results](../README.md#physical-measurement-results) for all results, detailed readings and limitations.
