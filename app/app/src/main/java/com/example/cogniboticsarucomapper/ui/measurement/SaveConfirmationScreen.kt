@@ -116,7 +116,8 @@ fun SaveConfirmationScreen(
                             pos.y,
                             pos.z
                         ),
-                        orientation = com.example.cogniboticsarucomapper.network.model.OrientationDto(
+                        orientation =
+                        com.example.cogniboticsarucomapper.network.model.OrientationDto(
                             0.0,
                             0.0,
                             0.0,
