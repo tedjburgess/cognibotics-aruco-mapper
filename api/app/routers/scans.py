@@ -1,3 +1,4 @@
+import uuid
 from collections.abc import Sequence
 from typing import Annotated
 
@@ -128,3 +129,20 @@ def get_scans(db: Annotated[Session, Depends(get_db)]) -> Sequence[models.Scan]:
         )
         .order_by(models.Scan.measured_at.desc())
     ).all()
+
+
+@router.delete("/{scan_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_scan(
+    scan_id: uuid.UUID,
+    db: Annotated[Session, Depends(get_db)],
+) -> None:
+    scan = db.get(models.Scan, scan_id)
+
+    if scan is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Scan not found",
+        )
+
+    db.delete(scan)
+    db.commit()
