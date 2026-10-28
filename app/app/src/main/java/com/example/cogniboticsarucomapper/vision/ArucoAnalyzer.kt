@@ -9,6 +9,8 @@ import com.example.cogniboticsarucomapper.domain.measurement.ImagePoint
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerImageQuality
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerMeasurements
 import com.example.cogniboticsarucomapper.domain.measurement.PositionedMarker
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerKey
+import com.example.cogniboticsarucomapper.domain.measurement.role
 import org.opencv.core.Mat
 import org.opencv.objdetect.ArucoDetector
 import org.opencv.objdetect.DetectorParameters
@@ -60,6 +62,7 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
                         Offset(point[0].toFloat(), point[1].toFloat())
                     }
                     val id = ids.get(index, 0)[0].toInt()
+                    val markerRole = MarkerKey(dictionary, id).role()
                     val gridCells = dictionary.markerGridCells
                     // Reject tiny or severely compressed candidates before estimating their position.
                     if (!MarkerImageQuality.hasEnoughDetail(
@@ -72,7 +75,13 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
                         continue
                     }
                     val pose = model?.let {
-                        solver.estimate(offsets, dictionary.sizeMm, it, gridCells)
+                        solver.estimate(
+                            offsets,
+                            dictionary.sizeMm,
+                            it,
+                            markerRole,
+                            gridCells
+                        )
                     }
                     markers.add(
                         VisionEvent.MarkerDetected(

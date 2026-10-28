@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.domain.measurement.ImagePoint
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerImageQuality
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerRole
 import kotlin.math.abs
 import kotlin.math.acos
 import kotlin.math.sqrt
@@ -24,13 +25,19 @@ data class MarkerPoseEstimate(
 
 // Each known-size marker is still solved independently in 3D.
 class MarkerPoseSolver {
-    fun solve(corners: List<Offset>, sizeMm: Double, model: CameraModel): PositionMm? =
-        estimate(corners, sizeMm, model)?.position
+    fun solve(
+        corners: List<Offset>,
+        sizeMm: Double,
+        model: CameraModel,
+        role: MarkerRole
+    ): PositionMm? =
+        estimate(corners, sizeMm, model, role)?.position
 
     fun estimate(
         corners: List<Offset>,
         sizeMm: Double,
         model: CameraModel,
+        role: MarkerRole,
         gridCells: Int = 6
     ): MarkerPoseEstimate? {
         val points = corners.map { ImagePoint(it.x.toDouble(), it.y.toDouble()) }
@@ -80,14 +87,48 @@ class MarkerPoseSolver {
             fun score(rotation: Mat, translation: Mat) {
                 val values = DoubleArray(3)
                 translation.get(0, 0, values)
-                val position = PositionMm(values[0], values[1], values[2])
-                if (!position.isValid) return
+
+                val centerPosition = PositionMm(
+                    values[0],
+                    values[1],
+                    values[2]
+                )
+
+                if (!centerPosition.isValid) return
+
                 Calib3d.Rodrigues(rotation, rotationMatrix)
+
+                val position =
+                    if (role == MarkerRole.DIRECTIONAL_REFERENCE) {
+                        // Marker-local top-left corner: (-half, +half, 0)
+                        val localX = -half
+                        val localY = half
+
+                        val offsetX =
+                            rotationMatrix.get(0, 0)[0] * localX +
+                                rotationMatrix.get(0, 1)[0] * localY
+
+                        val offsetY =
+                            rotationMatrix.get(1, 0)[0] * localX +
+                                rotationMatrix.get(1, 1)[0] * localY
+
+                        val offsetZ =
+                            rotationMatrix.get(2, 0)[0] * localX +
+                                rotationMatrix.get(2, 1)[0] * localY
+
+                        PositionMm(
+                            centerPosition.x + offsetX,
+                            centerPosition.y + offsetY,
+                            centerPosition.z + offsetZ
+                        )
+                    } else {
+                        centerPosition
+                    }
                 val zx = rotationMatrix.get(2, 0)[0]
                 val zy = rotationMatrix.get(2, 1)[0]
                 val zz = rotationMatrix.get(2, 2)[0]
                 if (!zz.isFinite() ||
-                    objectPoints.toArray().any { zx * it.x + zy * it.y + position.z <= 0.0 }
+                    objectPoints.toArray().any { zx * it.x + zy * it.y + centerPosition.z <= 0.0 }
                 ) {
                     return
                 }
