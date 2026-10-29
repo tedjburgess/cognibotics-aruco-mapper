@@ -3,6 +3,7 @@ package com.example.cogniboticsarucomapper.data.measurement
 import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.domain.measurement.ImagePoint
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerImageQuality
+import com.example.cogniboticsarucomapper.domain.measurement.OrientationQuaternion
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
 import kotlin.math.abs
 import kotlin.math.acos
@@ -18,6 +19,7 @@ import org.opencv.core.Point3
 
 data class MarkerPoseEstimate(
     val position: PositionMm,
+    val orientation: OrientationQuaternion,
     val tiltDegrees: Double,
     val errorPixels: Double
 )
@@ -83,6 +85,7 @@ class MarkerPoseSolver {
                 val position = PositionMm(values[0], values[1], values[2])
                 if (!position.isValid) return
                 Calib3d.Rodrigues(rotation, rotationMatrix)
+                val orientation = rotationVectorToQuaternion(rotation)
                 val zx = rotationMatrix.get(2, 0)[0]
                 val zy = rotationMatrix.get(2, 1)[0]
                 val zz = rotationMatrix.get(2, 2)[0]
@@ -111,9 +114,10 @@ class MarkerPoseSolver {
                 if (error.isFinite() && error <= minOf(2.0, thickness * 0.05)) {
                     candidates.add(
                         MarkerPoseEstimate(
-                            position,
-                            Math.toDegrees(acos(abs(zz).coerceIn(0.0, 1.0))),
-                            error
+                            position = position,
+                            orientation = orientation,
+                            tiltDegrees = Math.toDegrees(acos(abs(zz).coerceIn(0.0, 1.0))),
+                            errorPixels = error
                         )
                     )
                 }
@@ -168,4 +172,29 @@ class MarkerPoseSolver {
             translations.forEach { it.release() }
         }
     }
+}
+
+private fun rotationVectorToQuaternion(rotation: Mat): OrientationQuaternion {
+    val values = DoubleArray(3)
+    rotation.get(0, 0, values)
+
+    val rx = values[0]
+    val ry = values[1]
+    val rz = values[2]
+
+    val angle = sqrt(rx * rx + ry * ry + rz * rz)
+
+    if (angle < 1e-12) {
+        return OrientationQuaternion(0.0, 0.0, 0.0, 1.0)
+    }
+
+    val halfAngle = angle / 2.0
+    val scale = kotlin.math.sin(halfAngle) / angle
+
+    return OrientationQuaternion(
+        x = rx * scale,
+        y = ry * scale,
+        z = rz * scale,
+        w = kotlin.math.cos(halfAngle)
+    )
 }
