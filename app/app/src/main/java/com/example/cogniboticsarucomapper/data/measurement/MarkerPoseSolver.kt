@@ -3,8 +3,8 @@ package com.example.cogniboticsarucomapper.data.measurement
 import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.domain.measurement.ImagePoint
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerImageQuality
-import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerRole
+import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
 import kotlin.math.abs
 import kotlin.math.acos
 import kotlin.math.sqrt
@@ -30,8 +30,7 @@ class MarkerPoseSolver {
         sizeMm: Double,
         model: CameraModel,
         role: MarkerRole
-    ): PositionMm? =
-        estimate(corners, sizeMm, model, role)?.position
+    ): PositionMm? = estimate(corners, sizeMm, model, role)?.position
 
     fun estimate(
         corners: List<Offset>,

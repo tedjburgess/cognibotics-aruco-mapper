@@ -52,8 +52,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cogniboticsarucomapper.data.measurement.sensorGeometryFor
 import com.example.cogniboticsarucomapper.domain.measurement.DistanceDisplayTracker
-import com.example.cogniboticsarucomapper.domain.measurement.PairReading
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerRole
+import com.example.cogniboticsarucomapper.domain.measurement.PairReading
 import com.example.cogniboticsarucomapper.domain.measurement.role
 import com.example.cogniboticsarucomapper.util.MeasurementFormats
 import com.example.cogniboticsarucomapper.vision.ArucoAnalyzer
@@ -383,8 +383,10 @@ fun CameraFeedScreen(
                                                 )
                                                 append(
                                                     when (event.role) {
-                                                        MarkerRole.DIRECTIONAL_REFERENCE -> " - Directional"
-                                                        MarkerRole.POSITIONAL -> " - Position"
+                                                        MarkerRole.DIRECTIONAL_REFERENCE ->
+                                                            " - Directional"
+                                                        MarkerRole.POSITIONAL ->
+                                                            " - Position"
                                                     }
                                                 )
                                                 event.tiltDegrees?.let {

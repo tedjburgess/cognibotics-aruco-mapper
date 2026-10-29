@@ -5,10 +5,8 @@ enum class MarkerRole {
     POSITIONAL
 }
 
-fun MarkerKey.role(): MarkerRole {
-    return if (id in 0..9) {
-        MarkerRole.DIRECTIONAL_REFERENCE
-    } else {
-        MarkerRole.POSITIONAL
-    }
+fun MarkerKey.role(): MarkerRole = if (id in 0..9) {
+    MarkerRole.DIRECTIONAL_REFERENCE
+} else {
+    MarkerRole.POSITIONAL
 }

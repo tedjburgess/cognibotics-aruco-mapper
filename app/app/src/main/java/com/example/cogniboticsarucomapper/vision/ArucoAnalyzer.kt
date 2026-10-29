@@ -7,9 +7,9 @@ import com.example.cogniboticsarucomapper.data.measurement.SensorGeometry
 import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
 import com.example.cogniboticsarucomapper.domain.measurement.ImagePoint
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerImageQuality
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerKey
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerMeasurements
 import com.example.cogniboticsarucomapper.domain.measurement.PositionedMarker
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerKey
 import com.example.cogniboticsarucomapper.domain.measurement.role
 import org.opencv.core.Mat
 import org.opencv.objdetect.ArucoDetector
