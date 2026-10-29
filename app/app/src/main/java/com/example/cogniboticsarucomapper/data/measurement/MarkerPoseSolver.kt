@@ -1,9 +1,9 @@
 package com.example.cogniboticsarucomapper.data.measurement
 
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.domain.measurement.ImagePoint
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerImageQuality
+import com.example.cogniboticsarucomapper.domain.measurement.OrientationQuaternion
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
 import kotlin.math.abs
 import kotlin.math.acos
@@ -16,7 +16,6 @@ import org.opencv.core.MatOfPoint2f
 import org.opencv.core.MatOfPoint3f
 import org.opencv.core.Point
 import org.opencv.core.Point3
-import com.example.cogniboticsarucomapper.domain.measurement.OrientationQuaternion
 
 data class MarkerPoseEstimate(
     val position: PositionMm,

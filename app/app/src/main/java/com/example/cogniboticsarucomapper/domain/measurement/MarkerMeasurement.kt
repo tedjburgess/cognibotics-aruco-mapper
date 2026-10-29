@@ -6,12 +6,7 @@ data class MarkerKey(val dictionary: ArucoDictionary, val id: Int)
 
 /** Coordinates in the same camera frame, in millimetres. */
 
-data class OrientationQuaternion(
-    val x: Double,
-    val y: Double,
-    val z: Double,
-    val w: Double
-)
+data class OrientationQuaternion(val x: Double, val y: Double, val z: Double, val w: Double)
 data class PositionMm(val x: Double, val y: Double, val z: Double) {
     val isValid: Boolean get() = x.isFinite() && y.isFinite() && z.isFinite() && z > 0.0
 
