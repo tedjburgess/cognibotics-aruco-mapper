@@ -1,5 +1,7 @@
 package com.example.cogniboticsarucomapper.ui.measurement
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,14 +21,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.cogniboticsarucomapper.network.ApiClient
 import com.example.cogniboticsarucomapper.network.model.SiteWithCellsResponse
 import com.example.cogniboticsarucomapper.ui.components.ActionCard
 import com.example.cogniboticsarucomapper.ui.components.FeatureLayout
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val DEFAULT_SITE = "Test Site"
@@ -51,6 +56,44 @@ fun MeasurementScreen(
     var showAllSites by remember { mutableStateOf(true) }
     var showAllCells by remember { mutableStateOf(true) }
 
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    var csvData by remember {
+        mutableStateOf<ByteArray?>(null)
+    }
+
+    var downloadingCsv by remember {
+        mutableStateOf(false)
+    }
+
+    var downloadError by remember {
+        mutableStateOf<String?>(null)
+    }
+
+    val saveCsvLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.CreateDocument("text/csv")
+        ) { uri ->
+            if (uri != null) {
+                val data = csvData
+
+                if (data != null) {
+                    scope.launch {
+                        withContext(Dispatchers.IO) {
+                            context.contentResolver
+                                .openOutputStream(uri)
+                                ?.use { output ->
+                                    output.write(data)
+                                }
+                        }
+
+                        csvData = null
+                    }
+                }
+            }
+        }
+
     LaunchedEffect(reload) {
         loading = true
         error = null
@@ -71,6 +114,7 @@ fun MeasurementScreen(
         siteOptions.filter { it.contains(siteName, ignoreCase = true) }
     }
     val currentSite = sites.firstOrNull { it.name == siteName.trim() }
+    val currentCell = currentSite?.cells?.firstOrNull { it.name == cellName.trim() }
     val cellOptions = (listOf(DEFAULT_CELL) + currentSite?.cells.orEmpty().map { it.name })
         .distinctBy { it.lowercase() }
     val cellSuggestions = if (showAllCells) {
@@ -181,6 +225,71 @@ fun MeasurementScreen(
             ) {
                 Text("Start scan")
             }
+
+            Button(
+                onClick = {
+                    scope.launch {
+                        val cell = currentCell
+
+                        if (cell == null) {
+                            downloadError = "No measurements saved for this cell yet"
+                            return@launch
+                        }
+
+                        downloadingCsv = true
+                        downloadError = null
+
+                        try {
+                            val response = withContext(Dispatchers.IO) {
+                                ApiClient.getService().downloadScansCsv(cellId = cell.id)
+                            }
+
+                            if (response.isSuccessful) {
+                                val body = response.body()
+                                    ?: throw IllegalStateException("Empty CSV response")
+
+                                csvData = withContext(Dispatchers.IO) {
+                                    body.bytes()
+                                }
+
+                                val fileName =
+                                    "${siteName.trim()}-${cellName.trim()}-measurements.csv"
+                                        .replace(" ", "_")
+
+                                saveCsvLauncher.launch(fileName)
+                            } else {
+                                downloadError =
+                                    "Could not download measurements (${response.code()})"
+                            }
+                        } catch (e: Exception) {
+                            downloadError =
+                                e.message ?: "Could not download measurements"
+                        } finally {
+                            downloadingCsv = false
+                        }
+                    }
+                },
+                enabled = !downloadingCsv &&
+                    siteName.isNotBlank() &&
+                    cellName.isNotBlank(),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    if (downloadingCsv) {
+                        "Preparing CSV..."
+                    } else {
+                        "Download CSV"
+                    }
+                )
+            }
+        }
+
+        if (downloadError != null) {
+            Text(
+                text = downloadError!!,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
 
         ActionCard(
