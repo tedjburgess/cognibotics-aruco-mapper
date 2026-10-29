@@ -1,7 +1,10 @@
+import csv
+import io
 from collections.abc import Sequence
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -115,6 +118,83 @@ def create_scan(payload: schemas.ScanIn, db: Annotated[Session, Depends(get_db)]
     db.commit()
 
     return scan
+
+
+@router.get("/csv")
+def get_scans_csv(
+    site_name: str,
+    cell_name: str,
+    db: Annotated[Session, Depends(get_db)],
+) -> Response:
+    scans = db.scalars(
+        select(models.Scan)
+        .join(models.Scan.cell)
+        .join(models.Cell.site)
+        .where(
+            models.Site.name == site_name,
+            models.Cell.name == cell_name,
+        )
+        .options(
+            selectinload(models.Scan.cell).selectinload(models.Cell.site),
+            selectinload(models.Scan.observations).selectinload(models.Observation.marker),
+            selectinload(models.Scan.relations),
+        )
+        .order_by(models.Scan.measured_at)
+    ).all()
+
+    if not scans:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No measurements found for this site and cell",
+        )
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow(
+        [
+            "scan_id",
+            "site_name",
+            "cell_name",
+            "device_id",
+            "measured_at",
+            "created_at",
+            "from_aruco_id",
+            "from_dictionary",
+            "to_aruco_id",
+            "to_dictionary",
+            "distance_mm",
+        ]
+    )
+
+    for scan in scans:
+        observations = {observation.marker_id: observation for observation in scan.observations}
+
+        for relation in scan.relations:
+            from_observation = observations.get(relation.from_marker_id)
+            to_observation = observations.get(relation.to_marker_id)
+
+            writer.writerow(
+                [
+                    scan.id,
+                    scan.cell.site.name,
+                    scan.cell.name,
+                    scan.device_id,
+                    scan.measured_at,
+                    scan.created_at,
+                    from_observation.marker.aruco_id if from_observation else "",
+                    from_observation.marker.dictionary if from_observation else "",
+                    to_observation.marker.aruco_id if to_observation else "",
+                    to_observation.marker.dictionary if to_observation else "",
+                    relation.distance_mm,
+                ]
+            )
+
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="measurements.csv"'},
+    )
 
 
 @router.get("", response_model=list[schemas.ScanOut])
