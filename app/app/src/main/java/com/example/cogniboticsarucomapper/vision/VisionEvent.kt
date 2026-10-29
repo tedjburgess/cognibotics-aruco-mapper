@@ -5,6 +5,7 @@ import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerKey
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerPairDistance
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
+import com.example.cogniboticsarucomapper.domain.measurement.OrientationQuaternion
 
 enum class CameraParameterSource { UNAVAILABLE, ESTIMATED, CALIBRATED }
 
@@ -21,6 +22,7 @@ sealed interface VisionEvent {
         val rotationDegrees: Int,
         val dictionary: ArucoDictionary = ArucoDictionary.DICT_4X4_50,
         val positionMm: PositionMm? = null,
+        val orientation: OrientationQuaternion? = null,
         val tiltDegrees: Double? = null
     ) : VisionEvent {
         val key: MarkerKey get() = MarkerKey(dictionary, markerId)
