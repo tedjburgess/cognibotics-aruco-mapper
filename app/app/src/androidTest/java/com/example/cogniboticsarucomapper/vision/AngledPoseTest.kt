@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.cogniboticsarucomapper.data.measurement.CameraModel
 import com.example.cogniboticsarucomapper.data.measurement.MarkerPoseSolver
 import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrigin
 import kotlin.math.cos
 import kotlin.math.sin
 import org.junit.Assert.assertEquals
@@ -38,13 +39,13 @@ class AngledPoseTest {
                     corners(-67.5),
                     dictionary.sizeMm,
                     model,
-                    dictionary.ordinal + 6
+                    role = MarkerOrigin.CENTER
                 )
                 val second = solver.estimate(
                     corners(67.5),
                     dictionary.sizeMm,
                     model,
-                    dictionary.ordinal + 6
+                    role = MarkerOrigin.CENTER
                 )
                 assertNotNull("${dictionary.label} at $degrees degrees", first)
                 assertNotNull("${dictionary.label} at $degrees degrees", second)
@@ -52,5 +53,55 @@ class AngledPoseTest {
                 assertEquals(degrees, first.tiltDegrees, 0.1)
             }
         }
+    }
+
+    @Test
+    fun directionalMarkerReportsTopLeftInsteadOfCenter() {
+        assertTrue(OpenCv.ensureInitialized())
+
+        val model = CameraModel(
+            640,
+            480,
+            800.0,
+            800.0,
+            320.0,
+            240.0,
+            calibrated = true
+        )
+
+        val solver = MarkerPoseSolver()
+        val sizeMm = 40.0
+        val half = sizeMm / 2.0
+
+        val corners = listOf(
+            Offset(288f, 208f),
+            Offset(352f, 208f),
+            Offset(352f, 272f),
+            Offset(288f, 272f)
+        )
+
+        val positional = solver.estimate(
+            corners,
+            sizeMm,
+            model,
+            role = MarkerOrigin.CENTER
+        )
+
+        val directional = solver.estimate(
+            corners,
+            sizeMm,
+            model,
+            role = MarkerOrigin.CORNER
+        )
+
+        assertNotNull(positional)
+        assertNotNull(directional)
+
+        val positionalPosition = positional!!.position
+        val directionalPosition = directional!!.position
+
+        assertTrue(
+            positionalPosition.distanceTo(directionalPosition) > half
+        )
     }
 }
