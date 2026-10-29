@@ -176,6 +176,13 @@ class MainActivity : ComponentActivity() {
                                     measurements = ApiClient.getService().getScans()
                                         .map { it.toMeasurementHistoryItem() }
                                 },
+                                onDelete = { measurementId ->
+                                    ApiClient.getService().deleteScan(measurementId)
+
+                                    measurements = measurements.filterNot {
+                                        it.id == measurementId
+                                    }
+                                },
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
