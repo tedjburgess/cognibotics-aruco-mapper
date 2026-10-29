@@ -5,9 +5,9 @@ import com.example.cogniboticsarucomapper.network.model.ScanRequest
 import com.example.cogniboticsarucomapper.network.model.ScanResponse
 import com.example.cogniboticsarucomapper.network.model.SiteWithCellsResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.DELETE
 import retrofit2.http.Path
 
 interface ArucoApiService {
