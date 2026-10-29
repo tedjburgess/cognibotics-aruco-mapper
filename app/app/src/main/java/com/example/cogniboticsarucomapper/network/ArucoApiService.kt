@@ -26,8 +26,5 @@ interface ArucoApiService {
     suspend fun getSites(): List<SiteWithCellsResponse>
 
     @GET("api/v1/scans/csv")
-    suspend fun downloadScansCsv(
-        @Query("site_name") siteName: String,
-        @Query("cell_name") cellName: String
-    ): Response<ResponseBody>
+    suspend fun downloadScansCsv(@Query("cell_id") cellId: String): Response<ResponseBody>
 }

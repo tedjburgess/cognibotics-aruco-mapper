@@ -123,18 +123,12 @@ def create_scan(payload: schemas.ScanIn, db: Annotated[Session, Depends(get_db)]
 
 @router.get("/csv")
 def get_scans_csv(
-    site_name: str,
-    cell_name: str,
+    cell_id: uuid.UUID,
     db: Annotated[Session, Depends(get_db)],
 ) -> Response:
     scans = db.scalars(
         select(models.Scan)
-        .join(models.Scan.cell)
-        .join(models.Cell.site)
-        .where(
-            models.Site.name == site_name,
-            models.Cell.name == cell_name,
-        )
+        .where(models.Scan.cell_id == cell_id)
         .options(
             selectinload(models.Scan.cell).selectinload(models.Cell.site),
             selectinload(models.Scan.observations).selectinload(models.Observation.marker),
@@ -146,7 +140,7 @@ def get_scans_csv(
     if not scans:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No measurements found for this site and cell",
+            detail="No measurements found for this cell",
         )
 
     output = io.StringIO()

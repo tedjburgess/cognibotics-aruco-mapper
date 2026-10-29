@@ -114,6 +114,7 @@ fun MeasurementScreen(
         siteOptions.filter { it.contains(siteName, ignoreCase = true) }
     }
     val currentSite = sites.firstOrNull { it.name == siteName.trim() }
+    val currentCell = currentSite?.cells?.firstOrNull { it.name == cellName.trim() }
     val cellOptions = (listOf(DEFAULT_CELL) + currentSite?.cells.orEmpty().map { it.name })
         .distinctBy { it.lowercase() }
     val cellSuggestions = if (showAllCells) {
@@ -228,15 +229,19 @@ fun MeasurementScreen(
             Button(
                 onClick = {
                     scope.launch {
+                        val cell = currentCell
+
+                        if (cell == null) {
+                            downloadError = "No measurements saved for this cell yet"
+                            return@launch
+                        }
+
                         downloadingCsv = true
                         downloadError = null
 
                         try {
                             val response = withContext(Dispatchers.IO) {
-                                ApiClient.getService().downloadScansCsv(
-                                    siteName = siteName.trim(),
-                                    cellName = cellName.trim()
-                                )
+                                ApiClient.getService().downloadScansCsv(cellId = cell.id)
                             }
 
                             if (response.isSuccessful) {
