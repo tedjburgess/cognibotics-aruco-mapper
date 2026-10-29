@@ -5,7 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.cogniboticsarucomapper.data.measurement.CameraModel
 import com.example.cogniboticsarucomapper.data.measurement.MarkerPoseSolver
 import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerRole
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrigin
 import kotlin.math.cos
 import kotlin.math.sin
 import org.junit.Assert.assertEquals
@@ -39,13 +39,13 @@ class AngledPoseTest {
                     corners(-67.5),
                     dictionary.sizeMm,
                     model,
-                    role = MarkerRole.POSITIONAL
+                    role = MarkerOrigin.CENTER
                 )
                 val second = solver.estimate(
                     corners(67.5),
                     dictionary.sizeMm,
                     model,
-                    role = MarkerRole.POSITIONAL
+                    role = MarkerOrigin.CENTER
                 )
                 assertNotNull("${dictionary.label} at $degrees degrees", first)
                 assertNotNull("${dictionary.label} at $degrees degrees", second)
@@ -84,14 +84,14 @@ class AngledPoseTest {
             corners,
             sizeMm,
             model,
-            role = MarkerRole.POSITIONAL
+            role = MarkerOrigin.CENTER
         )
 
         val directional = solver.estimate(
             corners,
             sizeMm,
             model,
-            role = MarkerRole.DIRECTIONAL_REFERENCE
+            role = MarkerOrigin.CORNER
         )
 
         assertNotNull(positional)

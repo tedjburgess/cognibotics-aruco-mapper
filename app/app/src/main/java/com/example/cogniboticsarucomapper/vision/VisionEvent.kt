@@ -4,7 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerKey
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerPairDistance
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerRole
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrigin
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
 import com.example.cogniboticsarucomapper.domain.measurement.role
 
@@ -29,7 +29,7 @@ sealed interface VisionEvent {
         val key: MarkerKey
             get() = MarkerKey(dictionary, markerId)
 
-        val role: MarkerRole
+        val role: MarkerOrigin
             get() = key.role()
     }
 

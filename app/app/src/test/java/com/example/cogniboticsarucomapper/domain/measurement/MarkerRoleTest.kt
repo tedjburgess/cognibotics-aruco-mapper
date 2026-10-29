@@ -13,7 +13,7 @@ class MarkerRoleTest {
 
                 assertEquals(
                     "Expected $dictionary marker $id to be directional",
-                    MarkerRole.DIRECTIONAL_REFERENCE,
+                    MarkerOrigin.CORNER,
                     key.role()
                 )
             }
@@ -30,7 +30,7 @@ class MarkerRoleTest {
 
                 assertEquals(
                     "Expected $dictionary marker $id to be positional",
-                    MarkerRole.POSITIONAL,
+                    MarkerOrigin.CENTER,
                     key.role()
                 )
             }
@@ -44,12 +44,12 @@ class MarkerRoleTest {
             val positional = MarkerKey(dictionary, 10)
 
             assertEquals(
-                MarkerRole.DIRECTIONAL_REFERENCE,
+                MarkerOrigin.CORNER,
                 directional.role()
             )
 
             assertEquals(
-                MarkerRole.POSITIONAL,
+                MarkerOrigin.CENTER,
                 positional.role()
             )
         }

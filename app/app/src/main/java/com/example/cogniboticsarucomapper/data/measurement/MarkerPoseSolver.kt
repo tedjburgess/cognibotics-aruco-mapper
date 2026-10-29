@@ -3,7 +3,7 @@ package com.example.cogniboticsarucomapper.data.measurement
 import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.domain.measurement.ImagePoint
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerImageQuality
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerRole
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrigin
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
 import kotlin.math.abs
 import kotlin.math.acos
@@ -29,14 +29,14 @@ class MarkerPoseSolver {
         corners: List<Offset>,
         sizeMm: Double,
         model: CameraModel,
-        role: MarkerRole
+        role: MarkerOrigin
     ): PositionMm? = estimate(corners, sizeMm, model, role)?.position
 
     fun estimate(
         corners: List<Offset>,
         sizeMm: Double,
         model: CameraModel,
-        role: MarkerRole,
+        role: MarkerOrigin,
         gridCells: Int = 6
     ): MarkerPoseEstimate? {
         val points = corners.map { ImagePoint(it.x.toDouble(), it.y.toDouble()) }
@@ -98,7 +98,7 @@ class MarkerPoseSolver {
                 Calib3d.Rodrigues(rotation, rotationMatrix)
 
                 val position =
-                    if (role == MarkerRole.DIRECTIONAL_REFERENCE) {
+                    if (role == MarkerOrigin.CORNER) {
                         // Marker-local top-left corner: (-half, +half, 0)
                         val localX = -half
                         val localY = half

@@ -52,7 +52,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cogniboticsarucomapper.data.measurement.sensorGeometryFor
 import com.example.cogniboticsarucomapper.domain.measurement.DistanceDisplayTracker
-import com.example.cogniboticsarucomapper.domain.measurement.MarkerRole
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrigin
 import com.example.cogniboticsarucomapper.domain.measurement.PairReading
 import com.example.cogniboticsarucomapper.domain.measurement.role
 import com.example.cogniboticsarucomapper.util.MeasurementFormats
@@ -334,16 +334,16 @@ fun CameraFeedScreen(
 
                                 val distanceType =
                                     when {
-                                        fromRole == MarkerRole.DIRECTIONAL_REFERENCE &&
-                                            toRole == MarkerRole.POSITIONAL ->
+                                        fromRole == MarkerOrigin.CORNER &&
+                                            toRole == MarkerOrigin.CENTER ->
                                             "Directional-to-centre"
 
-                                        fromRole == MarkerRole.POSITIONAL &&
-                                            toRole == MarkerRole.DIRECTIONAL_REFERENCE ->
+                                        fromRole == MarkerOrigin.CENTER &&
+                                            toRole == MarkerOrigin.CORNER ->
                                             "Centre-to-directional"
 
-                                        fromRole == MarkerRole.DIRECTIONAL_REFERENCE &&
-                                            toRole == MarkerRole.DIRECTIONAL_REFERENCE ->
+                                        fromRole == MarkerOrigin.CORNER &&
+                                            toRole == MarkerOrigin.CORNER ->
                                             "Directional-to-directional"
 
                                         else ->
@@ -383,9 +383,9 @@ fun CameraFeedScreen(
                                                 )
                                                 append(
                                                     when (event.role) {
-                                                        MarkerRole.DIRECTIONAL_REFERENCE ->
+                                                        MarkerOrigin.CORNER ->
                                                             " - Directional"
-                                                        MarkerRole.POSITIONAL ->
+                                                        MarkerOrigin.CENTER ->
                                                             " - Position"
                                                     }
                                                 )
