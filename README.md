@@ -374,3 +374,7 @@ Same-sheet 100 mm marker pair, IDs 0 and 1:
 Original videos and notebook images remain with the testers and are not included in the repository.
 
 </details>
+
+## Printable marker test sheets
+
+See the [fixed sample marker pack](docs/markers/README.md) for five dictionaries, print settings and scale checks. Original ArUco at 110 mm requires #96 app support.
