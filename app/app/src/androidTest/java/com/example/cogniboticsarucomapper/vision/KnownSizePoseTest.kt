@@ -22,12 +22,13 @@ class KnownSizePoseTest {
     @Test
     fun detectsSmallerCapacityCodesAcrossFamiliesAndClearsTheNextEmptyFrame() {
         assertTrue(OpenCv.ensureInitialized())
-        val board = Mat(600, 600, CvType.CV_8UC1, Scalar(255.0))
+        val board = Mat(850, 600, CvType.CV_8UC1, Scalar(255.0))
         val codes = listOf(
             Objdetect.DICT_4X4_50,
             Objdetect.DICT_5X5_50,
             Objdetect.DICT_6X6_50,
-            Objdetect.DICT_7X7_50
+            Objdetect.DICT_7X7_50,
+            Objdetect.DICT_ARUCO_ORIGINAL
         )
         try {
             for ((index, code) in codes.withIndex()) {
@@ -59,10 +60,10 @@ class KnownSizePoseTest {
                     it.dictionary
                 }.toSet()
             )
-            assertEquals(4, frame.markers.size)
+            assertEquals(5, frame.markers.size)
             assertEquals(CameraParameterSource.UNAVAILABLE, frame.cameraParameters)
             assertTrue(frame.distances.isEmpty())
-            // An explicit enum selection must keep the requested family instead of enabling all four.
+            // An explicit enum selection must keep the requested family instead of enabling every dictionary.
             val selected = ArucoAnalyzer(ArucoDictionary.DICT_5X5_50).processFrame(
                 board,
                 board,

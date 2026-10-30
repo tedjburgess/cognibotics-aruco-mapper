@@ -10,10 +10,11 @@ Open **Measurement → Start measurement** on a physical phone and grant camera 
 | 5×5 | 50 mm |
 | 6×6 | 75 mm |
 | 7×7 | 100 mm |
+| Original ArUco | 110 mm (project-selected test size) |
 
 Measure the printed black square, including its black border, excluding the surrounding white quiet zone. Printing at another scale gives incorrect distances. Dictionary grid dimensions and physical dimensions are different concepts. There is no reference marker to configure.
 
-The detector uses the shared supported-dictionary enum with 50 entries per family (IDs 0–49). The enum maps each OpenCV dictionary to its family; physical sizes are defined once in MarkerFamily and shared by detection and measurement. Labels show the family and ID. Codes outside the selected 50-entry dictionaries are not supported. `DICT_ARUCO_ORIGINAL` and AprilTag are not assigned a physical size in Mathias's four-family mapping and are not measured. Do not print two identical IDs within one family: their identity would be ambiguous. ID 0 in 4×4 and ID 0 in 5×5 are separate markers.
+The detector supports the four 50-entry grid dictionaries (IDs 0–49) plus `DICT_ARUCO_ORIGINAL` (IDs 0–1023). Physical sizes are defined in `ArucoDictionary`; 110 mm for original ArUco is our project test convention and is not a specification from Mathias. Labels and API requests keep dictionary + ID separate, so the same numeric ID in two dictionaries is not the same marker. AprilTag remains unsupported. Never print duplicate identities in the same view.
 
 The camera overlay, tracking indicators, analysis switch and torch remain available. Distances use current-frame positions and need at least three consecutive detections of both markers. Removing a marker clears its number immediately and leaves a dash in the same row. Turn Analysis off and back on when switching sheets to clear the remembered rows. Tracking percentage means repeat detection over consecutive frames; it does not mean measurement accuracy.
 
@@ -58,3 +59,15 @@ Unit tests cover missing/stable rows, raw versus median readings, short smoothin
 The synthetic test is not evidence of physical accuracy. See the [physical measurement results](../../README.md#physical-measurement-results) for the recorded experiments, readings and remaining checks.
 
 Sources: [#57](https://github.com/tedjburgess/cognibotics-aruco-mapper/issues/57), [Simon’s prototype #37](https://github.com/tedjburgess/cognibotics-aruco-mapper/pull/37), [OpenCV PnP reference](https://docs.opencv.org/4.13.0/d5/d1f/calib3d_solvePnP.html), and Mathias's recorded size mapping.
+
+Original ArUco has five data cells plus its one-cell black border on each side (seven cells across). Exact decoding is used for this dictionary. IDs 0–9 follow the current corner-origin convention, while IDs 10 and above use the centre. See [marker roles](../marker-roles.md). A 135 mm same-sheet check is valid for equal-size markers printed in the same orientation with the same origin type; it is not a general reference between separate sheets.
+
+Some codes can be decoded under a second dictionary over the same square: the fixed sample
+set revealed that 7x7 ID 44 also produces a coarse 4x4 ID 17 interpretation. When different
+dictionaries claim the same four corners, the detector compares the whole rectified black/white
+pattern at 144 x 144 pixels against the candidate code. It keeps a candidate only if its mismatch
+is at most 15% and at least five percentage points better than the other interpretations;
+otherwise that ambiguous square is withheld. Unique, non-conflicting detections are unchanged.
+This prevents choosing a physical size just because one dictionary happened to decode first.
+Tests cover the alias, the legitimate 4x4 ID 17, and separate markers. Native camera tests and
+performance checks still need a connected device; synthetic/PDF checks are not physical accuracy results.

@@ -106,13 +106,18 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
                 corners.forEach { it.release() }
             }
         }
-        val uniqueKeys = markers.groupingBy { it.key }.eachCount().filterValues { it == 1 }.keys
-        val positioned = markers.filter { it.key in uniqueKeys }.mapNotNull { marker ->
+        val acceptedMarkers = CrossDictionaryConflictResolver.resolve(markers) {
+            MarkerPatternFit.error(gray, it)
+        }
+        val uniqueKeys = acceptedMarkers.groupingBy {
+            it.key
+        }.eachCount().filterValues { it == 1 }.keys
+        val positioned = acceptedMarkers.filter { it.key in uniqueKeys }.mapNotNull { marker ->
             marker.positionMm?.let { PositionedMarker(marker.key, it) }
         }
         return listOf(
             VisionEvent.FrameMeasured(
-                markers = markers,
+                markers = acceptedMarkers,
                 distances = MarkerMeasurements.distances(positioned),
                 cameraParameters = when {
                     model == null -> CameraParameterSource.UNAVAILABLE
@@ -124,9 +129,10 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
     }
 }
 
-private fun ArucoDictionary.toOpenCvDictionaryId(): Int = when (this) {
+internal fun ArucoDictionary.toOpenCvDictionaryId(): Int = when (this) {
     ArucoDictionary.DICT_4X4_50 -> Objdetect.DICT_4X4_50
     ArucoDictionary.DICT_5X5_50 -> Objdetect.DICT_5X5_50
     ArucoDictionary.DICT_6X6_50 -> Objdetect.DICT_6X6_50
     ArucoDictionary.DICT_7X7_50 -> Objdetect.DICT_7X7_50
+    ArucoDictionary.DICT_ARUCO_ORIGINAL -> Objdetect.DICT_ARUCO_ORIGINAL
 }

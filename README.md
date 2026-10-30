@@ -14,8 +14,9 @@ Physical sizes are currently fixed in code, not editable in settings. Print the 
 | `DICT_5X5_50` | 50 mm | 5×5 marker grid with 50 available marker IDs |
 | `DICT_6X6_50` | 75 mm | 6×6 marker grid with 50 available marker IDs |
 | `DICT_7X7_50` | 100 mm | 7×7 marker grid with 50 available marker IDs |
+| `DICT_ARUCO_ORIGINAL` | 110 mm | Original ArUco dictionary with 1024 available marker IDs; project-selected test size |
 
-Mixed-family live measurement uses the shared supported-dictionary enum: the 50-entry variant of each family, with IDs 0–49. Codes outside those dictionaries are not supported.
+The four grid families use IDs 0–49; original ArUco uses IDs 0–1023. Marker identity includes both dictionary and ID. The 110 mm original-marker size is a project test convention, not a size specified by Mathias or the dictionary format. Existing physical test results below use the original four families and are unchanged.
 
 ## Application Usage
 
