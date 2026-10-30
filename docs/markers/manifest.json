@@ -1,0 +1,3269 @@
+{
+  "paper": "A4 portrait",
+  "print_scale_percent": 100,
+  "sample_id_range": [
+    0,
+    49
+  ],
+  "directional_id_range": [
+    0,
+    9
+  ],
+  "positional_id_range": [
+    10,
+    49
+  ],
+  "original_size_basis": "110 mm project test convention, not specified by Mathias",
+  "pages": [
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        0,
+        1
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 1,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 1
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        2,
+        3
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 2,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 2
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        4,
+        5
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 3,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 3
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        6,
+        7
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 4,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 4
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        8,
+        9
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 5,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 5
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        10,
+        11
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 6,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 6
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        12,
+        13
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 7,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 7
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        14,
+        15
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 8,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 8
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        16,
+        17
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 9,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 9
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        18,
+        19
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 10,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 10
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        20,
+        21
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 11,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 11
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        22,
+        23
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 12,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 12
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        24,
+        25
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 13,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 13
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        26,
+        27
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 14,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 14
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        28,
+        29
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 15,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 15
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        30,
+        31
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 16,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 16
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        32,
+        33
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 17,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 17
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        34,
+        35
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 18,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 18
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        36,
+        37
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 19,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 19
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        38,
+        39
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 20,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 20
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        40,
+        41
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 21,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 21
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        42,
+        43
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 22,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 22
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        44,
+        45
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 23,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 23
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        46,
+        47
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 24,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 24
+    },
+    {
+      "dictionary": "DICT_4X4_50",
+      "size_mm": 20.0,
+      "ids": [
+        48,
+        49
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 25,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 3.3333333333333335,
+      "border_bits": 1,
+      "family_file": "families/aruco-4x4-20mm.pdf",
+      "page": 25
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        0,
+        1
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 1,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 26
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        2,
+        3
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 2,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 27
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        4,
+        5
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 3,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 28
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        6,
+        7
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 4,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 29
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        8,
+        9
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 5,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 30
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        10,
+        11
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 6,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 31
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        12,
+        13
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 7,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 32
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        14,
+        15
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 8,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 33
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        16,
+        17
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 9,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 34
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        18,
+        19
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 10,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 35
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        20,
+        21
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 11,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 36
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        22,
+        23
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 12,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 37
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        24,
+        25
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 13,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 38
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        26,
+        27
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 14,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 39
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        28,
+        29
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 15,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 40
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        30,
+        31
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 16,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 41
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        32,
+        33
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 17,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 42
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        34,
+        35
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 18,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 43
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        36,
+        37
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 19,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 44
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        38,
+        39
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 20,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 45
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        40,
+        41
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 21,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 46
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        42,
+        43
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 22,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 47
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        44,
+        45
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 23,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 48
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        46,
+        47
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 24,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 49
+    },
+    {
+      "dictionary": "DICT_5X5_50",
+      "size_mm": 50.0,
+      "ids": [
+        48,
+        49
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 25,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 7.142857142857143,
+      "border_bits": 1,
+      "family_file": "families/aruco-5x5-50mm.pdf",
+      "page": 50
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        0,
+        1
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 1,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 51
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        2,
+        3
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 2,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 52
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        4,
+        5
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 3,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 53
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        6,
+        7
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 4,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 54
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        8,
+        9
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 5,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 55
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        10,
+        11
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 6,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 56
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        12,
+        13
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 7,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 57
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        14,
+        15
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 8,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 58
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        16,
+        17
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 9,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 59
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        18,
+        19
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 10,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 60
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        20,
+        21
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 11,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 61
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        22,
+        23
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 12,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 62
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        24,
+        25
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 13,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 63
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        26,
+        27
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 14,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 64
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        28,
+        29
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 15,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 65
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        30,
+        31
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 16,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 66
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        32,
+        33
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 17,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 67
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        34,
+        35
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 18,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 68
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        36,
+        37
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 19,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 69
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        38,
+        39
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 20,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 70
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        40,
+        41
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 21,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 71
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        42,
+        43
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 22,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 72
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        44,
+        45
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 23,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 73
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        46,
+        47
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 24,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 74
+    },
+    {
+      "dictionary": "DICT_6X6_50",
+      "size_mm": 75.0,
+      "ids": [
+        48,
+        49
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 25,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 9.375,
+      "border_bits": 1,
+      "family_file": "families/aruco-6x6-75mm.pdf",
+      "page": 75
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        0,
+        1
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 1,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 76
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        2,
+        3
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 2,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 77
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        4,
+        5
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 3,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 78
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        6,
+        7
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 4,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 79
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        8,
+        9
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 5,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 80
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        10,
+        11
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 6,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 81
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        12,
+        13
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 7,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 82
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        14,
+        15
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 8,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 83
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        16,
+        17
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 9,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 84
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        18,
+        19
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 10,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 85
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        20,
+        21
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 11,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 86
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        22,
+        23
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 12,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 87
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        24,
+        25
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 13,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 88
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        26,
+        27
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 14,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 89
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        28,
+        29
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 15,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 90
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        30,
+        31
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 16,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 91
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        32,
+        33
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 17,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 92
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        34,
+        35
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 18,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 93
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        36,
+        37
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 19,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 94
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        38,
+        39
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 20,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 95
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        40,
+        41
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 21,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 96
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        42,
+        43
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 22,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 97
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        44,
+        45
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 23,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 98
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        46,
+        47
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 24,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 99
+    },
+    {
+      "dictionary": "DICT_7X7_50",
+      "size_mm": 100.0,
+      "ids": [
+        48,
+        49
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 25,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 11.11111111111111,
+      "border_bits": 1,
+      "family_file": "families/aruco-7x7-100mm.pdf",
+      "page": 100
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        0,
+        1
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 1,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 101
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        2,
+        3
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 2,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 102
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        4,
+        5
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 3,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 103
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        6,
+        7
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 4,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 104
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        8,
+        9
+      ],
+      "origin": "corner",
+      "role": "directional",
+      "family_page": 5,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 105
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        10,
+        11
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 6,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 106
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        12,
+        13
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 7,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 107
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        14,
+        15
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 8,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 108
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        16,
+        17
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 9,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 109
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        18,
+        19
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 10,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 110
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        20,
+        21
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 11,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 111
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        22,
+        23
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 12,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 112
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        24,
+        25
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 13,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 113
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        26,
+        27
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 14,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 114
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        28,
+        29
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 15,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 115
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        30,
+        31
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 16,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 116
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        32,
+        33
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 17,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 117
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        34,
+        35
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 18,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 118
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        36,
+        37
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 19,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 119
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        38,
+        39
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 20,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 120
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        40,
+        41
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 21,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 121
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        42,
+        43
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 22,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 122
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        44,
+        45
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 23,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 123
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        46,
+        47
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 24,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 124
+    },
+    {
+      "dictionary": "DICT_ARUCO_ORIGINAL",
+      "size_mm": 110.0,
+      "ids": [
+        48,
+        49
+      ],
+      "origin": "centre",
+      "role": "positional",
+      "family_page": 25,
+      "centre_spacing_mm": 135.0,
+      "centres_from_top_left_mm": [
+        [
+          105.0,
+          80.0
+        ],
+        [
+          105.0,
+          215.0
+        ]
+      ],
+      "quiet_zone_mm": 15.714285714285714,
+      "border_bits": 1,
+      "family_file": "families/aruco-original-110mm.pdf",
+      "page": 125
+    }
+  ]
+}
