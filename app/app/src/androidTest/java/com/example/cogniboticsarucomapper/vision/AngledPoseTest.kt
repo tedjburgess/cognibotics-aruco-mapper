@@ -39,13 +39,15 @@ class AngledPoseTest {
                     corners(-67.5),
                     dictionary.sizeMm,
                     model,
-                    role = MarkerOrigin.CENTER
+                    role = MarkerOrigin.CENTER,
+                    gridCells = dictionary.markerGridCells
                 )
                 val second = solver.estimate(
                     corners(67.5),
                     dictionary.sizeMm,
                     model,
-                    role = MarkerOrigin.CENTER
+                    role = MarkerOrigin.CENTER,
+                    gridCells = dictionary.markerGridCells
                 )
                 assertNotNull("${dictionary.label} at $degrees degrees", first)
                 assertNotNull("${dictionary.label} at $degrees degrees", second)

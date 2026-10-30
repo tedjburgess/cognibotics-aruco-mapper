@@ -7,7 +7,12 @@ import org.junit.Test
 class MarkerMeasurementsTest {
     @Test
     fun usesAgreedPhysicalSizes() {
-        assertEquals(listOf(20.0, 50.0, 75.0, 100.0), ArucoDictionary.entries.map { it.sizeMm })
+        assertEquals(
+            listOf(20.0, 50.0, 75.0, 100.0, 110.0),
+            ArucoDictionary.entries.map {
+                it.sizeMm
+            }
+        )
     }
 
     @Test

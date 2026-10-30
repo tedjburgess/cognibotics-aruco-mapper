@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -192,7 +193,7 @@ fun CameraFeedScreen(
                     ).padding(horizontal = 16.dp).clip(RoundedCornerShape(20.dp))
                 ) {
                     AndroidView(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().testTag("liveCameraPreview"),
                         factory = { ctx ->
 
                             val camController = LifecycleCameraController(ctx).apply {
@@ -223,7 +224,7 @@ fun CameraFeedScreen(
                                 }, ContextCompat.getMainExecutor(ctx))
 
                                 implementationMode =
-                                    PreviewView.ImplementationMode.PERFORMANCE
+                                    PreviewView.ImplementationMode.COMPATIBLE
                             }
                         }
                     )
@@ -248,8 +249,12 @@ fun CameraFeedScreen(
                     }
                 }
 
-                controller?.enableTorch(torchEnabled)
+                // Apply camera commands only when their setting changes, not for every reading.
+                LaunchedEffect(controller, torchEnabled) {
+                    controller?.enableTorch(torchEnabled)
+                }
 
+                // Growing result lists must scroll inside this fixed-height panel.
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(
                         horizontal = 16.dp,
@@ -262,8 +267,8 @@ fun CameraFeedScreen(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Column(
-                        Modifier.heightIn(
-                            max = controlsMaxHeight
+                        Modifier.height(
+                            controlsMaxHeight
                         ).verticalScroll(rememberScrollState()).padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -422,33 +427,26 @@ fun CameraFeedScreen(
                     }
                 }
 
-                if (distances.isNotEmpty() && visibleMarkers.size >= 2 && !isSaving) {
-                    Button(
-                        onClick = {
-                            onSavingChanged(true)
-                            onSave(latestFrameMeasured, latestMarkers)
-                        },
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .fillMaxWidth(),
-                        enabled = !isSaving
-                    ) {
-                        Text("Save Measurement")
+                // Keep the preview size fixed when detections or saving state change.
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(64.dp).padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isSaving) {
+                        Text("Preparing to save...", style = MaterialTheme.typography.bodySmall)
+                    } else {
+                        Button(
+                            onClick = {
+                                onSavingChanged(true)
+                                onSave(latestFrameMeasured, latestMarkers)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = distances.isNotEmpty() && visibleMarkers.size >= 2
+                        ) {
+                            Text("Save Measurement")
+                        }
                     }
-                } else if (isSaving) {
-                    Text(
-                        "Preparing to save...",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                } else if (analysisEnabled && visibleMarkers.size < 2) {
-                    Text(
-                        "Detect at least 2 markers to enable saving.",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
                 }
-
                 OutlinedButton(
                     onClick = onBack,
                     modifier = Modifier

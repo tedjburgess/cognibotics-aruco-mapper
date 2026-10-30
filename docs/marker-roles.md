@@ -86,17 +86,18 @@ The marker-role convention applies to the currently supported dictionaries:
 - `DICT_5X5_50`
 - `DICT_6X6_50`
 - `DICT_7X7_50`
+- `DICT_ARUCO_ORIGINAL` (110 mm project test size, IDs 0–1023)
 
 ## Implementation
 
 Marker roles are derived from the marker's `MarkerKey`.
 
 ```kotlin
-fun MarkerKey.role(): MarkerRole {
+fun MarkerKey.role(): MarkerOrigin {
     return if (id in 0..9) {
-        MarkerRole.DIRECTIONAL_REFERENCE
+        MarkerOrigin.CORNER
     } else {
-        MarkerRole.POSITIONAL
+        MarkerOrigin.CENTER
     }
 }
 ```

@@ -81,6 +81,70 @@ class DetectionGuardTest {
     }
 
     @Test
+    fun sevenBySeven44IsNotReportedAsFourByFour17() {
+        withMarker(44, false, Objdetect.DICT_7X7_50) { board ->
+            val frame = ArucoAnalyzer().processFrame(board, board, 0, 0)
+                .single() as VisionEvent.FrameMeasured
+            assertTrue(
+                frame.markers.any {
+                    it.dictionary == ArucoDictionary.DICT_7X7_50 && it.markerId == 44
+                }
+            )
+            assertTrue(frame.markers.none { it.dictionary == ArucoDictionary.DICT_4X4_50 })
+        }
+    }
+
+    @Test
+    fun aRealFourByFour17RemainsDetectable() {
+        withMarker(17, false) { board ->
+            val frame = ArucoAnalyzer().processFrame(board, board, 0, 0)
+                .single() as VisionEvent.FrameMeasured
+            assertTrue(
+                frame.markers.any {
+                    it.dictionary == ArucoDictionary.DICT_4X4_50 && it.markerId == 17
+                }
+            )
+        }
+    }
+
+    @Test
+    fun originalDictionaryUsesItsOwnIdsAnd110MmSize() {
+        withMarker(1023, false, Objdetect.DICT_ARUCO_ORIGINAL) { board ->
+            val analyzer = ArucoAnalyzer().apply {
+                calibratedCameraModel =
+                    com.example.cogniboticsarucomapper.data.measurement.CameraModel(
+                        240,
+                        240,
+                        300.0,
+                        300.0,
+                        120.0,
+                        120.0,
+                        calibrated = true
+                    )
+            }
+            val frame = analyzer.processFrame(
+                board,
+                board,
+                0,
+                0
+            ).single() as VisionEvent.FrameMeasured
+            val marker = frame.markers.single {
+                it.dictionary == ArucoDictionary.DICT_ARUCO_ORIGINAL && it.markerId == 1023
+            }
+            val position = requireNotNull(marker.positionMm)
+            // 110 mm at a 300 px focal length spans approximately 120 px at 275 mm depth.
+            org.junit.Assert.assertEquals(0.0, position.x, 1.0)
+            org.junit.Assert.assertEquals(0.0, position.y, 1.0)
+            org.junit.Assert.assertEquals(275.0, position.z, 5.0)
+            assertTrue(
+                frame.markers.none {
+                    it.dictionary == ArucoDictionary.DICT_5X5_50 && it.markerId == 1023
+                }
+            )
+        }
+    }
+
+    @Test
     fun damagedFourByFourCodeIsRejected() {
         withMarker(0, true) { board ->
             val frame = ArucoAnalyzer().processFrame(
