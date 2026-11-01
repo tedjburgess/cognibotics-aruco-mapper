@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.cogniboticsarucomapper.data.measurement.CameraModel
 import com.example.cogniboticsarucomapper.data.measurement.MarkerPoseSolver
 import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrigin
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -97,12 +98,12 @@ class KnownSizePoseTest {
         val corners =
             listOf(Offset(384f, 256f), Offset(416f, 256f), Offset(416f, 288f), Offset(384f, 288f))
         val solver = MarkerPoseSolver()
-        val small = solver.solve(corners, 20.0, model)
+        val small = solver.solve(corners, 20.0, model, role = MarkerOrigin.CENTER)
         assertNotNull(small)
         assertEquals(50.0, small!!.x, 0.01)
         assertEquals(20.0, small.y, 0.01)
         assertEquals(500.0, small.z, 0.01)
-        val large = solver.solve(corners, 100.0, model)!!
+        val large = solver.solve(corners, 100.0, model, role = MarkerOrigin.CENTER)!!
         assertEquals(small.z * 5, large.z, 0.05)
     }
 }

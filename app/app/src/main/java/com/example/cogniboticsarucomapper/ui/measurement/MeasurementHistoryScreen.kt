@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,11 +52,20 @@ fun MeasurementHistoryScreen(
     measurements: List<MeasurementHistoryItem>,
     onBack: () -> Unit,
     onRefresh: suspend () -> Unit,
+    onDelete: suspend (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
+
+    var measurementToDelete by remember {
+        mutableStateOf<MeasurementHistoryItem?>(null)
+    }
+
+    var deleting by remember {
+        mutableStateOf(false)
+    }
 
     Column(modifier = modifier.fillMaxSize().padding(24.dp)) {
         PageHeading("Measurement History", "Saved measurements", onBack)
@@ -161,10 +173,82 @@ fun MeasurementHistoryScreen(
                                     }
                                 }
                             }
+
+                            OutlinedButton(
+                                onClick = {
+                                    measurementToDelete = measurement
+                                },
+                                enabled = !deleting,
+                                modifier = Modifier.align(Alignment.End),
+                                border = BorderStroke(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.error
+                                )
+                            ) {
+                                Text(
+                                    "Delete",
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    measurementToDelete?.let { measurement ->
+        AlertDialog(
+            onDismissRequest = {
+                if (!deleting) {
+                    measurementToDelete = null
+                }
+            },
+            title = {
+                Text("Delete measurement?")
+            },
+            text = {
+                Text(
+                    "Delete the measurement for " +
+                        "${measurement.siteName}, ${measurement.cellName}? " +
+                        "This cannot be undone."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            deleting = true
+                            error = null
+
+                            try {
+                                onDelete(measurement.id)
+                                measurementToDelete = null
+                            } catch (e: Exception) {
+                                error = e.message ?: "Could not delete measurement"
+                            } finally {
+                                deleting = false
+                            }
+                        }
+                    },
+                    enabled = !deleting
+                ) {
+                    Text(
+                        if (deleting) "Deleting..." else "Delete",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        measurementToDelete = null
+                    },
+                    enabled = !deleting
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
