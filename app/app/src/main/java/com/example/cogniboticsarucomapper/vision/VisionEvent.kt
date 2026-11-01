@@ -3,8 +3,10 @@ package com.example.cogniboticsarucomapper.vision
 import androidx.compose.ui.geometry.Offset
 import com.example.cogniboticsarucomapper.domain.measurement.ArucoDictionary
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerKey
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrigin
 import com.example.cogniboticsarucomapper.domain.measurement.MarkerPairDistance
 import com.example.cogniboticsarucomapper.domain.measurement.PositionMm
+import com.example.cogniboticsarucomapper.domain.measurement.role
 
 enum class CameraParameterSource { UNAVAILABLE, ESTIMATED, CALIBRATED }
 
@@ -23,7 +25,12 @@ sealed interface VisionEvent {
         val positionMm: PositionMm? = null,
         val tiltDegrees: Double? = null
     ) : VisionEvent {
-        val key: MarkerKey get() = MarkerKey(dictionary, markerId)
+
+        val key: MarkerKey
+            get() = MarkerKey(dictionary, markerId)
+
+        val role: MarkerOrigin
+            get() = key.role()
     }
 
     /** A complete single-frame snapshot, including an empty snapshot when nothing is visible. */

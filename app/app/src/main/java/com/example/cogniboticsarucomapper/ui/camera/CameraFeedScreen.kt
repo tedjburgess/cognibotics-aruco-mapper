@@ -52,7 +52,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cogniboticsarucomapper.data.measurement.sensorGeometryFor
 import com.example.cogniboticsarucomapper.domain.measurement.DistanceDisplayTracker
+import com.example.cogniboticsarucomapper.domain.measurement.MarkerOrigin
 import com.example.cogniboticsarucomapper.domain.measurement.PairReading
+import com.example.cogniboticsarucomapper.domain.measurement.role
 import com.example.cogniboticsarucomapper.util.MeasurementFormats
 import com.example.cogniboticsarucomapper.vision.ArucoAnalyzer
 import com.example.cogniboticsarucomapper.vision.CameraParameterSource
@@ -315,7 +317,7 @@ fun CameraFeedScreen(
                         )
                         if (distances.isNotEmpty()) {
                             Text(
-                                "Centre-to-centre distances",
+                                "Marker distances",
                                 style = MaterialTheme.typography.titleSmall
                             )
                             distances.forEach { pair ->
@@ -327,8 +329,28 @@ fun CameraFeedScreen(
                                 val formattedValue = value?.let {
                                     MeasurementFormats.millimeters(it, 1)
                                 } ?: "N/A"
+                                val fromRole = pair.from.role()
+                                val toRole = pair.to.role()
+
+                                val distanceType =
+                                    when {
+                                        fromRole == MarkerOrigin.CORNER &&
+                                            toRole == MarkerOrigin.CENTER ->
+                                            "Directional-to-centre"
+
+                                        fromRole == MarkerOrigin.CENTER &&
+                                            toRole == MarkerOrigin.CORNER ->
+                                            "Centre-to-directional"
+
+                                        fromRole == MarkerOrigin.CORNER &&
+                                            toRole == MarkerOrigin.CORNER ->
+                                            "Directional-to-directional"
+
+                                        else ->
+                                            "Centre-to-centre"
+                                    }
                                 Text(
-                                    "$pairLabel: $formattedValue",
+                                    "$pairLabel - $distanceType: $formattedValue",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
@@ -358,6 +380,14 @@ fun CameraFeedScreen(
                                                             event.dictionary.sizeMm,
                                                             0
                                                         )})"
+                                                )
+                                                append(
+                                                    when (event.role) {
+                                                        MarkerOrigin.CORNER ->
+                                                            " - Directional"
+                                                        MarkerOrigin.CENTER ->
+                                                            " - Position"
+                                                    }
                                                 )
                                                 event.tiltDegrees?.let {
                                                     append(" · tilt ≈%.0f°".format(it))
