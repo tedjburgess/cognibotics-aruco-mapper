@@ -1,8 +1,11 @@
 package com.example.cogniboticsarucomapper.ui.camera
 
 import android.Manifest
+import android.content.res.Configuration
 import android.os.SystemClock
 import android.util.Log
+import android.view.OrientationEventListener
+import android.view.Surface
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -45,6 +49,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -81,9 +87,18 @@ fun CameraFeedScreen(
     onSavingChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val controlsMaxHeight = (LocalConfiguration.current.screenHeightDp.dp * 0.35f).coerceAtMost(
-        300.dp
-    )
+    val configuration = LocalConfiguration.current
+
+    val isLandscape =
+        configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    val controlsMaxHeight =
+        if (isLandscape) {
+            150.dp
+        } else {
+            (configuration.screenHeightDp.dp * 0.35f)
+                .coerceAtMost(300.dp)
+        }
     val lifecycleOwner = LocalLifecycleOwner.current
     val permissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
@@ -101,6 +116,35 @@ fun CameraFeedScreen(
     val analysisEnabled by visionEngine.analysisEnabled.collectAsStateWithLifecycle()
     val fps by visionEngine.fps.collectAsStateWithLifecycle()
     var torchEnabled by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val view = LocalView.current
+
+    var physicalRotationDegrees by remember { mutableStateOf(0) }
+    val orientationListener = remember {
+        object : OrientationEventListener(context) {
+            override fun onOrientationChanged(orientation: Int) {
+                if (orientation == ORIENTATION_UNKNOWN) {
+                    return
+                }
+
+                physicalRotationDegrees =
+                    when (orientation) {
+                        in 45..134 -> 270
+                        in 135..224 -> 180
+                        in 225..314 -> 90
+                        else -> 0
+                    }
+            }
+        }
+    }
+
+    DisposableEffect(orientationListener) {
+        orientationListener.enable()
+
+        onDispose {
+            orientationListener.disable()
+        }
+    }
 
     var latestFrameMeasured by remember { mutableStateOf<VisionEvent.FrameMeasured?>(null) }
     var latestMarkers by remember { mutableStateOf<List<VisionEvent.MarkerDetected>>(emptyList()) }
@@ -163,17 +207,49 @@ fun CameraFeedScreen(
         }
     }
 
-    Column(modifier = modifier.fillMaxSize()) {
-        Text(
-            "Live measurement",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
-        )
-        Text(
-            text = "Site: $siteName  |  Cell: $cellName",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 20.dp)
-        )
+    Column(
+        modifier = modifier.fillMaxSize()
+    ) {
+        if (isLandscape) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 4.dp
+                    ),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Live measurement",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Text(
+                    text = "$siteName | $cellName",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        } else {
+            Text(
+                "Live measurement",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(
+                    horizontal = 20.dp,
+                    vertical = 12.dp
+                )
+            )
+
+            Text(
+                text = "Site: $siteName  |  Cell: $cellName",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(
+                    horizontal = 20.dp
+                )
+            )
+        }
+
         when {
             permissionState.status.isGranted -> {
                 var controller by remember { mutableStateOf<LifecycleCameraController?>(null) }
@@ -186,276 +262,343 @@ fun CameraFeedScreen(
                     }
                 }
 
-                Box(
-                    modifier = Modifier.fillMaxWidth().weight(
-                        1f
-                    ).padding(horizontal = 16.dp).clip(RoundedCornerShape(20.dp))
-                ) {
-                    AndroidView(
-                        modifier = Modifier.fillMaxSize(),
-                        factory = { ctx ->
-
-                            val camController = LifecycleCameraController(ctx).apply {
-                                setEnabledUseCases(
-                                    CameraController.IMAGE_ANALYSIS
-                                )
-
-                                cameraSelector =
-                                    CameraSelector.DEFAULT_BACK_CAMERA
-
-                                setImageAnalysisAnalyzer(
-                                    analysisExecutor,
-                                    visionEngine
-                                )
-
-                                isPinchToZoomEnabled = false
-                                bindToLifecycle(lifecycleOwner)
-                            }
-
-                            controller = camController
-
-                            PreviewView(ctx).apply {
-                                this.controller = camController
-                                camController.initializationFuture.addListener({
-                                    camController.cameraInfo?.let { info ->
-                                        markerAnalyzer?.sensorGeometry = sensorGeometryFor(info)
-                                    }
-                                }, ContextCompat.getMainExecutor(ctx))
-
-                                implementationMode =
-                                    PreviewView.ImplementationMode.PERFORMANCE
-                            }
-                        }
-                    )
-
-                    // ArUco overlay
-                    MarkerOverlay(
-                        markers = visibleMarkers,
-                        modifier = Modifier.fillMaxSize()
-                    )
-
-                    Surface(
-                        color = Color(0xD9102A43),
-                        contentColor = Color.White,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.align(Alignment.TopEnd).padding(12.dp)
+                val cameraPanel: @Composable (Modifier) -> Unit = { panelModifier ->
+                    Box(
+                        modifier = panelModifier
+                            .clip(RoundedCornerShape(20.dp))
                     ) {
-                        Text(
-                            text = "%.0f fps".format(fps),
-                            style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                        AndroidView(
+                            modifier = Modifier.fillMaxSize(),
+                            factory = { ctx ->
+                                val camController =
+                                    LifecycleCameraController(ctx).apply {
+                                        setEnabledUseCases(
+                                            CameraController.IMAGE_ANALYSIS
+                                        )
+
+                                        cameraSelector =
+                                            CameraSelector.DEFAULT_BACK_CAMERA
+
+                                        setImageAnalysisAnalyzer(
+                                            analysisExecutor,
+                                            visionEngine
+                                        )
+
+                                        isPinchToZoomEnabled = false
+                                        bindToLifecycle(lifecycleOwner)
+                                    }
+
+                                controller = camController
+
+                                PreviewView(ctx).apply {
+                                    this.controller = camController
+
+                                    camController.initializationFuture.addListener(
+                                        {
+                                            camController.cameraInfo?.let { info ->
+                                                markerAnalyzer?.sensorGeometry =
+                                                    sensorGeometryFor(info)
+                                            }
+                                        },
+                                        ContextCompat.getMainExecutor(ctx)
+                                    )
+
+                                    implementationMode =
+                                        PreviewView.ImplementationMode.PERFORMANCE
+                                }
+                            }
                         )
+
+                        MarkerOverlay(
+                            markers = visibleMarkers,
+                            physicalRotationDegrees = physicalRotationDegrees,
+                            screenRotation = view.display?.rotation ?: Surface.ROTATION_0,
+                            modifier = Modifier.fillMaxSize()
+                        )
+
+                        Surface(
+                            color = Color(0xD9102A43),
+                            contentColor = Color.White,
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(12.dp)
+                        ) {
+                            Text(
+                                text = "%.0f fps".format(fps),
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(
+                                    horizontal = 10.dp,
+                                    vertical = 6.dp
+                                )
+                            )
+                        }
                     }
                 }
 
                 controller?.enableTorch(torchEnabled)
 
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(
-                        horizontal = 16.dp,
-                        vertical = 12.dp
-                    ),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    ),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                ) {
+                val controlsPanel: @Composable (Modifier) -> Unit = { panelModifier ->
                     Column(
-                        Modifier.heightIn(
-                            max = controlsMaxHeight
-                        ).verticalScroll(rememberScrollState()).padding(16.dp),
+                        modifier = panelModifier
+                            .verticalScroll(rememberScrollState())
+                            .padding(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(20.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            ),
+                            border = BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.outlineVariant
+                            )
                         ) {
-                            Text(
-                                "${visibleMarkers.size} marker(s)",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Badge { Text("OPENCV ${if (opencvReady) "OK" else "FAIL"}") }
-                        }
-                        OptionToggle(
-                            label = "Analysis",
-                            checked = analysisEnabled,
-                            onCheckedChange = { enabled ->
-                                visionEngine.setAnalysisEnabled(enabled)
-                                if (!enabled) {
-                                    visibleMarkers.clear()
-                                    displayTracker.reset()
-                                    distances = emptyList()
-                                    latestFrameMeasured = null
-                                    latestMarkers = emptyList()
+                            Column(
+                                modifier = Modifier.padding(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Row(
+                                    Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        "${visibleMarkers.size} marker(s)",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        modifier = Modifier.weight(1f)
+                                    )
+
+                                    Badge {
+                                        Text(
+                                            "OPENCV ${if (opencvReady) "OK" else "FAIL"}"
+                                        )
+                                    }
                                 }
-                            }
-                        )
-                        OptionToggle(
-                            label = "Torch",
-                            checked = torchEnabled,
-                            onCheckedChange = { torchEnabled = it }
-                        )
-                        OptionToggle(
-                            label = "Steady display (up to 5 frames)",
-                            checked = steadyDisplay,
-                            onCheckedChange = { steadyDisplay = it }
-                        )
-                        Text(
-                            text = measurementError ?: when {
-                                !analysisEnabled -> "Analysis paused."
-                                !opencvReady -> "OpenCV could not start."
-                                cameraParameters == CameraParameterSource.UNAVAILABLE ->
-                                    "Camera parameters unavailable : distances cannot be measured."
-                                cameraParameters == CameraParameterSource.ESTIMATED ->
-                                    "Estimated camera parameters : accuracy not validated."
-                                else -> "Using calibrated camera parameters."
-                            },
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        if (distances.isNotEmpty()) {
-                            Text(
-                                "Marker distances",
-                                style = MaterialTheme.typography.titleSmall
-                            )
-                            distances.forEach { pair ->
-                                val value = if (steadyDisplay) pair.steadyMm else pair.rawMm
-                                val pairLabel = MeasurementFormats.markerPairLabel(
-                                    pair.from,
-                                    pair.to
+
+                                OptionToggle(
+                                    label = "Analysis",
+                                    checked = analysisEnabled,
+                                    onCheckedChange = { enabled ->
+                                        visionEngine.setAnalysisEnabled(enabled)
+
+                                        if (!enabled) {
+                                            visibleMarkers.clear()
+                                            displayTracker.reset()
+                                            distances = emptyList()
+                                            latestFrameMeasured = null
+                                            latestMarkers = emptyList()
+                                        }
+                                    }
                                 )
-                                val formattedValue = value?.let {
-                                    MeasurementFormats.millimeters(it, 1)
-                                } ?: "N/A"
-                                val fromRole = pair.from.role()
-                                val toRole = pair.to.role()
 
-                                val distanceType =
-                                    when {
-                                        fromRole == MarkerOrigin.CORNER &&
-                                            toRole == MarkerOrigin.CENTER ->
-                                            "Directional-to-centre"
+                                OptionToggle(
+                                    label = "Torch",
+                                    checked = torchEnabled,
+                                    onCheckedChange = {
+                                        torchEnabled = it
+                                    }
+                                )
 
-                                        fromRole == MarkerOrigin.CENTER &&
-                                            toRole == MarkerOrigin.CORNER ->
-                                            "Centre-to-directional"
+                                OptionToggle(
+                                    label = "Steady display",
+                                    checked = steadyDisplay,
+                                    onCheckedChange = {
+                                        steadyDisplay = it
+                                    }
+                                )
 
-                                        fromRole == MarkerOrigin.CORNER &&
-                                            toRole == MarkerOrigin.CORNER ->
-                                            "Directional-to-directional"
+                                Text(
+                                    text = measurementError ?: when {
+                                        !analysisEnabled ->
+                                            "Analysis paused."
+
+                                        !opencvReady ->
+                                            "OpenCV could not start."
+
+                                        cameraParameters ==
+                                            CameraParameterSource.UNAVAILABLE ->
+                                            "Camera parameters unavailable."
+
+                                        cameraParameters ==
+                                            CameraParameterSource.ESTIMATED ->
+                                            "Using estimated camera parameters."
 
                                         else ->
-                                            "Centre-to-centre"
-                                    }
-                                Text(
-                                    "$pairLabel - $distanceType: $formattedValue",
-                                    style = MaterialTheme.typography.bodyMedium
+                                            "Using calibrated camera parameters."
+                                    },
+                                    style = MaterialTheme.typography.bodySmall
                                 )
-                            }
-                        } else if (analysisEnabled && visibleMarkers.size < 2) {
-                            Text(
-                                "Show two different markers together to measure a distance.",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                        if (visibleMarkers.isNotEmpty()) {
-                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                visibleMarkers
-                                    .sortedWith(
-                                        compareBy({
-                                            it.dictionary.ordinal
-                                        }, { it.markerId })
+
+                                if (distances.isNotEmpty()) {
+                                    Text(
+                                        "Marker distances",
+                                        style = MaterialTheme.typography.titleSmall
                                     )
-                                    .forEach { event ->
+
+                                    distances.forEach { pair ->
+                                        val value =
+                                            if (steadyDisplay) {
+                                                pair.steadyMm
+                                            } else {
+                                                pair.rawMm
+                                            }
+
+                                        val pairLabel =
+                                            MeasurementFormats.markerPairLabel(
+                                                pair.from,
+                                                pair.to
+                                            )
+
+                                        val formattedValue =
+                                            value?.let {
+                                                MeasurementFormats.millimeters(it, 1)
+                                            } ?: "N/A"
+
+                                        val fromRole = pair.from.role()
+                                        val toRole = pair.to.role()
+
+                                        val distanceType =
+                                            when {
+                                                fromRole == MarkerOrigin.CORNER &&
+                                                    toRole == MarkerOrigin.CENTER ->
+                                                    "Corner-to-center"
+
+                                                fromRole == MarkerOrigin.CENTER &&
+                                                    toRole == MarkerOrigin.CORNER ->
+                                                    "Center-to-corner"
+
+                                                fromRole == MarkerOrigin.CORNER &&
+                                                    toRole == MarkerOrigin.CORNER ->
+                                                    "Corner-to-corner"
+
+                                                else ->
+                                                    "Center-to-center"
+                                            }
+
                                         Text(
-                                            text = buildString {
-                                                append(
-                                                    "${MeasurementFormats.markerLabel(
-                                                        event.dictionary,
-                                                        event.markerId
-                                                    )} " +
-                                                        "(${MeasurementFormats.millimeters(
-                                                            event.dictionary.sizeMm,
-                                                            0
-                                                        )})"
-                                                )
-                                                append(
-                                                    when (event.role) {
-                                                        MarkerOrigin.CORNER ->
-                                                            " - Directional"
-                                                        MarkerOrigin.CENTER ->
-                                                            " - Position"
-                                                    }
-                                                )
-                                                event.tiltDegrees?.let {
-                                                    append(" · tilt ≈%.0f°".format(it))
-                                                }
-                                                if (event.positionMm ==
-                                                    null
-                                                ) {
-                                                    append(" · pose unavailable")
-                                                }
-                                                append(
-                                                    " - tracking ${(event.certainty * 100).toInt()}%"
-                                                )
-                                                append(
-                                                    when (event.scanState) {
-                                                        MarkerScanState.DETECTED ->
-                                                            " - Detected"
-
-                                                        MarkerScanState.CONFIRMING ->
-                                                            " - Confirming"
-
-                                                        MarkerScanState.STABLE ->
-                                                            " - Stable ✓"
-                                                    }
-                                                )
-                                            },
-                                            color = markerOutlineColor(event.scanState),
+                                            "$pairLabel - $distanceType: $formattedValue",
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                     }
+                                }
+
+                                if (visibleMarkers.isNotEmpty()) {
+                                    visibleMarkers
+                                        .sortedWith(
+                                            compareBy(
+                                                { it.dictionary.ordinal },
+                                                { it.markerId }
+                                            )
+                                        )
+                                        .forEach { event ->
+                                            Text(
+                                                text = buildString {
+                                                    append(
+                                                        MeasurementFormats.markerLabel(
+                                                            event.dictionary,
+                                                            event.markerId
+                                                        )
+                                                    )
+
+                                                    append(
+                                                        when (event.role) {
+                                                            MarkerOrigin.CORNER ->
+                                                                " - Corner"
+
+                                                            MarkerOrigin.CENTER ->
+                                                                " - Center"
+                                                        }
+                                                    )
+
+                                                    append(
+                                                        " - ${(event.certainty * 100).toInt()}%"
+                                                    )
+                                                },
+                                                color =
+                                                markerOutlineColor(event.scanState),
+                                                style =
+                                                MaterialTheme.typography.bodySmall
+                                            )
+                                        }
+                                }
                             }
+                        }
+
+                        if (
+                            distances.isNotEmpty() &&
+                            visibleMarkers.size >= 2 &&
+                            !isSaving
+                        ) {
+                            Button(
+                                onClick = {
+                                    onSavingChanged(true)
+                                    onSave(
+                                        latestFrameMeasured,
+                                        latestMarkers
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text("Save Measurement")
+                            }
+                        } else if (isSaving) {
+                            Text(
+                                "Preparing to save...",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+
+                        OutlinedButton(
+                            onClick = onBack,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Back")
                         }
                     }
                 }
 
-                if (distances.isNotEmpty() && visibleMarkers.size >= 2 && !isSaving) {
-                    Button(
-                        onClick = {
-                            onSavingChanged(true)
-                            onSave(latestFrameMeasured, latestMarkers)
-                        },
+                if (isLandscape) {
+                    Row(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .fillMaxWidth(),
-                        enabled = !isSaving
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("Save Measurement")
-                    }
-                } else if (isSaving) {
-                    Text(
-                        "Preparing to save...",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                } else if (analysisEnabled && visibleMarkers.size < 2) {
-                    Text(
-                        "Detect at least 2 markers to enable saving.",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                }
+                        cameraPanel(
+                            Modifier
+                                .weight(0.72f)
+                                .fillMaxHeight()
+                        )
 
-                OutlinedButton(
-                    onClick = onBack,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text("Back")
+                        controlsPanel(
+                            Modifier
+                                .weight(0.28f)
+                                .fillMaxHeight()
+                        )
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        cameraPanel(
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .padding(horizontal = 16.dp)
+                        )
+
+                        controlsPanel(
+                            Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = controlsMaxHeight)
+                        )
+                    }
                 }
             }
 
@@ -515,6 +658,8 @@ private fun PermissionPrompt(
 @Composable
 private fun MarkerOverlay(
     markers: List<VisionEvent.MarkerDetected>,
+    physicalRotationDegrees: Int,
+    screenRotation: Int,
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier) {
@@ -524,13 +669,22 @@ private fun MarkerOverlay(
                 return@forEach
             }
 
-            val transformedCorners = marker.corners.map { corner ->
+            val physicalCorrection =
+                if (screenRotation == Surface.ROTATION_0) {
+                    physicalRotationDegrees
+                } else {
+                    0
+                }
 
+            val correctedRotation =
+                (marker.rotationDegrees + physicalCorrection) % 360
+
+            val transformedCorners = marker.corners.map { corner ->
                 transformPoint(
                     point = corner,
                     frameWidth = marker.frameWidth,
                     frameHeight = marker.frameHeight,
-                    rotationDegrees = marker.rotationDegrees,
+                    rotationDegrees = correctedRotation,
                     canvasWidth = size.width,
                     canvasHeight = size.height
                 )
