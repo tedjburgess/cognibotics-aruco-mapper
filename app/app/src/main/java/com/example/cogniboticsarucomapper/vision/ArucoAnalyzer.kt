@@ -97,6 +97,7 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
                             rotationDegrees = rotationDegrees,
                             dictionary = dictionary,
                             positionMm = pose?.position,
+                            orientation = pose?.orientation,
                             tiltDegrees = pose?.tiltDegrees
                         )
                     )

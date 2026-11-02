@@ -113,13 +113,14 @@ fun SaveConfirmationScreen(
                             pos.y,
                             pos.z
                         ),
-                        orientation =
-                        com.example.cogniboticsarucomapper.network.model.OrientationDto(
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ),
+                        orientation = marker.orientation?.let { orientation ->
+                            com.example.cogniboticsarucomapper.network.model.OrientationDto(
+                                orientation.x,
+                                orientation.y,
+                                orientation.z,
+                                orientation.w
+                            )
+                        } ?: throw IllegalStateException("Marker orientation unavailable"),
                         sizeMm = marker.dictionary.sizeMm
                     )
                 }
