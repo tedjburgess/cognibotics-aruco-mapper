@@ -70,8 +70,8 @@ fun CalibrationScreen(
         }
 
         Text(
-            "Saved focal lengths replace the estimated camera parameters; " +
-                "incomplete values fall back to the estimate.",
+            "Set custom camera intrinsic parameters to improve measurement accuracy. " +
+                "If not set, estimated values are used by default.",
             style = MaterialTheme.typography.bodySmall
         )
 
