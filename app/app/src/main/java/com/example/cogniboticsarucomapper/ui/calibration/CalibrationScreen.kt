@@ -1,20 +1,16 @@
 package com.example.cogniboticsarucomapper.ui.calibration
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -24,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -37,8 +32,6 @@ import com.example.cogniboticsarucomapper.util.DateTimeFormats
 @Composable
 fun CalibrationScreen(
     measurement: CalibrationMeasurement,
-    useCustomCalibration: Boolean,
-    onUseCustomCalibrationChange: (Boolean) -> Unit,
     onOpenCamera: () -> Unit,
     onUpdate: (CalibrationMeasurement) -> Unit,
     onReset: () -> Unit,
@@ -76,30 +69,11 @@ fun CalibrationScreen(
             )
         }
 
-        Card(Modifier.fillMaxWidth()) {
-            Row(
-                Modifier.fillMaxWidth().padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(Modifier.weight(1f)) {
-                    Text("Use custom calibration", style = MaterialTheme.typography.titleMedium)
-                    Text(
-                        if (measurement.hasCameraMatrix) {
-                            "Measurements use the saved values."
-                        } else {
-                            "Enter a focal length X and Y to enable custom calibration."
-                        },
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-                Switch(
-                    checked = useCustomCalibration,
-                    onCheckedChange = onUseCustomCalibrationChange,
-                    enabled = measurement.hasCameraMatrix
-                )
-            }
-        }
+        Text(
+            "Saved focal lengths replace the estimated camera parameters; " +
+                "incomplete values fall back to the estimate.",
+            style = MaterialTheme.typography.bodySmall
+        )
 
         ActionCard(
             Icons.Filled.CameraAlt,

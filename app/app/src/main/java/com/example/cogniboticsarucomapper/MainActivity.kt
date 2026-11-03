@@ -78,9 +78,6 @@ class MainActivity : ComponentActivity() {
                 var calibrationMeasurement by remember {
                     mutableStateOf(calibrationStore.load())
                 }
-                var useCustomCalibration by rememberSaveable {
-                    mutableStateOf(calibrationStore.loadCustomCalibrationEnabled())
-                }
 
                 var measurements by remember {
                     mutableStateOf<List<MeasurementHistoryItem>>(emptyList())
@@ -130,25 +127,13 @@ class MainActivity : ComponentActivity() {
                             CalibrationScreen(
                                 onOpenCamera = { currentScreen = AppScreen.CheckerboardCamera },
                                 measurement = calibrationMeasurement,
-                                useCustomCalibration = useCustomCalibration,
-                                onUseCustomCalibrationChange = { enabled ->
-                                    useCustomCalibration = enabled
-                                    calibrationStore.saveCustomCalibrationEnabled(enabled)
-                                },
                                 onUpdate = { updatedMeasurement ->
                                     calibrationStore.update(updatedMeasurement)
                                     calibrationMeasurement = updatedMeasurement
-                                    if (!updatedMeasurement.hasCameraMatrix &&
-                                        useCustomCalibration
-                                    ) {
-                                        useCustomCalibration = false
-                                        calibrationStore.saveCustomCalibrationEnabled(false)
-                                    }
                                 },
                                 onReset = {
                                     calibrationStore.reset()
                                     calibrationMeasurement = CalibrationMeasurement()
-                                    useCustomCalibration = false
                                 },
                                 onBack = {
                                     currentScreen = AppScreen.Home
@@ -206,7 +191,6 @@ class MainActivity : ComponentActivity() {
                             CameraFeedScreen(
                                 siteName = siteName,
                                 cellName = cellName,
-                                useCustomCalibration = useCustomCalibration,
                                 calibrationMeasurement = calibrationMeasurement,
                                 onBack = {
                                     currentScreen = AppScreen.Measurement

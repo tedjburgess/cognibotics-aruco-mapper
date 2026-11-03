@@ -86,7 +86,6 @@ fun CameraFeedScreen(
     onSave: (VisionEvent.FrameMeasured?, List<VisionEvent.MarkerDetected>) -> Unit,
     isSaving: Boolean,
     onSavingChanged: (Boolean) -> Unit,
-    useCustomCalibration: Boolean = false,
     calibrationMeasurement: CalibrationMeasurement = CalibrationMeasurement(),
     modifier: Modifier = Modifier
 ) {
@@ -107,10 +106,10 @@ fun CameraFeedScreen(
 
     val opencvReady = remember { OpenCv.ensureInitialized() }
     val markerAnalyzer =
-        remember(opencvReady, useCustomCalibration, calibrationMeasurement) {
+        remember(opencvReady, calibrationMeasurement) {
             if (opencvReady) {
                 ArucoAnalyzer().apply {
-                    calibration = calibrationMeasurement.takeIf { useCustomCalibration }
+                    calibration = calibrationMeasurement
                 }
             } else {
                 null

@@ -20,9 +20,6 @@ data class CalibrationMeasurement(
     val reprojectionErrorPx: Double? = null,
     val updatedAtMillis: Long? = null
 ) {
-    val hasCameraMatrix: Boolean
-        get() = focalLengthX != null && focalLengthY != null
-
     fun toCameraModel(width: Int, height: Int): CameraModel? {
         if (width <= 0 || height <= 0) return null
         if (imageWidth != null && imageWidth != width) return null
@@ -98,12 +95,6 @@ class CalibrationMeasurementStore(context: Context) {
         preferences.edit().clear().apply()
     }
 
-    fun loadCustomCalibrationEnabled(): Boolean = preferences.getBoolean(KEY_CUSTOM_ENABLED, false)
-
-    fun saveCustomCalibrationEnabled(enabled: Boolean) {
-        preferences.edit().putBoolean(KEY_CUSTOM_ENABLED, enabled).apply()
-    }
-
     private fun SharedPreferences.getDouble(key: String): Double? =
         getString(key, null)?.toDoubleOrNull()
 
@@ -140,6 +131,5 @@ class CalibrationMeasurementStore(context: Context) {
         const val KEY_TANGENTIAL_P2 = "tangential_distortion_p2"
         const val KEY_REPROJECTION_ERROR = "reprojection_error_px"
         const val KEY_UPDATED_AT = "updated_at_millis"
-        const val KEY_CUSTOM_ENABLED = "custom_calibration_enabled"
     }
 }
