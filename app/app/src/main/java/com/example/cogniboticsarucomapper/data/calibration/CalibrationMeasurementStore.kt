@@ -46,6 +46,7 @@ data class CalibrationMeasurement(
         val p1 = tangentialDistortionP1 ?: return emptyList()
         val p2 = tangentialDistortionP2 ?: return emptyList()
         val k3 = radialDistortionK3 ?: return listOf(k1, k2, p1, p2)
+
         return listOf(k1, k2, p1, p2, k3)
     }
 }
