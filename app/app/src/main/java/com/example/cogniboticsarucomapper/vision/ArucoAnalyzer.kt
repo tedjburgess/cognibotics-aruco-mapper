@@ -24,6 +24,7 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
     // Calibration capture/persistence can supply a profile here without changing the solver.
     // A supplied profile must match the actual analysis resolution; never silently reuse a mismatch.
     @Volatile var calibratedCameraModel: CameraModel? = null
+
     @Volatile var calibration: CalibrationMeasurement? = null
 
     private val solver = MarkerPoseSolver()
