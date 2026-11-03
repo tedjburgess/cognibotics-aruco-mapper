@@ -50,7 +50,8 @@ fun CalibrationScreen(
 
     FeatureLayout(
         "Calibration",
-        "Review and manage the saved camera calibration",
+        "Set custom camera intrinsic parameters to improve measurement accuracy. " +
+            "If left empty, estimated values are used instead.",
         onBack,
         modifier
     ) {
@@ -68,12 +69,6 @@ fun CalibrationScreen(
                     ?: "Calibration values are saved on this device."
             )
         }
-
-        Text(
-            "Set custom camera intrinsic parameters to improve measurement accuracy. " +
-                "If not set, estimated values are used by default.",
-            style = MaterialTheme.typography.bodySmall
-        )
 
         ActionCard(
             Icons.Filled.CameraAlt,
