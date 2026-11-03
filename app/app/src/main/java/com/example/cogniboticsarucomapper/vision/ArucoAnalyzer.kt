@@ -1,6 +1,7 @@
 package com.example.cogniboticsarucomapper.vision
 
 import androidx.compose.ui.geometry.Offset
+import com.example.cogniboticsarucomapper.data.calibration.CalibrationMeasurement
 import com.example.cogniboticsarucomapper.data.measurement.CameraModel
 import com.example.cogniboticsarucomapper.data.measurement.MarkerPoseSolver
 import com.example.cogniboticsarucomapper.data.measurement.SensorGeometry
@@ -24,6 +25,8 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
     // A supplied profile must match the actual analysis resolution; never silently reuse a mismatch.
     @Volatile var calibratedCameraModel: CameraModel? = null
 
+    @Volatile var calibration: CalibrationMeasurement? = null
+
     private val solver = MarkerPoseSolver()
 
     private val dictionaries = dictionary?.let { listOf(it) } ?: ArucoDictionary.entries
@@ -45,6 +48,7 @@ class ArucoAnalyzer(dictionary: ArucoDictionary? = null) : VisionEngine.FrameAna
         rotationDegrees: Int
     ): List<VisionEvent> {
         val calibrated = calibratedCameraModel
+            ?: calibration?.toCameraModel(gray.cols(), gray.rows())
         val model = if (calibrated != null) {
             calibrated.takeIf { it.calibrated && it.matches(gray.cols(), gray.rows()) }
         } else {

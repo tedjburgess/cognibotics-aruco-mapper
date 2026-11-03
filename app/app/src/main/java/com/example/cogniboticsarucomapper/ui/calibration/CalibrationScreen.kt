@@ -50,7 +50,8 @@ fun CalibrationScreen(
 
     FeatureLayout(
         "Calibration",
-        "Review and manage the saved camera calibration",
+        "Set custom camera intrinsic parameters to improve measurement accuracy. " +
+            "If left empty, estimated values are used instead.",
         onBack,
         modifier
     ) {
