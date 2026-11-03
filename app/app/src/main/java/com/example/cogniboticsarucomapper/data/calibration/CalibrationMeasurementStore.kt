@@ -24,8 +24,10 @@ data class CalibrationMeasurement(
         if (width <= 0 || height <= 0) return null
         if (imageWidth != null && imageWidth != width) return null
         if (imageHeight != null && imageHeight != height) return null
+
         val fx = focalLengthX ?: return null
         val fy = focalLengthY ?: return null
+
         return CameraModel(
             width = width,
             height = height,
