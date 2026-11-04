@@ -1,0 +1,20 @@
+Cognibotics ArUco Mapper
+
+Copyright 2026 the Cognibotics ArUco Mapper project authors:
+
+    Adam Pisula
+    Mhd Osama Alsaheb
+    Osayi Uwadiae
+    Ralph Tolentino Ariza
+    Simon Ostini
+    Ted J. Burgess
+
+Developed as a student project in cooperation with Cognibotics and HKR
+(Kristianstad University). The Cognibotics and HKR names and logos remain the
+property of their respective owners and are not licensed under the Apache
+License, Version 2.0.
+
+The Android application uses OpenCV (Apache License 2.0), AndroidX and CameraX
+(Apache License 2.0), and Accompanist (Apache License 2.0). The API uses
+FastAPI, SQLAlchemy and psycopg, which carry their own licenses as listed by
+their respective distributions.
