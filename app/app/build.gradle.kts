@@ -6,6 +6,35 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+val localProperties = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use(::load)
+}
+
+val keystoreProperties = Properties().apply {
+    rootProject.file("keystore.properties").takeIf { it.isFile }?.inputStream()?.use(::load)
+}
+
+fun signingValue(key: String, environmentVariable: String): String? =
+    keystoreProperties.getProperty(key) ?: System.getenv(environmentVariable)
+
+val appVersionName = providers.gradleProperty("versionName").orElse("0.1.0").get()
+
+fun versionCodeFor(name: String): Int {
+    val parts = name.substringBefore('-').split('.').map { it.toIntOrNull() ?: 0 }
+    return parts.getOrElse(0) { 0 } * 10000 +
+        parts.getOrElse(1) { 0 } * 100 +
+        parts.getOrElse(2) { 0 }
+}
+
+val appVersionCode = providers.gradleProperty("versionCode")
+    .map(String::toInt)
+    .orElse(versionCodeFor(appVersionName))
+    .get()
+
+// The release workflow passes -PapiBaseUrl; local builds fall back to local.properties.
+val apiBaseUrl = providers.gradleProperty("apiBaseUrl").orNull
+    ?: localProperties.getProperty("apiBaseUrl", "http://127.0.0.1:8000/")
+
 android {
     namespace = "com.cognibotics.arucomapper"
     compileSdk {
@@ -16,14 +45,10 @@ android {
         applicationId = "com.cognibotics.arucomapper"
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        val localProperties = Properties().apply {
-            rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use(::load)
-        }
-        val apiBaseUrl = localProperties.getProperty("apiBaseUrl", "http://127.0.0.1:8000/")
         buildConfigField(
             "String",
             "API_BASE_URL",
@@ -31,11 +56,33 @@ android {
         )
     }
 
+    signingConfigs {
+        create("release") {
+            val storePath = signingValue("storeFile", "ANDROID_KEYSTORE_PATH")
+            val storePasswordValue =
+                signingValue("storePassword", "ANDROID_KEYSTORE_PASSWORD")
+            val keyAliasValue = signingValue("keyAlias", "ANDROID_KEY_ALIAS")
+            val keyPasswordValue = signingValue("keyPassword", "ANDROID_KEY_PASSWORD")
+            if (storePath != null &&
+                storePasswordValue != null &&
+                keyAliasValue != null &&
+                keyPasswordValue != null
+            ) {
+                storeFile = rootProject.file(storePath)
+                storePassword = storePasswordValue
+                keyAlias = keyAliasValue
+                keyPassword = keyPasswordValue
+            }
+        }
+    }
+
     buildTypes {
         release {
             optimization {
                 enable = false
             }
+            signingConfig = signingConfigs.findByName("release")
+                ?.takeIf { it.storeFile != null }
         }
     }
     compileOptions {
