@@ -1,0 +1,55 @@
+name: Release API
+
+on:
+  push:
+    tags: ["api-v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version, e. g.: 0.1.0"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Resolve version
+        id: version
+        run: |
+          version="${GITHUB_REF_NAME#api-v}"
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then version="${{ inputs.version }}"; fi
+          grep -q "^version = \"$version\"" api/pyproject.toml || {
+            echo "api/pyproject.toml must declare version $version"; exit 1; }
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.14"
+          enable-cache: true
+
+      - name: Check
+        working-directory: api
+        run: make install && make check
+
+      - name: Package source
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git archive --format=tar.gz \
+            --prefix="aruco-mapper-api-$VERSION/" \
+            -o "aruco-mapper-api-$VERSION.tar.gz" \
+            "HEAD:api"
+          ls -l "aruco-mapper-api-$VERSION.tar.gz"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: api-v${{ steps.version.outputs.version }}
+          name: API ${{ steps.version.outputs.version }}
+          files: aruco-mapper-api-*.tar.gz
+          draft: true
+          generate_release_notes: true
