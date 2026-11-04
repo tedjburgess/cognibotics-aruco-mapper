@@ -7,13 +7,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.cogniboticsarucomapper"
+    namespace = "com.cognibotics.arucomapper"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.cogniboticsarucomapper"
+        applicationId = "com.cognibotics.arucomapper"
         minSdk = 24
         targetSdk = 37
         versionCode = 1
