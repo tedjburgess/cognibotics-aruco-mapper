@@ -53,23 +53,3 @@ jobs:
           files: aruco-mapper-api-*.tar.gz
           draft: true
           generate_release_notes: true
-          body: |
-            Python source release for the measurement API. Python 3.14 and
-            [uv](https://docs.astral.sh/uv/) required.
-
-            ```bash
-            tar xzf aruco-mapper-api-${{ steps.version.outputs.version }}.tar.gz
-            cd aruco-mapper-api-${{ steps.version.outputs.version }}
-            uv sync
-            uv run fastapi run app/main.py --host 0.0.0.0 --port 8000
-            ```
-
-            Then open <http://localhost:8000/docs>. Without uv, install the
-            dependencies yourself and run the same command:
-
-            ```bash
-            pip install "fastapi[standard]" sqlalchemy "psycopg[binary]"
-            ```
-
-            `DATABASE_URL` selects the database (SQLite by default). The archive
-            also contains the `Dockerfile` if you would rather run a container.
