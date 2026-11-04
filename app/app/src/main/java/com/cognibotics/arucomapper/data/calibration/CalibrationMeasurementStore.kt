@@ -2,6 +2,7 @@ package com.cognibotics.arucomapper.data.calibration
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.cognibotics.arucomapper.data.measurement.CameraModel
 
 /** Camera parameters produced by a calibration run. Values are nullable until measured. */
 data class CalibrationMeasurement(
@@ -18,7 +19,37 @@ data class CalibrationMeasurement(
     val tangentialDistortionP2: Double? = null,
     val reprojectionErrorPx: Double? = null,
     val updatedAtMillis: Long? = null
-)
+) {
+    fun toCameraModel(width: Int, height: Int): CameraModel? {
+        if (width <= 0 || height <= 0) return null
+        if (imageWidth != null && imageWidth != width) return null
+        if (imageHeight != null && imageHeight != height) return null
+
+        val fx = focalLengthX ?: return null
+        val fy = focalLengthY ?: return null
+
+        return CameraModel(
+            width = width,
+            height = height,
+            fx = fx,
+            fy = fy,
+            cx = principalPointX ?: width / 2.0,
+            cy = principalPointY ?: height / 2.0,
+            distortion = distortionCoefficients(),
+            calibrated = true
+        ).takeIf { it.isValid }
+    }
+
+    private fun distortionCoefficients(): List<Double> {
+        val k1 = radialDistortionK1 ?: return emptyList()
+        val k2 = radialDistortionK2 ?: return emptyList()
+        val p1 = tangentialDistortionP1 ?: return emptyList()
+        val p2 = tangentialDistortionP2 ?: return emptyList()
+        val k3 = radialDistortionK3 ?: return listOf(k1, k2, p1, p2)
+
+        return listOf(k1, k2, p1, p2, k3)
+    }
+}
 
 /** Persists the latest calibration output locally on this device. */
 class CalibrationMeasurementStore(context: Context) {

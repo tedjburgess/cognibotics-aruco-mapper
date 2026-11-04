@@ -56,6 +56,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cognibotics.arucomapper.data.calibration.CalibrationMeasurement
 import com.cognibotics.arucomapper.data.measurement.sensorGeometryFor
 import com.cognibotics.arucomapper.domain.measurement.DistanceDisplayTracker
 import com.cognibotics.arucomapper.domain.measurement.MarkerOrigin
@@ -85,6 +86,7 @@ fun CameraFeedScreen(
     onSave: (VisionEvent.FrameMeasured?, List<VisionEvent.MarkerDetected>) -> Unit,
     isSaving: Boolean,
     onSavingChanged: (Boolean) -> Unit,
+    calibrationMeasurement: CalibrationMeasurement = CalibrationMeasurement(),
     modifier: Modifier = Modifier
 ) {
     val configuration = LocalConfiguration.current
@@ -103,7 +105,16 @@ fun CameraFeedScreen(
     val permissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
     val opencvReady = remember { OpenCv.ensureInitialized() }
-    val markerAnalyzer = remember(opencvReady) { if (opencvReady) ArucoAnalyzer() else null }
+    val markerAnalyzer =
+        remember(opencvReady, calibrationMeasurement) {
+            if (opencvReady) {
+                ArucoAnalyzer().apply {
+                    calibration = calibrationMeasurement
+                }
+            } else {
+                null
+            }
+        }
     val visionEngine =
         remember(markerAnalyzer) { VisionEngine(analyzers = listOfNotNull(markerAnalyzer)) }
     // Fixed rows and a short median window make results readable without hiding missing readings.
@@ -427,7 +438,7 @@ fun CameraFeedScreen(
                                             "Using estimated camera parameters."
 
                                         else ->
-                                            "Using calibrated camera parameters."
+                                            "Using saved custom calibration."
                                     },
                                     style = MaterialTheme.typography.bodySmall
                                 )

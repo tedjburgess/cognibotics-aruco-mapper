@@ -224,6 +224,7 @@ class MainActivity : ComponentActivity() {
                             CameraFeedScreen(
                                 siteName = siteName,
                                 cellName = cellName,
+                                calibrationMeasurement = calibrationMeasurement,
                                 onBack = {
                                     currentScreen = AppScreen.Measurement
                                 },
