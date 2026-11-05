@@ -23,7 +23,11 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - uses: android-actions/setup-android@v3
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools platforms;android-37.0"
+          log-accepted-android-sdk-licenses: false
 
       - uses: gradle/actions/setup-gradle@v4
 
@@ -43,9 +47,9 @@ jobs:
           test -n "$KEYSTORE" || { echo "Missing ANDROID_KEYSTORE_BASE64 secret"; exit 1; }
           echo "$KEYSTORE" | base64 -d > "$ANDROID_KEYSTORE_PATH"
           if [ -n "$API_BASE_URL" ]; then
-            ./gradlew assembleRelease -PversionName="$version" -PapiBaseUrl="$API_BASE_URL"
+            bash ./gradlew assembleRelease -PversionName="$version" -PapiBaseUrl="$API_BASE_URL"
           else
-            ./gradlew assembleRelease -PversionName="$version"
+            bash ./gradlew assembleRelease -PversionName="$version"
           fi
           cp app/build/outputs/apk/release/app-release.apk "../aruco-mapper-$version.apk"
           echo "version=$version" >> "$GITHUB_OUTPUT"
