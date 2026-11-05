@@ -49,7 +49,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: api-v${{ steps.version.outputs.version }}
-          name: API ${{ steps.version.outputs.version }}
+          name: API v${{ steps.version.outputs.version }}
           files: aruco-mapper-api-*.tar.gz
           draft: true
           generate_release_notes: true

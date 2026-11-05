@@ -57,7 +57,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: android-v${{ steps.build.outputs.version }}
-          name: Android ${{ steps.build.outputs.version }}
+          name: Android v${{ steps.build.outputs.version }}
           files: aruco-mapper-*.apk
           draft: true
           generate_release_notes: true
